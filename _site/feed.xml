@@ -6,8 +6,8 @@
 </description>
     <link>https://arta678.github.io//</link>
     <atom:link href="https://arta678.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 04 Feb 2021 21:44:58 +0800</pubDate>
-    <lastBuildDate>Thu, 04 Feb 2021 21:44:58 +0800</lastBuildDate>
+    <pubDate>Thu, 04 Feb 2021 22:18:31 +0800</pubDate>
+    <lastBuildDate>Thu, 04 Feb 2021 22:18:31 +0800</lastBuildDate>
     <generator>Jekyll v3.0.1</generator>
     
       <item>
@@ -37,95 +37,189 @@
     
       <item>
         <title>Dewi</title>
-        <description>&lt;div class=&quot;gambar&quot;&gt;
-	
-	
-	&lt;img src=&quot;/assets/img/1.png&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/2.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/3.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
+        <description>&lt;style&gt;
+img {
+  width: 100%;
+  height: auto;
+}
+&lt;/style&gt;
+
+&lt;div class=&quot;wrapper&quot;&gt;
+
+    &lt;div class=&quot;footer-col-wrapper&quot;&gt;
+    
 	
 	
 	
-	&lt;img src=&quot;/assets/img/4.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
 	
-	
-	
-	&lt;img src=&quot;/assets/img/5.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/img20170211175323.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/img20170211175440.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/img20170211175533.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/img20170212205528.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/img20170221184918.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/img20170225170318.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/img20170225170532.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/img20170225170742.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/img20170227075915.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/img20170227080148.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
-	
-	
-	
-	&lt;img src=&quot;/assets/img/img20170227090525.jpg&quot; alt=&quot;image&quot; /&gt;
-	&lt;br /&gt;
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/1.png&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
 	
 	
 	
 	
 	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/2.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
 	
 	
 	
-&lt;/div&gt;
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/3.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/4.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/5.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/img20170211175323.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/img20170211175440.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/img20170211175533.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/img20170212205528.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/img20170221184918.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/img20170225170318.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/img20170225170532.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/img20170225170742.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/img20170227075915.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/img20170227080148.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+      &lt;div class=&quot;footer-col footer-col-2&quot;&gt;
+        &lt;a href=&quot;default.asp&quot;&gt;&lt;img src=&quot;/assets/dewi/img20170227090525.jpg&quot; alt=&quot;image&quot; width=&quot;100%&quot; /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+
+      
+	
+	
+	
+	
+	
+	
+	
+
+      
+    &lt;/div&gt;
+
+  &lt;/div&gt;
+
 </description>
         <pubDate>Thu, 04 Feb 2021 07:33:23 +0800</pubDate>
         <link>https://arta678.github.io//kompor</link>
