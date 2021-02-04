@@ -6,7 +6,7 @@ categories: jekyll update
 ---
 Halo Nama Saya arta
 ini makanan saya
-![halo]([{{site.url}}/gambar/01.JPG])
+![halo]([{{site.url}}/gambar/01.png])
 <img src="/gambar/1.png" alt="">
 ![Azunyan](https://3.bp.blogspot.com/-jFUYJlcFR4s/WDZALylcM9I/AAAAAAAAAC4/e-JJokwZzDcVZWDVfIYEdjmAORkZwZZQACLcB/s640/azusa.jpg)
 
