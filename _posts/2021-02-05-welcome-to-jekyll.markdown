@@ -1,12 +1,12 @@
 ---
 layout: post
-title:  "Makanan Favorite"
+title:  "welcome Jekyll"
 date:   2021-02-04 07:33:23 +0800
 categories: jekyll update
 ---
-Halo Nama Saya arta
-ini makanan saya
-![halo]([../gambar/01.png])
+
+
+
 <img src="/gambar/1.png" alt="">
 ![Azunyan](https://3.bp.blogspot.com/-jFUYJlcFR4s/WDZALylcM9I/AAAAAAAAAC4/e-JJokwZzDcVZWDVfIYEdjmAORkZwZZQACLcB/s640/azusa.jpg)
 
