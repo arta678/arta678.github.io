@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="/css/main.css">
   <link rel="canonical" href="https://arta678.github.io//Rumah-Nenek">
   <link rel="alternate" type="application/rss+xml" title="My Album" href="https://arta678.github.io//feed.xml">
+<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.3.0/dist/lazyload.min.js"></script>
+
 </head>
 
 
@@ -47,6 +49,25 @@ img {
   height: auto;
 }
 </style>
+
+<script type="text/javascript">
+  (() => {
+  'use strict';
+  // Page is loaded
+  const objects = document.getElementsByClassName('asyncImage');  Array.from(objects).map((item) => {
+    // Start loading image
+    const img = new Image();
+    img.src = item.dataset.src;
+    // Once image is loaded replace the src of the HTML element
+    img.onload = () => {
+      item.classList.remove('asyncImage');
+      return item.nodeName === 'IMG' ? 
+        item.src = item.dataset.src :        
+        item.style.backgroundImage = `url(${item.dataset.src})`;
+    };
+  });
+})();
+</script>
 
 <div class="wrapper">
 
