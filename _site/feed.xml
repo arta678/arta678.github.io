@@ -3,10 +3,10 @@
   <channel>
     <title></title>
     <description>Blogging about stuffs</description>
-    <link>/kasper/</link>
-    <atom:link href="/kasper/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 25 Feb 2021 17:24:13 +0800</pubDate>
-    <lastBuildDate>Thu, 25 Feb 2021 17:24:13 +0800</lastBuildDate>
+    <link>/</link>
+    <atom:link href="/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Thu, 25 Feb 2021 17:28:57 +0800</pubDate>
+    <lastBuildDate>Thu, 25 Feb 2021 17:28:57 +0800</lastBuildDate>
     <generator>Jekyll v4.2.0</generator>
     
       <item>
@@ -26,8 +26,8 @@ To add new posts, simply add a file in the &lt;code class=&quot;language-plainte
 
 </description>
         <pubDate>Sun, 10 Nov 2013 18:18:00 +0800</pubDate>
-        <link>/kasper/thriller/comedy/horror/2013/11/10/welcome-to-jekyll.html</link>
-        <guid isPermaLink="true">/kasper/thriller/comedy/horror/2013/11/10/welcome-to-jekyll.html</guid>
+        <link>/thriller/comedy/horror/2013/11/10/welcome-to-jekyll.html</link>
+        <guid isPermaLink="true">/thriller/comedy/horror/2013/11/10/welcome-to-jekyll.html</guid>
         
         
         <category>Thriller</category>
