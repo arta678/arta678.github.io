@@ -12,14 +12,13 @@ about: 'about.html'
                     <img src="{{ page.logo }}" alt="Blog Logo" />
                 </a>
             {% endif %}
-        <a class="subscribe-button icon-feed" href="{{'feed.xml' | relative_url }} ">Subscribe</a>
+        <a class="subscribe-button " href="{{page.about | relative_url}} ">About Me</a>
     </nav>
     <div class="vertical">
         <div class="main-header-content inner">
             <h1 class="page-title">{{ site.name }}</h1>
             <h2 class="page-description">
                 {% if site.description %} {{ site.description }}. {% endif %}
-                {% if page.about %} <a href='{{page.about | relative_url}}'> About me </a> {% endif %}
             </h2>
         </div>
     </div>
@@ -44,13 +43,13 @@ about: 'about.html'
             {{ post.excerpt }} <a class="read-more" href="{{ post.url | relative_url }}">&raquo;</a>
         </section>
         <footer class="post-meta">
-            {% if site.author %}
+            <!-- {% if site.author %} -->
                 <img class="author-thumb" src="{{'/assets/images/profile.png' | relative_url}}" alt="Author's profile picture" nopin="nopin" />
                 {{ site.author }}
-            {% endif %}
+           <!--  {% endif %}
             {% if post.categories.size > 0 %} 
                 {{ post.categories | array_to_sentence_string | prepend: 'on ' }} 
-            {% endif %}
+            {% endif %} -->
             <time class="post-date" datetime="{{ post.date | date:"%Y-%m-%d" }}">
                 {{ post.date | date_to_string }}
             </time> 

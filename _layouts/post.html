@@ -8,7 +8,7 @@ post_class: post-template
 <header class="main-header post-head {% if page.cover %}" style="background-image: url({{ page.cover }}) {%else%}no-cover{% endif %}">
     <nav class="main-nav {% if page.cover %} overlay {% endif %} clearfix">
         <a class="back-button icon-arrow-left" href="{{'/' | relative_url }}">Home</a>
-        <a class="subscribe-button icon-feed" href="{{'feed.xml' | relative_url }}">Subscribe</a>
+        <a class="subscribe-button" href="{{page.about}}">About Me</a>
     </nav>
 </header>
 
@@ -18,11 +18,13 @@ post_class: post-template
 
         <header class="post-header">
             <h1 class="post-title">{{ page.title }}</h1>
-            <section class="post-meta">
+            <section class="post-meta"><!-- 
                 {% if page.categories.size > 0 %}
                     {{ page.categories | array_to_sentence_string | prepend: 'on ' }}
-                {% endif %}
-                <time class="post-date" datetime="{{ page.date | date:"%Y-%m-%d" }}">{{ page.date | date_to_string }}</time>
+                {% endif %} -->
+                <!-- <time class="post-date" datetime="{{ page.date | date:"%Y-%m-%d" }}">{{ page.date | date_to_string }}</time> -->
+                <p>{{ page.date | date_to_string }}</p>
+
             </section>
         </header>
 
@@ -64,7 +66,7 @@ post_class: post-template
             <!-- If we want to display author's name and bio -->
             {% if site.author %}
                 <figure class="author-image">
-                    <a class="img" href="{{'/' | relative_url }}" style="background-image: url({{'/assets/images/profile.png' | relative_url}})">
+                    <a class="img" href="{{'/about' | relative_url }}" style="background-image: url({{'/assets/images/profile.png' | relative_url}})">
                     <span class="hidden">{{site.author}}'s Picture</span></a>
                 </figure>
                 <section class="author">
@@ -72,7 +74,7 @@ post_class: post-template
                     <h4> {{ site.author }} </h4>
                     <!-- Author Bio -->
                     <p>
-                        Here goes the author description. You might want to place some links too in here
+                        Hi, Saya Arta, Saya penulis pemula dan menyukai Jekyll
                     </p>
                 </section>
             {% endif %}

@@ -1,5 +1,5 @@
-name: Your New Jekyll Site
-description: Blogging about stuffs
+name: Arta Wiguna
+description: Welcome to my Blog
 meta_description: "Your New Jekyll Site, Blogging about stuffs"
 
 markdown: kramdown
@@ -8,8 +8,9 @@ logo: false
 paginate: 15
 baseurl: ""
 domain_name: "https://arta678.github.io/"
-google_analytics: "UA-XXXXXXXX-X"
+# google_analytics: "UA-XXXXXXXX-X"
 plugins: [jekyll-paginate]
+
 
 # Details for the RSS feed generator
 url: ""
