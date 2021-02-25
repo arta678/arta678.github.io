@@ -2,11 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title></title>
-    <description>Welcome to my Blog</description>
+    <description>Traveling, Fun</description>
     <link>/</link>
     <atom:link href="/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Fri, 26 Feb 2021 06:52:27 +0800</pubDate>
-    <lastBuildDate>Fri, 26 Feb 2021 06:52:27 +0800</lastBuildDate>
+    <pubDate>Fri, 26 Feb 2021 07:21:09 +0800</pubDate>
+    <lastBuildDate>Fri, 26 Feb 2021 07:21:09 +0800</lastBuildDate>
     <generator>Jekyll v4.2.0</generator>
     
       <item>
@@ -16,29 +16,12 @@
 &lt;p&gt;&lt;img src=&quot;/assets/foto/tahunbaru1.jpg&quot; alt=&quot;tahunbaru1&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/assets/foto/tahunbaru5.jpg&quot; alt=&quot;tahunbaru3&quot; width=&quot;100&quot; /&gt;&lt;/p&gt;
 </description>
-        <pubDate>Wed, 01 Jan 2020 18:18:00 +0800</pubDate>
-        <link>/tahun-baru/2020/01/01/Tahun-Baru-2021.html</link>
-        <guid isPermaLink="true">/tahun-baru/2020/01/01/Tahun-Baru-2021.html</guid>
+        <pubDate>Fri, 01 Jan 2021 18:18:00 +0800</pubDate>
+        <link>/tahun-baru/2021/01/01/Tahun-Baru-2021.html</link>
+        <guid isPermaLink="true">/tahun-baru/2021/01/01/Tahun-Baru-2021.html</guid>
         
         
         <category>Tahun-baru</category>
-        
-      </item>
-    
-      <item>
-        <title>Welcome to Jekyll!</title>
-        <description>&lt;p&gt;Foto ini waktu perjalanan ke denpasar.&lt;/p&gt;
-</description>
-        <pubDate>Sun, 10 Nov 2013 18:18:00 +0800</pubDate>
-        <link>/thriller/comedy/horror/2013/11/10/welcome-to-jekyll.html</link>
-        <guid isPermaLink="true">/thriller/comedy/horror/2013/11/10/welcome-to-jekyll.html</guid>
-        
-        
-        <category>Thriller</category>
-        
-        <category>Comedy</category>
-        
-        <category>Horror</category>
         
       </item>
     

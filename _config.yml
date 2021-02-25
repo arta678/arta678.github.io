@@ -1,11 +1,11 @@
-name: Arta Wiguna
-description: Welcome to my Blog
-meta_description: "Your New Jekyll Site, Blogging about stuffs"
+name: Arta's Blog
+description: Traveling, Fun
+# meta_description: "Your New Jekyll Site, Blogging about stuffs"
 
 markdown: kramdown
 highlighter: rouge
-logo: false
-paginate: 15
+logo: true
+paginate: 5
 baseurl: ""
 domain_name: "https://arta678.github.io/"
 # google_analytics: "UA-XXXXXXXX-X"
