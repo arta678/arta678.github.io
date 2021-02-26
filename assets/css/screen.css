@@ -161,6 +161,15 @@ table { border-collapse: collapse; border-spacing: 0; }
     content: "\f608";
 }
 
+.icon-envelope:before {
+    content: "\2709";
+    size: 200px;
+
+}
+
+
+
+
 
 /* ==========================================================================
    2. General - Setting up some base styles
