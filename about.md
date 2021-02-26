@@ -1,6 +1,14 @@
 ---
 layout: page
-title: About me 
+title: Arta W 
 ---
 
-This is a static page. It could be an 'about page' if you'd like.
+Hai, Saya Arta Wiguna, tinggal di Indonesia. Bermalas malasan adalah hobi saya. Saya suka membuat program sederhana. Anda bisa melihat program saya **[disini].**
+
+
+
+
+[disini]: https://github.com/arta678
+
+
+
