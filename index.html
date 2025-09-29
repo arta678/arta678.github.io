@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Toko Online Arta</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Library SheetJS untuk baca Excel -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <!-- Library untuk baca CSV -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body class="bg-gray-100">
 
@@ -33,12 +33,12 @@
     const whatsappNumber = "628123456789"; // Ganti dengan nomor WA kamu
     let products = [];
 
-    // Render Produk
+    // Fungsi render produk
     function renderProducts(filter = "") {
       const productList = document.getElementById("product-list");
       productList.innerHTML = "";
       products
-        .filter(p => p.Nama && p.Nama.toLowerCase().includes(filter.toLowerCase()))
+        .filter(p => p.Nama.toLowerCase().includes(filter.toLowerCase()))
         .forEach(product => {
           const productCard = document.createElement("div");
           productCard.className = "bg-white rounded-2xl shadow p-4 text-center";
@@ -56,15 +56,15 @@
         });
     }
 
-    // Load Excel (produk.xlsx)
-    fetch("produk.xlsx")
-      .then(response => response.arrayBuffer())
-      .then(data => {
-        const workbook = XLSX.read(data, { type: "array" });
-        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        products = XLSX.utils.sheet_to_json(firstSheet); // Convert ke JSON
+    // Ambil file CSV
+    Papa.parse("produk.csv", {
+      download: true,
+      header: true,
+      complete: function(results) {
+        products = results.data;
         renderProducts();
-      });
+      }
+    });
 
     // Search event
     document.getElementById("search").addEventListener("input", (e) => {
