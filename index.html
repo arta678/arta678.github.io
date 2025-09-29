@@ -61,14 +61,15 @@
     }
 
     // Ambil file CSV
-    Papa.parse("produk.csv", {
-      download: true,
-      header: true,
-      complete: function(results) {
-        products = results.data;
-        renderProducts();
-      }
-    });
+Papa.parse("produk.csv", {
+  download: true,
+  header: true,
+  complete: function(results) {
+    products = results.data;
+    renderProducts();
+  }
+});
+
 
     // Search event
     document.getElementById("search").addEventListener("input", (e) => {
