@@ -4,78 +4,48 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Toko Online Arta</title>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- PapaParse untuk membaca CSV -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
-<body class="bg-gray-100">
-
-  <!-- Header -->
-  <header class="bg-blue-600 text-white p-4 text-center text-2xl font-bold shadow">
-    Toko Online Arta
-  </header>
-
-  <!-- Search -->
-  <div class="p-4 flex justify-center">
-    <input type="text" id="search" placeholder="Cari produk..."
-           class="w-full md:w-1/2 p-2 border rounded-lg shadow">
+<body class="bg-gray-100 font-sans">
+  <div class="max-w-6xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center mb-8">Toko Online Arta</h1>
+    <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
   </div>
 
-  <!-- Produk -->
-  <main id="product-list" class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6"></main>
-
-  <!-- Footer -->
-  <footer class="bg-gray-800 text-white text-center p-4 mt-6">
-    © 2025 Toko Online Arta - Semua Hak Dilindungi
-  </footer>
-
   <script>
-    const whatsappNumber = "628123456789"; // Ganti dengan nomor WA kamu
-    let products = [];
+    const nomorWA = "628123456789"; // ganti dengan nomor WhatsApp kamu
 
-    // Render produk
-    function renderProducts(filter = "") {
-      const productList = document.getElementById("product-list");
-      productList.innerHTML = "";
-      products
-        .filter(p => p.Nama && p.Nama.toLowerCase().includes(filter.toLowerCase()))
-        .forEach(product => {
-          const productCard = document.createElement("div");
-          productCard.className = "bg-white rounded-2xl shadow p-4 text-center cursor-pointer hover:shadow-lg transition";
-
-          productCard.innerHTML = `
-            <img src="${product.Gambar}" alt="${product.Nama}" class="mx-auto rounded-lg">
-            <h2 class="text-lg font-semibold mt-2">${product.Nama}</h2>
-          `;
-
-          // Klik gambar → langsung buka WA
-          productCard.addEventListener("click", () => {
-            window.open(
-              `https://wa.me/${whatsappNumber}?text=Halo%20saya%20mau%20pesan%20${encodeURIComponent(product.Nama)}`,
-              "_blank"
-            );
-          });
-
-          productList.appendChild(productCard);
-        });
+    // Render produk ke halaman
+    function renderProducts(products) {
+      const list = document.getElementById("product-list");
+      list.innerHTML = "";
+      products.forEach((p) => {
+        if (!p.nama || !p.gambar) return; // skip baris kosong
+        const div = document.createElement("div");
+        div.className = "bg-white rounded-2xl shadow hover:shadow-lg cursor-pointer overflow-hidden";
+        div.innerHTML = `
+          <img src="${p.gambar}" alt="${p.nama}" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h2 class="text-lg font-semibold">${p.nama}</h2>
+          </div>
+        `;
+        div.onclick = () => {
+          const pesan = `Halo, saya ingin pesan *${p.nama}*`;
+          window.open(`https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`, "_blank");
+        };
+        list.appendChild(div);
+      });
     }
 
-    // Ambil file CSV
-Papa.parse("produk.csv", {
-  download: true,
-  header: true,
-  complete: function(results) {
-    products = results.data;
-    renderProducts();
-  }
-});
-
-
-    // Search event
-    document.getElementById("search").addEventListener("input", (e) => {
-      renderProducts(e.target.value);
+    // Ambil data dari produk.csv
+    Papa.parse("produk.csv", {
+      download: true,
+      header: true,
+      complete: function(results) {
+        renderProducts(results.data);
+      }
     });
   </script>
-
 </body>
 </html>
