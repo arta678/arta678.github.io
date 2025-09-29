@@ -2,46 +2,37 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Toko Online Arta</title>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Toko Online</title>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    .produk { display: inline-block; margin: 15px; border: 1px solid #ddd; padding: 10px; width: 200px; }
+    img { max-width: 100%; cursor: pointer; }
+  </style>
 </head>
-<body class="bg-gray-100 font-sans">
-  <div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-3xl font-bold text-center mb-8">Toko Online Arta</h1>
-    <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-  </div>
+<body>
+  <h1>Daftar Produk</h1>
+  <div id="daftar-produk"></div>
 
   <script>
-    const nomorWA = "6283117345545"; // ganti dengan nomor WhatsApp kamu
-
-    function renderProducts(products) {
-      const list = document.getElementById("product-list");
-      list.innerHTML = "";
-      products.forEach((p) => {
-        if (!p.nama || !p.gambar) return;
-        const div = document.createElement("div");
-        div.className = "bg-white rounded-2xl shadow hover:shadow-lg cursor-pointer overflow-hidden";
-        div.innerHTML = `
-         <img src="assets/images/${p.gambar}" alt="${p.nama}" class="w-full h-48 object-cover">
-          <div class="p-4">
-            <h2 class="text-lg font-semibold">${p.nama}</h2>
-          </div>
-        `;
-        div.onclick = () => {
-          const pesan = `Halo, saya ingin pesan *${p.nama}*`;
-          window.open(`https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`, "_blank");
-        };
-        list.appendChild(div);
-      });
-    }
-
     Papa.parse("produk.csv", {
       download: true,
       header: true,
       complete: function(results) {
-        renderProducts(results.data);
+        const container = document.getElementById("daftar-produk");
+        results.data.forEach(item => {
+          if(item.nama) {
+            const div = document.createElement("div");
+            div.className = "produk";
+            div.innerHTML = `
+              <h3>${item.nama}</h3>
+              <a href="detail.html?id=${item.id}">
+                <img src="${item.gambar}" alt="${item.nama}">
+              </a>
+            `;
+            container.appendChild(div);
+          }
+        });
       }
     });
   </script>
