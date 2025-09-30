@@ -117,8 +117,8 @@
             <th>No</th>
             <th>Nama Barang</th>
             <th>Harga Jual</th>
-            <th>Harga Beli</th>
             <th>Harga Dagang</th>
+            <th>Harga Beli</th>
             <th>Kategori</th>
           </tr>
         </thead>
@@ -152,8 +152,8 @@
           <td>${row.No}</td>
           <td>${row["Nama Barang"]}</td>
           <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
-          <td>Rp ${row["Harga Beli"]}</td>
           <td>Rp ${row["Harga Dagang"]}</td>
+          <td>Rp ${row["Harga Beli"]}</td>
           <td>${row.Kategori}</td>
         `;
         tbody.appendChild(tr);
