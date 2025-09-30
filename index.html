@@ -2,198 +2,134 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar Barang</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tabel Barang</title>
   <style>
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f9fafb;
-      color: #333;
-    }
-    header {
-      background: #2563eb;
-      color: white;
-      padding: 15px;
-      text-align: center;
-      font-size: 1.4rem;
-      font-weight: bold;
-    }
-    main {
-      padding: 15px;
-      max-width: 1000px;
-      margin: auto;
-    }
-    .search-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    input, select {
-      padding: 10px;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    input {
-      flex: 1;
-      min-width: 200px;
-    }
-    select {
-      background: white;
-      min-width: 150px;
-    }
-    .table-container {
-      overflow-x: auto;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      min-width: 700px;
-    }
-    th, td {
-      border-bottom: 1px solid #eee;
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background: #f3f4f6;
-      font-weight: bold;
-    }
-    tr:hover {
-      background: #f9f9f9;
-    }
-    .pagination {
-      margin-top: 15px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #2563eb;
-      color: white;
-      font-size: 1rem;
-      transition: 0.2s;
-    }
-    button:hover {
-      background: #1e40af;
-    }
-    #page-info {
-      font-size: 1rem;
-    }
-    @media (max-width: 600px) {
-      header { font-size: 1.2rem; padding: 12px; }
-      th, td { padding: 8px; font-size: 0.9rem; }
-      button { font-size: 0.9rem; padding: 8px 12px; }
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f4f4f4; }
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    select, input { padding: 6px; }
+    button { padding: 6px 12px; cursor: pointer; }
   </style>
 </head>
 <body>
-  <header>📦 Daftar Barang</header>
-  <main>
-    <div class="search-bar">
-      <input type="text" id="search" placeholder="🔍 Cari nama barang...">
-      <select id="kategori">
-        <option value="">📂 Semua Kategori</option>
-      </select>
-    </div>
+  <h2>Daftar Barang</h2>
+  
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="Cari barang...">
+    <select id="categorySelect">
+      <option value="">Semua Kategori</option>
+    </select>
+  </div>
 
-    <div class="table-container">
-      <table id="tabel-barang">
-        <thead>
-          <tr>
-            <th>Nama Barang</th>
-            <th>Harga Jual</th>
-            <th>Harga Grosir</th>
-            <th>Harga Beli</th>
-            <th>Kategori</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+  <table id="barangTable">
+    <thead>
+      <tr>
+        <th>Nama Barang</th>
+        <th>Kategori</th>
+        <th>Harga Beli</th>
+        <th>Harga Jual</th>
+        <th>Harga Dagang</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-    <div class="pagination">
-      <button id="prev">⬅️ Previous</button>
-      <span id="page-info"></span>
-      <button id="next">Next ➡️</button>
-    </div>
-  </main>
+  <div>
+    <button id="prevBtn">Sebelumnya</button>
+    <button id="nextBtn">Selanjutnya</button>
+  </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script>
-  let dataBarang = [];
-  let currentPage = 1;
-  const rowsPerPage = 20;
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vXXXX/pub?output=csv"; // ganti dengan URL CSV Arta
+    const rowsPerPage = 20;
+    let currentPage = 1;
+    let data = [];
+    let filteredData = [];
 
-  function renderTable(data) {
-    let tbody = document.querySelector("#tabel-barang tbody");
-    tbody.innerHTML = "";
+    const tbody = document.querySelector("#barangTable tbody");
+    const searchInput = document.getElementById("searchInput");
+    const categorySelect = document.getElementById("categorySelect");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
 
-    let start = (currentPage - 1) * rowsPerPage;
-    let end = start + rowsPerPage;
-    let paginatedData = data.slice(start, end);
-
-    paginatedData.forEach(row => {
-      let tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${row["Nama Barang"]}</td>
-        <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
-        <td>${row["Harga Dagang"]}</td>
-        <td>${row["Harga Beli"]}</td>
-        <td>${row.Kategori}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-
-    document.getElementById("page-info").textContent =
-      `Halaman ${currentPage} dari ${Math.ceil(data.length / rowsPerPage)}`;
-  }
-
-  function updateTable() {
-    let searchText = document.getElementById("search").value.toLowerCase();
-    let kategori = document.getElementById("kategori").value;
-
-    let filtered = dataBarang.filter(item => {
-      let cocokNama = item["Nama Barang"].toLowerCase().includes(searchText);
-      let cocokKategori = kategori === "" || item.Kategori === kategori;
-      return cocokNama && cocokKategori;
-    });
-
-    renderTable(filtered);
-  }
-
-  Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv", {
-    download: true,
-    header: true,
-    complete: function(results) {
-      dataBarang = results.data.filter(row => row["Nama Barang"]);
-
-      // Ambil kategori unik
-      let kategoriUnik = [...new Set(dataBarang.map(item => item.Kategori))];
-      let select = document.getElementById("kategori");
-      kategoriUnik.forEach(kat => {
-        let opt = document.createElement("option");
-        opt.value = kat;
-        opt.textContent = kat;
-        select.appendChild(opt);
+    // render tabel
+    function renderTable() {
+      tbody.innerHTML = "";
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      filteredData.slice(start, end).forEach(item => {
+        const row = `<tr>
+          <td>${item.nama}</td>
+          <td>${item.kategori}</td>
+          <td>${item.harga_beli}</td>
+          <td>${item.harga_jual}</td>
+          <td>${item.harga_dagang}</td>
+        </tr>`;
+        tbody.insertAdjacentHTML("beforeend", row);
       });
-
-      updateTable();
     }
-  });
-</script>
+
+    // filter
+    function applyFilter() {
+      const searchText = searchInput.value.toLowerCase();
+      const selectedCategory = categorySelect.value;
+      filteredData = data.filter(item => {
+        const matchText = item.nama.toLowerCase().includes(searchText);
+        const matchCat = selectedCategory ? item.kategori === selectedCategory : true;
+        return matchText && matchCat;
+      });
+      currentPage = 1;
+      renderTable();
+    }
+
+    // ambil CSV dari Google Sheets
+    Papa.parse(csvUrl, {
+      download: true,
+      header: true,
+      complete: function(results) {
+        data = results.data.map(item => ({
+          nama: item.nama,
+          kategori: item.kategori,
+          harga_beli: item.harga_beli,
+          harga_jual: item.harga_jual,
+          harga_dagang: item.harga_dagang
+        }));
+        filteredData = data;
+
+        // isi dropdown kategori
+        const categories = [...new Set(data.map(item => item.kategori))];
+        categories.forEach(cat => {
+          const option = document.createElement("option");
+          option.value = cat;
+          option.textContent = cat;
+          categorySelect.appendChild(option);
+        });
+
+        renderTable();
+      }
+    });
+
+    // event listener
+    searchInput.addEventListener("input", applyFilter);
+    categorySelect.addEventListener("change", applyFilter);
+
+    prevBtn.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (currentPage * rowsPerPage < filteredData.length) {
+        currentPage++;
+        renderTable();
+      }
+    });
+  </script>
 </body>
 </html>
-
