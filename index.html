@@ -115,10 +115,10 @@
         <thead>
           <tr>
             <th>Nama Barang</th>
-            <th>Harga Jual</th>
-            <th>Harga Grosir</th>
-            <th>M</th>
             <th>Kategori</th>
+            <th>Harga Jual</th>
+            <th>Harga Beli</th>
+            <th>Harga Dagang</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -149,10 +149,10 @@
         let tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${row["Nama Barang"]}</td>
-          <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
-          <td>${row["Harga Dagang"]}</td>
-          <td>${row["Harga Beli"]}</td>
           <td>${row.Kategori}</td>
+          <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
+          <td>Rp ${Number(row["Harga Beli"]).toLocaleString("id-ID")}</td>
+          <td>Rp ${Number(row["Harga Dagang"]).toLocaleString("id-ID")}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -211,7 +211,7 @@
       download: true,
       header: true,
       complete: function(results) {
-        dataBarang = results.data.filter(row => row.No);
+        dataBarang = results.data.filter(row => row["Nama Barang"]);
 
         // ambil kategori unik
         let kategoriUnik = [...new Set(dataBarang.map(item => item.Kategori))];
