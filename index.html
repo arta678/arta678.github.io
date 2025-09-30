@@ -55,7 +55,7 @@
     table {
       border-collapse: collapse;
       width: 100%;
-      min-width: 600px;
+      min-width: 700px;
     }
     th, td {
       border-bottom: 1px solid #eee;
@@ -118,6 +118,7 @@
             <th>Nama Barang</th>
             <th>Harga Jual</th>
             <th>Harga Beli</th>
+            <th>Harga Dagang</th>
             <th>Kategori</th>
           </tr>
         </thead>
@@ -151,7 +152,8 @@
           <td>${row.No}</td>
           <td>${row["Nama Barang"]}</td>
           <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
-          <td>${row["Harga Beli"]}</td>
+          <td>Rp ${row["Harga Beli"]}</td>
+          <td>Rp ${row["Harga Dagang"]}</td>
           <td>${row.Kategori}</td>
         `;
         tbody.appendChild(tr);
@@ -211,7 +213,7 @@
       download: true,
       header: true,
       complete: function(results) {
-        dataBarang = results.data.filter(row => row.No); 
+        dataBarang = results.data.filter(row => row.No);
 
         // ambil kategori unik
         let kategoriUnik = [...new Set(dataBarang.map(item => item.Kategori))];
