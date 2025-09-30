@@ -152,8 +152,8 @@
         tr.innerHTML = `
           <td>${row["Nama Barang"]}</td>
           <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
-          <td>Rp ${row["Harga Dagang"]}</td>
-          <td>Rp ${row["Harga Beli"]}</td>
+          <td>${row["Harga Dagang"]}</td>
+          <td>${row["Harga Beli"]}</td>
           <td>${row.Kategori}</td>
         `;
         tbody.appendChild(tr);
