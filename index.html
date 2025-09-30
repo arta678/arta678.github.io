@@ -133,102 +133,67 @@
   </main>
 
   <script>
-    let dataBarang = [];
-    let currentPage = 1;
-    const rowsPerPage = 20;
+  let dataBarang = [];
+  let currentPage = 1;
+  const rowsPerPage = 20;
 
-    function renderTable(data) {
-      let tbody = document.querySelector("#tabel-barang tbody");
-      tbody.innerHTML = "";
+  function renderTable(data) {
+    let tbody = document.querySelector("#tabel-barang tbody");
+    tbody.innerHTML = "";
 
-      let start = (currentPage - 1) * rowsPerPage;
-      let end = start + rowsPerPage;
-      let paginatedData = data.slice(start, end);
+    let start = (currentPage - 1) * rowsPerPage;
+    let end = start + rowsPerPage;
+    let paginatedData = data.slice(start, end);
 
-      paginatedData.forEach(row => {
-        let tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${row["Nama Barang"]}</td>
-          <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
-          <td>${row["Harga Dagang"]}</td>
-          <td>${row["Harga Beli"]}</td>
-          <td>${row.Kategori}</td>
-        `;
-        tbody.appendChild(tr);
+    paginatedData.forEach(row => {
+      let tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${row["Nama Barang"]}</td>
+        <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
+        <td>${row["Harga Dagang"]}</td>
+        <td>${row["Harga Beli"]}</td>
+        <td>${row.Kategori}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById("page-info").textContent =
+      `Halaman ${currentPage} dari ${Math.ceil(data.length / rowsPerPage)}`;
+  }
+
+  function updateTable() {
+    let searchText = document.getElementById("search").value.toLowerCase();
+    let kategori = document.getElementById("kategori").value;
+
+    let filtered = dataBarang.filter(item => {
+      let cocokNama = item["Nama Barang"].toLowerCase().includes(searchText);
+      let cocokKategori = kategori === "" || item.Kategori === kategori;
+      return cocokNama && cocokKategori;
+    });
+
+    renderTable(filtered);
+  }
+
+  Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv", {
+    download: true,
+    header: true,
+    complete: function(results) {
+      dataBarang = results.data.filter(row => row["Nama Barang"]);
+
+      // Ambil kategori unik
+      let kategoriUnik = [...new Set(dataBarang.map(item => item.Kategori))];
+      let select = document.getElementById("kategori");
+      kategoriUnik.forEach(kat => {
+        let opt = document.createElement("option");
+        opt.value = kat;
+        opt.textContent = kat;
+        select.appendChild(opt);
       });
 
-      document.getElementById("page-info").textContent =
-        `Halaman ${currentPage} dari ${Math.ceil(data.length / rowsPerPage)}`;
-    }
-
-    function updateTable() {
-      let searchText = document.getElementById("search").value.toLowerCase();
-      let kategori = document.getElementById("kategori").value;
-
-      let filtered = dataBarang.filter(item => {
-        let cocokNama = item["Nama Barang"].toLowerCase().includes(searchText);
-        let cocokKategori = kategori === "" || item.Kategori === kategori;
-        return cocokNama && cocokKategori;
-      });
-
-      renderTable(filtered);
-    }
-
-    document.getElementById("search").addEventListener("input", () => {
-      currentPage = 1;
       updateTable();
-    });
-
-    document.getElementById("kategori").addEventListener("change", () => {
-      currentPage = 1;
-      updateTable();
-    });
-
-    document.getElementById("next").addEventListener("click", () => {
-      let searchText = document.getElementById("search").value.toLowerCase();
-      let kategori = document.getElementById("kategori").value;
-
-      let filtered = dataBarang.filter(item => {
-        let cocokNama = item["Nama Barang"].toLowerCase().includes(searchText);
-        let cocokKategori = kategori === "" || item.Kategori === kategori;
-        return cocokNama && cocokKategori;
-      });
-
-      if (currentPage < Math.ceil(filtered.length / rowsPerPage)) {
-        currentPage++;
-        renderTable(filtered);
-      }
-    });
-
-    document.getElementById("prev").addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        updateTable();
-      }
-    });
-
-    Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv", {
-      download: true,
-      header: true,
-      complete: function(results) {
-        dataBarang = results.data.filter(row => row["Nama Barang"]);
-
-        // ambil kategori unik
-        let kategoriUnik = [...new Set(dataBarang.map(item => item.Kategori))];
-        let select = document.getElementById("kategori");
-        kategoriUnik.forEach(kat => {
-          let opt = document.createElement("option");
-          opt.value = kat;
-          opt.textContent = kat;
-          select.appendChild(opt);
-        });
-
-        updateTable();
-      }
-    });
-
-    
-  </script>
+    }
+  });
+</script>
 </body>
 </html>
 
