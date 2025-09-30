@@ -114,7 +114,6 @@
       <table id="tabel-barang">
         <thead>
           <tr>
-            <th>No</th>
             <th>Nama Barang</th>
             <th>Harga Jual</th>
             <th>Harga Grosir</th>
@@ -149,7 +148,6 @@
       paginatedData.forEach(row => {
         let tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${row.No}</td>
           <td>${row["Nama Barang"]}</td>
           <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
           <td>${row["Harga Dagang"]}</td>
