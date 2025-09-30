@@ -26,14 +26,25 @@
       max-width: 1000px;
       margin: auto;
     }
-    input {
-      padding: 10px;
-      width: 100%;
-      max-width: 400px;
+    .search-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-bottom: 15px;
+    }
+    input, select {
+      padding: 10px;
+      font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 8px;
-      font-size: 1rem;
+    }
+    input {
+      flex: 1;
+      min-width: 200px;
+    }
+    select {
+      background: white;
+      min-width: 150px;
     }
     .table-container {
       overflow-x: auto;
@@ -82,28 +93,22 @@
     #page-info {
       font-size: 1rem;
     }
-
-    /* Responsive tweaks */
     @media (max-width: 600px) {
-      header {
-        font-size: 1.2rem;
-        padding: 12px;
-      }
-      th, td {
-        padding: 8px;
-        font-size: 0.9rem;
-      }
-      button {
-        font-size: 0.9rem;
-        padding: 8px 12px;
-      }
+      header { font-size: 1.2rem; padding: 12px; }
+      th, td { padding: 8px; font-size: 0.9rem; }
+      button { font-size: 0.9rem; padding: 8px 12px; }
     }
   </style>
 </head>
 <body>
   <header>📦 Daftar Barang</header>
   <main>
-    <input type="text" id="search" placeholder="🔍 Cari nama barang...">
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="🔍 Cari nama barang...">
+      <select id="kategori">
+        <option value="">📂 Semua Kategori</option>
+      </select>
+    </div>
 
     <div class="table-container">
       <table id="tabel-barang">
@@ -158,9 +163,14 @@
 
     function updateTable() {
       let searchText = document.getElementById("search").value.toLowerCase();
-      let filtered = dataBarang.filter(item =>
-        item["Nama Barang"].toLowerCase().includes(searchText)
-      );
+      let kategori = document.getElementById("kategori").value;
+
+      let filtered = dataBarang.filter(item => {
+        let cocokNama = item["Nama Barang"].toLowerCase().includes(searchText);
+        let cocokKategori = kategori === "" || item.Kategori === kategori;
+        return cocokNama && cocokKategori;
+      });
+
       renderTable(filtered);
     }
 
@@ -169,14 +179,24 @@
       updateTable();
     });
 
+    document.getElementById("kategori").addEventListener("change", () => {
+      currentPage = 1;
+      updateTable();
+    });
+
     document.getElementById("next").addEventListener("click", () => {
       let searchText = document.getElementById("search").value.toLowerCase();
-      let filtered = dataBarang.filter(item =>
-        item["Nama Barang"].toLowerCase().includes(searchText)
-      );
+      let kategori = document.getElementById("kategori").value;
+
+      let filtered = dataBarang.filter(item => {
+        let cocokNama = item["Nama Barang"].toLowerCase().includes(searchText);
+        let cocokKategori = kategori === "" || item.Kategori === kategori;
+        return cocokNama && cocokKategori;
+      });
+
       if (currentPage < Math.ceil(filtered.length / rowsPerPage)) {
         currentPage++;
-        updateTable();
+        renderTable(filtered);
       }
     });
 
@@ -191,7 +211,18 @@
       download: true,
       header: true,
       complete: function(results) {
-        dataBarang = results.data.filter(row => row.No); // buang baris kosong
+        dataBarang = results.data.filter(row => row.No); 
+
+        // ambil kategori unik
+        let kategoriUnik = [...new Set(dataBarang.map(item => item.Kategori))];
+        let select = document.getElementById("kategori");
+        kategoriUnik.forEach(kat => {
+          let opt = document.createElement("option");
+          opt.value = kat;
+          opt.textContent = kat;
+          select.appendChild(opt);
+        });
+
         updateTable();
       }
     });
