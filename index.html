@@ -2,41 +2,130 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Daftar Barang</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    input { padding: 8px; width: 300px; margin-bottom: 15px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background: #f4f4f4; }
-    .pagination { margin-top: 15px; }
-    button { padding: 6px 12px; margin: 0 5px; }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9fafb;
+      color: #333;
+    }
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+    main {
+      padding: 15px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    input {
+      padding: 10px;
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .table-container {
+      overflow-x: auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 600px;
+    }
+    th, td {
+      border-bottom: 1px solid #eee;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #f3f4f6;
+      font-weight: bold;
+    }
+    tr:hover {
+      background: #f9f9f9;
+    }
+    .pagination {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      font-size: 1rem;
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #1e40af;
+    }
+    #page-info {
+      font-size: 1rem;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 600px) {
+      header {
+        font-size: 1.2rem;
+        padding: 12px;
+      }
+      th, td {
+        padding: 8px;
+        font-size: 0.9rem;
+      }
+      button {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Daftar Barang</h1>
+  <header>📦 Daftar Barang</header>
+  <main>
+    <input type="text" id="search" placeholder="🔍 Cari nama barang...">
 
-  <input type="text" id="search" placeholder="Cari nama barang...">
+    <div class="table-container">
+      <table id="tabel-barang">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Barang</th>
+            <th>Kategori</th>
+            <th>Harga Jual</th>
+            <th>Harga Beli</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-  <table id="tabel-barang">
-    <thead>
-      <tr>
-        <th>No</th>
-        <th>Nama Barang</th>
-        <th>Kategori</th>
-        <th>Harga Jual</th>
-        <th>Harga Beli</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <div class="pagination">
-    <button id="prev">Previous</button>
-    <span id="page-info"></span>
-    <button id="next">Next</button>
-  </div>
+    <div class="pagination">
+      <button id="prev">⬅️ Previous</button>
+      <span id="page-info"></span>
+      <button id="next">Next ➡️</button>
+    </div>
+  </main>
 
   <script>
     let dataBarang = [];
@@ -98,7 +187,6 @@
       }
     });
 
-    // Load CSV
     Papa.parse("barang.csv", {
       download: true,
       header: true,
