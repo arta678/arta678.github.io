@@ -101,6 +101,21 @@
   </style>
 </head>
 <body>
+  <div id="login-container" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;">
+  <h2>🔒 Masukkan Password</h2>
+  <input type="password" id="password" placeholder="Password...">
+  <button onclick="checkLogin()">Login</button>
+  <p id="error" style="color:red;display:none;">❌ Password salah!</p>
+</div>
+
+<!-- Bungkus konten utama -->
+<div id="app" style="display:none;">
+  <header>📦 Daftar Barang</header>
+  <main>
+    <!-- isi tabel & search bar Arta taruh di sini -->
+  </main>
+</div>
+
   <header>📦 Daftar Barang</header>
   <main>
     <div class="search-bar">
@@ -133,6 +148,19 @@
       <button id="next">Next ➡️</button>
     </div>
   </main>
+  <script>
+  function checkLogin() {
+    const inputPass = document.getElementById("password").value;
+    const correctPass = "arta"; // Ganti dengan password yang Arta mau
+    if (inputPass === correctPass) {
+      document.getElementById("login-container").style.display = "none";
+      document.getElementById("app").style.display = "block";
+    } else {
+      document.getElementById("error").style.display = "block";
+    }
+  }
+</script>
+
 
   <script>
     let dataBarang = [];
