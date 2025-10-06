@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
   <title>Daftar Barang</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
@@ -16,42 +16,45 @@
     header {
       background: #2563eb;
       color: white;
-      padding: 15px;
+      padding: 14px;
       text-align: center;
-      font-size: 1.4rem;
-      font-weight: bold;
+      font-size: 1.3rem;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     main {
-      padding: 15px;
+      padding: 12px;
       max-width: 1000px;
       margin: auto;
     }
+
     .search-bar {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 15px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
     input, select {
       padding: 10px;
       font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 8px;
-    }
-    input {
       flex: 1;
-      min-width: 200px;
     }
     select {
       background: white;
-      min-width: 150px;
     }
+
     .table-container {
       overflow-x: auto;
       background: white;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      -webkit-overflow-scrolling: touch;
     }
+
     table {
       border-collapse: collapse;
       width: 100%;
@@ -61,21 +64,26 @@
       border-bottom: 1px solid #eee;
       padding: 10px;
       text-align: left;
+      white-space: nowrap;
     }
     th {
       background: #f3f4f6;
       font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
     tr:hover {
       background: #f9f9f9;
       cursor: pointer;
     }
+
     .pagination {
-      margin-top: 15px;
+      margin-top: 12px;
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
     button {
@@ -91,11 +99,12 @@
     button:hover {
       background: #1e40af;
     }
+
     #page-info {
-      font-size: 1rem;
+      font-size: 0.95rem;
     }
 
-    /* === Popup Modal Styling === */
+    /* === Popup Modal === */
     .modal {
       display: none;
       position: fixed;
@@ -106,6 +115,7 @@
       justify-content: center;
       align-items: center;
       animation: fadeIn 0.3s ease;
+      padding: 10px;
     }
     @keyframes fadeIn {
       from { opacity: 0; }
@@ -114,8 +124,8 @@
     .modal-content {
       background: white;
       border-radius: 12px;
-      padding: 20px;
-      width: 90%;
+      padding: 16px;
+      width: 95%;
       max-width: 400px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
       text-align: center;
@@ -125,12 +135,15 @@
       from { transform: translateY(30px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
+
     .modal h3 {
       margin-top: 0;
       color: #2563eb;
+      font-size: 1.2rem;
     }
     .modal p {
       margin: 8px 0;
+      font-size: 0.95rem;
     }
     .close-btn {
       margin-top: 15px;
@@ -141,15 +154,19 @@
       padding: 10px 16px;
       cursor: pointer;
       font-size: 1rem;
+      width: 100%;
     }
     .close-btn:hover {
       background: #1e40af;
     }
 
+    /* === Mobile Optimization === */
     @media (max-width: 600px) {
-      header { font-size: 1.2rem; padding: 12px; }
-      th, td { padding: 8px; font-size: 0.9rem; }
+      header { font-size: 1.1rem; padding: 12px; }
+      th, td { padding: 8px; font-size: 0.85rem; }
       button { font-size: 0.9rem; padding: 8px 12px; }
+      input, select { font-size: 0.9rem; padding: 8px; }
+      .modal-content { width: 90%; padding: 14px; }
     }
   </style>
 </head>
@@ -179,9 +196,9 @@
     </div>
 
     <div class="pagination">
-      <button id="prev">⬅️ Previous</button>
+      <button id="prev">⬅️</button>
       <span id="page-info"></span>
-      <button id="next">Next ➡️</button>
+      <button id="next">➡️</button>
     </div>
   </main>
 
@@ -219,15 +236,12 @@
           <td>${row["Harga Beli"]}</td>
           <td>${row.Kategori}</td>
         `;
-        // event klik untuk popup
-        tr.querySelector(".clickable").addEventListener("click", () => {
-          bukaPopup(row);
-        });
+        tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
         tbody.appendChild(tr);
       });
 
       document.getElementById("page-info").textContent =
-        `Halaman ${currentPage} dari ${Math.ceil(data.length / rowsPerPage)}`;
+        `Halaman ${currentPage} / ${Math.ceil(data.length / rowsPerPage)}`;
     }
 
     function bukaPopup(row) {
@@ -246,13 +260,10 @@
     function updateTable() {
       let searchText = document.getElementById("search").value.toLowerCase();
       let kategori = document.getElementById("kategori").value;
-
-      let filtered = dataBarang.filter(item => {
-        let cocokNama = item["Nama Barang"].toLowerCase().includes(searchText);
-        let cocokKategori = kategori === "" || item.Kategori === kategori;
-        return cocokNama && cocokKategori;
-      });
-
+      let filtered = dataBarang.filter(item =>
+        item["Nama Barang"].toLowerCase().includes(searchText) &&
+        (kategori === "" || item.Kategori === kategori)
+      );
       renderTable(filtered);
     }
 
@@ -260,28 +271,20 @@
       currentPage = 1;
       updateTable();
     });
-
     document.getElementById("kategori").addEventListener("change", () => {
       currentPage = 1;
       updateTable();
     });
-
     document.getElementById("next").addEventListener("click", () => {
-      let searchText = document.getElementById("search").value.toLowerCase();
-      let kategori = document.getElementById("kategori").value;
-
-      let filtered = dataBarang.filter(item => {
-        let cocokNama = item["Nama Barang"].toLowerCase().includes(searchText);
-        let cocokKategori = kategori === "" || item.Kategori === kategori;
-        return cocokNama && cocokKategori;
-      });
-
+      let filtered = dataBarang.filter(item =>
+        item["Nama Barang"].toLowerCase().includes(document.getElementById("search").value.toLowerCase()) &&
+        (document.getElementById("kategori").value === "" || item.Kategori === document.getElementById("kategori").value)
+      );
       if (currentPage < Math.ceil(filtered.length / rowsPerPage)) {
         currentPage++;
         renderTable(filtered);
       }
     });
-
     document.getElementById("prev").addEventListener("click", () => {
       if (currentPage > 1) {
         currentPage--;
@@ -289,6 +292,7 @@
       }
     });
 
+    // Ambil data dari Google Sheets
     Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv", {
       download: true,
       header: true,
