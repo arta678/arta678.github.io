@@ -24,7 +24,7 @@
   <input id="jual" placeholder="Harga Jual" type="number" />
   <input id="grosir" placeholder="Harga Grosir" type="number" />
   <input id="modal" placeholder="Harga Modal" type="number" />
-  <button onclick="tambahData()">Tambah</button>
+  <button id="addBtn">Tambah</button>
 </div>
 
 <table id="tabelBarang">
@@ -44,28 +44,43 @@
 
 <script>
 const scriptURL = "https://script.google.com/macros/s/AKfycbyYVrINaSKrnKXpZNDCHVGbyj9QreFXOsMtRTB6FgqSSh9GwWhqW5kIGLmeYjQ4WMloXA/exec";
+const form = document.forms['crud-form'];
+const tableBody = document.querySelector('#dataTable tbody');
 
-async function loadData() {
-  const res = await fetch(`${scriptURL}?action=read`);
-  const data = await res.json();
-  const tbody = document.querySelector("#tabelBarang tbody");
-  tbody.innerHTML = "";
-  data.slice(1).forEach((r, i) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${i+2}</td>
-      <td>${r[0]}</td>
-      <td>${r[1]}</td>
-      <td>${r[2]}</td>
-      <td>${r[3]}</td>
-      <td>${r[4]}</td>
-      <td>
-        <button onclick="editData(${i+2}, '${r[0]}','${r[1]}','${r[2]}','${r[3]}','${r[4]}')">✏️</button>
-        <button onclick="hapusData(${i+2})">🗑️</button>
-      </td>`;
-    tbody.appendChild(tr);
-  });
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+    .then(response => response.text())
+    .then(() => {
+      alert("Data berhasil ditambahkan!");
+      form.reset();
+      // Tambahkan kode ini:
+      loadData(); // <-- panggil ulang data setelah insert
+    })
+    .catch(error => console.error('Error!', error.message))
+});
+
+
+function loadData() {
+  fetch(scriptURL + '?action=read')
+    .then(res => res.json())
+    .then(data => {
+      tableBody.innerHTML = ''; // kosongkan tabel
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.NamaBarang}</td>
+          <td>${row.Kategori}</td>
+          <td>${row.HargaJual}</td>
+          <td>${row.HargaGrosir}</td>
+          <td>${row.HargaModal}</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    })
+    .catch(err => console.error(err));
 }
+
 
 async function tambahData() {
   const nama = namaInput.value;
@@ -115,6 +130,8 @@ const grosirInput = document.getElementById("grosir");
 const modalInput = document.getElementById("modal");
 
 loadData();
+  window.addEventListener('load', loadData);
+
 </script>
 </body>
 </html>
