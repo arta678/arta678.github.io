@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Barang</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9fafb;
+      color: #333;
+    }
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+    main {
+      padding: 15px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .search-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+      align-items: center;
+    }
+    input, select {
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    input {
+      flex: 1;
+      min-width: 200px;
+    }
+    select {
+      background: white;
+      min-width: 150px;
+    }
+    .table-container {
+      overflow-x: auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 700px;
+    }
+    th, td {
+      border-bottom: 1px solid #eee;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #f3f4f6;
+      font-weight: bold;
+    }
+    tr:hover {
+      background: #f9f9f9;
+    }
+    .pagination {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      font-size: 1rem;
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #1e40af;
+    }
+    #page-info {
+      font-size: 1rem;
+    }
+
+    /* Popup form */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .modal-content input {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .modal-header {
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>📦 Daftar Barang</header>
+  <main>
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="🔍 Cari nama barang...">
+      <select id="kategori">
+        <option value="">📂 Semua Kategori</option>
+      </select>
+      <button id="btnTambah">➕ Tambah Barang</button>
+    </div>
+
+    <div class="table-container">
+      <table id="tabel-barang">
+        <thead>
+          <tr>
+            <th>Nama Barang</th>
+            <th>Harga Jual</th>
+            <th>Harga Grosir</th>
+            <th>Kode</th>
+            <th>Kategori</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button id="prev">⬅️ Previous</button>
+      <span id="page-info"></span>
+      <button id="next">Next ➡️</button>
+    </div>
+  </main>
+
+  <!-- Modal Tambah Barang -->
+  <div class="modal" id="modalTambah">
+    <div class="modal-content">
+      <div class="modal-header">🆕 Tambah Barang</div>
+      <input id="nama" placeholder="Nama Barang" />
+      <input id="jual" placeholder="Harga Jual" type="number" />
+      <input id="grosir" placeholder="Harga Grosir" type="number" />
+      <input id="kode" placeholder="Kode Barang" />
+      <input id="kategoriInput" placeholder="Kategori" />
+      <div style="text-align:center;">
+        <button id="simpanBarang">💾 Simpan</button>
+        <button onclick="tutupModal()">❌ Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let dataBarang = [];
+    let currentPage = 1;
+    const rowsPerPage = 14;
+
+    const scriptURL = "https://script.google.com/macros/s/AKfycbyYVrINaSKrnKXpZNDCHVGbyj9QreFXOsMtRTB6FgqSSh9GwWhqW5kIGLmeYjQ4WMloXA/exec";
+
+    function renderTable(data) {
+      let tbody = document.querySelector("#tabel-barang tbody");
+      tbody.innerHTML = "";
+
+      let start = (currentPage - 1) * rowsPerPage;
+      let end = start + rowsPerPage;
+      let paginatedData = data.slice(start, end);
+
+      paginatedData.forEach(row => {
+        let tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row["Nama Barang"]}</td>
+          <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
+          <td>${row["Harga Grosir"]}</td>
+          <td>${row["Kode"]}</td>
+          <td>${row["Kategori"]}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("page-info").textContent =
+        `Halaman ${currentPage} dari ${Math.ceil(data.length / rowsPerPage)}`;
+    }
+
+    function updateTable() {
+      let searchText = document.getElementById("search").value.toLowerCase();
+      let kategori = document.getElementById("kategori").value;
+
+      let filtered = dataBarang.filter(item => {
+        let cocokNama = item["Nama Barang"].toLowerCase().includes(searchText);
+        let cocokKategori = kategori === "" || item.Kategori === kategori;
+        return cocokNama && cocokKategori;
+      });
+
+      renderTable(filtered);
+    }
+
+    document.getElementById("search").addEventListener("input", () => {
+      currentPage = 1;
+      updateTable();
+    });
+
+    document.getElementById("kategori").addEventListener("change", () => {
+      currentPage = 1;
+      updateTable();
+    });
+
+    document.getElementById("next").addEventListener("click", () => {
+      if (currentPage < Math.ceil(dataBarang.length / rowsPerPage)) {
+        currentPage++;
+        updateTable();
+      }
+    });
+
+    document.getElementById("prev").addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updateTable();
+      }
+    });
+
+    // Tombol tambah barang
+    document.getElementById("btnTambah").addEventListener("click", () => {
+      document.getElementById("modalTambah").style.display = "flex";
+    });
+
+    function tutupModal() {
+      document.getElementById("modalTambah").style.display = "none";
+    }
+
+    // Simpan data ke Google Sheet
+    document.getElementById("simpanBarang").addEventListener("click", async () => {
+      const nama = document.getElementById("nama").value.trim();
+      const jual = document.getElementById("jual").value;
+      const grosir = document.getElementById("grosir").value;
+      const kode = document.getElementById("kode").value.trim();
+      const kategori = document.getElementById("kategoriInput").value.trim();
+
+      if (!nama) return alert("Nama barang wajib diisi!");
+
+      await fetch(`${scriptURL}?action=create&nama=${nama}&jual=${jual}&grosir=${grosir}&kode=${kode}&kategori=${kategori}`);
+      alert("Barang berhasil ditambahkan!");
+      tutupModal();
+      location.reload();
+    });
+
+    // Ambil data dari Google Sheet (CSV)
+    Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv", {
+      download: true,
+      header: true,
+      complete: function(results) {
+        dataBarang = results.data.filter(row => row["Nama Barang"]);
+
+        // ambil kategori unik
+        let kategoriUnik = [...new Set(dataBarang.map(item => item.Kategori))];
+        let select = document.getElementById("kategori");
+        kategoriUnik.forEach(kat => {
+          let opt = document.createElement("option");
+          opt.value = kat;
+          opt.textContent = kat;
+          select.appendChild(opt);
+        });
+
+        updateTable();
+      }
+    });
+  </script>
+</body>
+</html>
