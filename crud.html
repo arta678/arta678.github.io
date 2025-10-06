@@ -18,14 +18,15 @@
 
 <h2>📦 Manajemen Data Barang</h2>
 
-<div>
+<!-- ✅ Jadikan form -->
+<form id="crudForm">
   <input id="nama" placeholder="Nama Barang" />
   <input id="kategori" placeholder="Kategori" />
   <input id="jual" placeholder="Harga Jual" type="number" />
   <input id="grosir" placeholder="Harga Grosir" type="number" />
   <input id="modal" placeholder="Harga Modal" type="number" />
-  <button id="addBtn">Tambah</button>
-</div>
+  <button type="submit" id="addBtn">Tambah</button>
+</form>
 
 <table id="tabelBarang">
   <thead>
@@ -44,53 +45,45 @@
 
 <script>
 const scriptURL = "https://script.google.com/macros/s/AKfycbyYVrINaSKrnKXpZNDCHVGbyj9QreFXOsMtRTB6FgqSSh9GwWhqW5kIGLmeYjQ4WMloXA/exec";
-const form = document.forms['crud-form'];
-const tableBody = document.querySelector('#dataTable tbody');
+const form = document.getElementById('crudForm');
+const tableBody = document.querySelector('#tabelBarang tbody');
 
-form.addEventListener('submit', e => {
+// ⛏️ Saat form dikirim
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-    .then(response => response.text())
-    .then(() => {
-      alert("Data berhasil ditambahkan!");
-      form.reset();
-      // Tambahkan kode ini:
-      loadData(); // <-- panggil ulang data setelah insert
-    })
-    .catch(error => console.error('Error!', error.message))
+  const nama = document.getElementById("nama").value.trim();
+  const kategori = document.getElementById("kategori").value.trim();
+  const jual = document.getElementById("jual").value;
+  const grosir = document.getElementById("grosir").value;
+  const modal = document.getElementById("modal").value;
+
+  if (!nama) return alert("Nama harus diisi!");
+
+  await fetch(`${scriptURL}?action=create&nama=${nama}&kategori=${kategori}&jual=${jual}&grosir=${grosir}&modal=${modal}`);
+  alert("Data berhasil ditambahkan!");
+  form.reset();
+  loadData(); // ✅ langsung tampilkan data baru
 });
 
-
-function loadData() {
-  fetch(scriptURL + '?action=read')
-    .then(res => res.json())
-    .then(data => {
-      tableBody.innerHTML = ''; // kosongkan tabel
-      data.forEach(row => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${row.NamaBarang}</td>
-          <td>${row.Kategori}</td>
-          <td>${row.HargaJual}</td>
-          <td>${row.HargaGrosir}</td>
-          <td>${row.HargaModal}</td>
-        `;
-        tableBody.appendChild(tr);
-      });
-    })
-    .catch(err => console.error(err));
-}
-
-
-async function tambahData() {
-  const nama = namaInput.value;
-  const kategori = kategoriInput.value;
-  const jual = jualInput.value;
-  const grosir = grosirInput.value;
-  const modal = modalInput.value;
-  if(!nama) return alert("Nama harus diisi!");
-  await fetch(`${scriptURL}?action=create&nama=${nama}&kategori=${kategori}&jual=${jual}&grosir=${grosir}&modal=${modal}`);
-  loadData();
+async function loadData() {
+  const res = await fetch(scriptURL + '?action=read');
+  const data = await res.json();
+  tableBody.innerHTML = '';
+  data.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i + 1}</td>
+      <td>${row.NamaBarang}</td>
+      <td>${row.Kategori}</td>
+      <td>${row.HargaJual}</td>
+      <td>${row.HargaGrosir}</td>
+      <td>${row.HargaModal}</td>
+      <td>
+        <button onclick="hapusData(${row.row})">🗑️</button>
+      </td>
+    `;
+    tableBody.appendChild(tr);
+  });
 }
 
 async function hapusData(row) {
@@ -100,38 +93,7 @@ async function hapusData(row) {
   }
 }
 
-function editData(row, nama, kategori, jual, grosir, modal) {
-  document.getElementById("nama").value = nama;
-  document.getElementById("kategori").value = kategori;
-  document.getElementById("jual").value = jual;
-  document.getElementById("grosir").value = grosir;
-  document.getElementById("modal").value = modal;
-  document.querySelector("button[onclick='tambahData()']").textContent = "Simpan Perubahan";
-  document.querySelector("button[onclick='tambahData()']").setAttribute("onclick", `updateData(${row})`);
-}
-
-async function updateData(row) {
-  const nama = namaInput.value;
-  const kategori = kategoriInput.value;
-  const jual = jualInput.value;
-  const grosir = grosirInput.value;
-  const modal = modalInput.value;
-  await fetch(`${scriptURL}?action=update&row=${row}&nama=${nama}&kategori=${kategori}&jual=${jual}&grosir=${grosir}&modal=${modal}`);
-  document.querySelector("button[onclick^='updateData']").textContent = "Tambah";
-  document.querySelector("button[onclick^='updateData']").setAttribute("onclick", "tambahData()");
-  loadData();
-}
-
-// ambil input element
-const namaInput = document.getElementById("nama");
-const kategoriInput = document.getElementById("kategori");
-const jualInput = document.getElementById("jual");
-const grosirInput = document.getElementById("grosir");
-const modalInput = document.getElementById("modal");
-
-loadData();
-  window.addEventListener('load', loadData);
-
+window.addEventListener('load', loadData);
 </script>
 </body>
 </html>
