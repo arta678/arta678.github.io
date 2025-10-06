@@ -39,8 +39,14 @@
       border: 1px solid #ccc;
       border-radius: 8px;
     }
-    input { flex: 1; min-width: 200px; }
-    select { background: white; min-width: 150px; }
+    input {
+      flex: 1;
+      min-width: 200px;
+    }
+    select {
+      background: white;
+      min-width: 150px;
+    }
     .table-container {
       overflow-x: auto;
       background: white;
@@ -61,7 +67,14 @@
       background: #f3f4f6;
       font-weight: bold;
     }
-    tr:hover { background: #f9f9f9; }
+    tr:hover {
+      background: #f9f9f9;
+    }
+    td:first-child {
+      color: #2563eb;
+      cursor: pointer;
+      font-weight: 600;
+    }
     .pagination {
       margin-top: 15px;
       display: flex;
@@ -80,48 +93,54 @@
       font-size: 1rem;
       transition: 0.2s;
     }
-    button:hover { background: #1e40af; }
-    #page-info { font-size: 1rem; }
+    button:hover {
+      background: #1e40af;
+    }
+    #page-info {
+      font-size: 1rem;
+    }
 
-    /* Popup Modern */
-    .popup-overlay {
+    /* Popup modern */
+    #popup-overlay {
       display: none;
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
       justify-content: center;
       align-items: center;
-      z-index: 999;
+      z-index: 1000;
     }
-    .popup-content {
+    #popup-box {
       background: white;
       border-radius: 12px;
       padding: 20px;
-      width: 90%;
       max-width: 400px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      animation: fadeIn 0.25s ease-in-out;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      animation: fadeIn 0.3s ease;
     }
-    .popup-content h2 {
+    #popup-box h2 {
       margin-top: 0;
-      border-bottom: 2px solid #2563eb;
-      padding-bottom: 8px;
+      color: #2563eb;
     }
-    .popup-buttons {
-      text-align: right;
-      margin-top: 15px;
+    #popup-box p {
+      margin: 8px 0;
+      text-align: left;
     }
-    .popup-buttons button:first-child {
-      background: #4b5563;
-      margin-right: 10px;
-    }
-    .popup-buttons button:first-child:hover {
-      background: #374151;
+    #popup-box button {
+      margin-top: 10px;
+      width: 48%;
     }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 600px) {
+      header { font-size: 1.2rem; padding: 12px; }
+      th, td { padding: 8px; font-size: 0.9rem; }
+      button { font-size: 0.9rem; padding: 8px 12px; }
     }
   </style>
 </head>
@@ -158,17 +177,15 @@
   </main>
 
   <!-- Popup -->
-  <div class="popup-overlay" id="popup">
-    <div class="popup-content" id="popup-box">
+  <div id="popup-overlay">
+    <div id="popup-box">
       <h2 id="popup-nama"></h2>
-      <p><b>Harga Jual:</b> <span id="popup-jual"></span></p>
-      <p><b>Harga Grosir:</b> <span id="popup-grosir"></span></p>
+      <p><b>Harga Jual:</b> <span id="popup-hjual"></span></p>
+      <p><b>Harga Grosir:</b> <span id="popup-hgrosir"></span></p>
       <p><b>Kode:</b> <span id="popup-kode"></span></p>
       <p><b>Kategori:</b> <span id="popup-kategori"></span></p>
-      <div class="popup-buttons">
-        <button onclick="tutupPopup()">Tutup</button>
-        <button onclick="bagikanPopup()">📤 Bagikan</button>
-      </div>
+      <button onclick="bagikanPopup()">📤 Bagikan</button>
+      <button onclick="tutupPopup()">❌ Tutup</button>
     </div>
   </div>
 
@@ -178,7 +195,7 @@
     const rowsPerPage = 14;
 
     function renderTable(data) {
-      const tbody = document.querySelector("#tabel-barang tbody");
+      let tbody = document.querySelector("#tabel-barang tbody");
       tbody.innerHTML = "";
 
       let start = (currentPage - 1) * rowsPerPage;
@@ -188,13 +205,14 @@
       paginatedData.forEach(row => {
         let tr = document.createElement("tr");
         tr.innerHTML = `
-          <td class="klik-nama" style="color:#2563eb;cursor:pointer;">${row["Nama Barang"]}</td>
+          <td>${row["Nama Barang"]}</td>
           <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
-          <td>${row["Harga Dagang"]}</td>
-          <td>${row["Harga Beli"]}</td>
+          <td>${row["Harga Grosir"]}</td>
+          <td>${row["Kode"]}</td>
           <td>${row.Kategori}</td>
         `;
-        tr.querySelector(".klik-nama").addEventListener("click", () => bukaPopup(row));
+        // Klik nama barang untuk popup
+        tr.querySelector("td:first-child").addEventListener("click", () => tampilPopup(row));
         tbody.appendChild(tr);
       });
 
@@ -203,38 +221,43 @@
     }
 
     function updateTable() {
-      const searchText = document.getElementById("search").value.toLowerCase();
-      const kategori = document.getElementById("kategori").value;
+      let searchText = document.getElementById("search").value.toLowerCase();
+      let kategori = document.getElementById("kategori").value;
 
-      const filtered = dataBarang.filter(item => {
-        const cocokNama = item["Nama Barang"].toLowerCase().includes(searchText);
-        const cocokKategori = kategori === "" || item.Kategori === kategori;
+      let filtered = dataBarang.filter(item => {
+        let cocokNama = item["Nama Barang"].toLowerCase().includes(searchText);
+        let cocokKategori = kategori === "" || item.Kategori === kategori;
         return cocokNama && cocokKategori;
       });
 
       renderTable(filtered);
     }
 
-    // === Popup ===
-    function bukaPopup(data) {
-      document.getElementById("popup-nama").textContent = data["Nama Barang"];
-      document.getElementById("popup-jual").textContent = "Rp " + Number(data["Harga Jual"]).toLocaleString("id-ID");
-      document.getElementById("popup-grosir").textContent = data["Harga Dagang"];
-      document.getElementById("popup-kode").textContent = data["Harga Beli"];
-      document.getElementById("popup-kategori").textContent = data.Kategori;
-      document.getElementById("popup").style.display = "flex";
+    function tampilPopup(row) {
+      document.getElementById("popup-nama").textContent = row["Nama Barang"];
+      document.getElementById("popup-hjual").textContent = "Rp " + Number(row["Harga Jual"]).toLocaleString("id-ID");
+      document.getElementById("popup-hgrosir").textContent = row["Harga Grosir"];
+      document.getElementById("popup-kode").textContent = row["Kode"];
+      document.getElementById("popup-kategori").textContent = row["Kategori"];
+
+      document.getElementById("popup-overlay").style.display = "flex";
     }
 
     function tutupPopup() {
-      document.getElementById("popup").style.display = "none";
+      document.getElementById("popup-overlay").style.display = "none";
     }
 
     async function bagikanPopup() {
       const popup = document.querySelector("#popup-box");
-      const canvas = await html2canvas(popup);
-      const imageData = canvas.toDataURL("image/png");
+      const scale = window.devicePixelRatio || 2;
 
-      // Simpan screenshot
+      const canvas = await html2canvas(popup, {
+        scale: scale,
+        backgroundColor: "#ffffff",
+        useCORS: true
+      });
+
+      const imageData = canvas.toDataURL("image/png");
       const link = document.createElement("a");
       link.href = imageData;
       link.download = "barang.png";
@@ -242,50 +265,54 @@
 
       const pesan = "Berikut detail barang dari toko saya 👇";
       const whatsappURL = `https://wa.me/?text=${encodeURIComponent(pesan)}`;
-
-      // Buka WhatsApp Mobile App
       window.location.href = whatsappURL;
 
-      alert("📸 Gambar popup tersimpan! Sekarang pilih kontak di WhatsApp untuk mengirim pesan.");
+      alert("📸 Gambar popup tersimpan dengan kualitas tinggi! Sekarang pilih kontak di WhatsApp untuk mengirim pesan.");
     }
 
-    // === Load Data ===
-    Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv", {
-      download: true,
-      header: true,
-      complete: function(results) {
-        dataBarang = results.data.filter(row => row["Nama Barang"]);
-        const kategoriUnik = [...new Set(dataBarang.map(item => item.Kategori))];
-        const select = document.getElementById("kategori");
-        kategoriUnik.forEach(kat => {
-          const opt = document.createElement("option");
-          opt.value = kat;
-          opt.textContent = kat;
-          select.appendChild(opt);
-        });
-        updateTable();
-      }
+    document.getElementById("search").addEventListener("input", () => {
+      currentPage = 1;
+      updateTable();
     });
 
-    // Pagination & search
-    document.getElementById("search").addEventListener("input", () => { currentPage = 1; updateTable(); });
-    document.getElementById("kategori").addEventListener("change", () => { currentPage = 1; updateTable(); });
+    document.getElementById("kategori").addEventListener("change", () => {
+      currentPage = 1;
+      updateTable();
+    });
+
     document.getElementById("next").addEventListener("click", () => {
-      const searchText = document.getElementById("search").value.toLowerCase();
-      const kategori = document.getElementById("kategori").value;
-      const filtered = dataBarang.filter(item => {
-        const cocokNama = item["Nama Barang"].toLowerCase().includes(searchText);
-        const cocokKategori = kategori === "" || item.Kategori === kategori;
+      let filtered = dataBarang.filter(item => {
+        let cocokNama = item["Nama Barang"].toLowerCase().includes(document.getElementById("search").value.toLowerCase());
+        let cocokKategori = document.getElementById("kategori").value === "" || item.Kategori === document.getElementById("kategori").value;
         return cocokNama && cocokKategori;
       });
+
       if (currentPage < Math.ceil(filtered.length / rowsPerPage)) {
         currentPage++;
         renderTable(filtered);
       }
     });
+
     document.getElementById("prev").addEventListener("click", () => {
       if (currentPage > 1) {
         currentPage--;
+        updateTable();
+      }
+    });
+
+    Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv", {
+      download: true,
+      header: true,
+      complete: function(results) {
+        dataBarang = results.data.filter(row => row["Nama Barang"]);
+        let kategoriUnik = [...new Set(dataBarang.map(item => item.Kategori))];
+        let select = document.getElementById("kategori");
+        kategoriUnik.forEach(kat => {
+          let opt = document.createElement("option");
+          opt.value = kat;
+          opt.textContent = kat;
+          select.appendChild(opt);
+        });
         updateTable();
       }
     });
