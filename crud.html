@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Data Barang - CRUD Google Sheets</title>
+<style>
+  body { font-family: Arial; margin: 40px; background: #f7f7f7; }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  th { background: #0f62fe; color: white; }
+  input, select, button { padding: 6px; margin: 4px; }
+  button { background: #0f62fe; color: white; border: none; cursor: pointer; border-radius: 4px; }
+  button:hover { background: #0043ce; }
+</style>
+</head>
+<body>
+
+<h2>📦 Manajemen Data Barang</h2>
+
+<div>
+  <input id="nama" placeholder="Nama Barang" />
+  <input id="kategori" placeholder="Kategori" />
+  <input id="jual" placeholder="Harga Jual" type="number" />
+  <input id="grosir" placeholder="Harga Grosir" type="number" />
+  <input id="modal" placeholder="Harga Modal" type="number" />
+  <button onclick="tambahData()">Tambah</button>
+</div>
+
+<table id="tabelBarang">
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Nama Barang</th>
+      <th>Kategori</th>
+      <th>Harga Jual</th>
+      <th>Harga Grosir</th>
+      <th>Harga Modal</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+const scriptURL = "PASTE_URL_WEB_APP_KAMU_DI_SINI";
+
+async function loadData() {
+  const res = await fetch(`${scriptURL}?action=read`);
+  const data = await res.json();
+  const tbody = document.querySelector("#tabelBarang tbody");
+  tbody.innerHTML = "";
+  data.slice(1).forEach((r, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${i+2}</td>
+      <td>${r[0]}</td>
+      <td>${r[1]}</td>
+      <td>${r[2]}</td>
+      <td>${r[3]}</td>
+      <td>${r[4]}</td>
+      <td>
+        <button onclick="editData(${i+2}, '${r[0]}','${r[1]}','${r[2]}','${r[3]}','${r[4]}')">✏️</button>
+        <button onclick="hapusData(${i+2})">🗑️</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+async function tambahData() {
+  const nama = namaInput.value;
+  const kategori = kategoriInput.value;
+  const jual = jualInput.value;
+  const grosir = grosirInput.value;
+  const modal = modalInput.value;
+  if(!nama) return alert("Nama harus diisi!");
+  await fetch(`${scriptURL}?action=create&nama=${nama}&kategori=${kategori}&jual=${jual}&grosir=${grosir}&modal=${modal}`);
+  loadData();
+}
+
+async function hapusData(row) {
+  if(confirm("Yakin hapus data ini?")) {
+    await fetch(`${scriptURL}?action=delete&row=${row}`);
+    loadData();
+  }
+}
+
+function editData(row, nama, kategori, jual, grosir, modal) {
+  document.getElementById("nama").value = nama;
+  document.getElementById("kategori").value = kategori;
+  document.getElementById("jual").value = jual;
+  document.getElementById("grosir").value = grosir;
+  document.getElementById("modal").value = modal;
+  document.querySelector("button[onclick='tambahData()']").textContent = "Simpan Perubahan";
+  document.querySelector("button[onclick='tambahData()']").setAttribute("onclick", `updateData(${row})`);
+}
+
+async function updateData(row) {
+  const nama = namaInput.value;
+  const kategori = kategoriInput.value;
+  const jual = jualInput.value;
+  const grosir = grosirInput.value;
+  const modal = modalInput.value;
+  await fetch(`${scriptURL}?action=update&row=${row}&nama=${nama}&kategori=${kategori}&jual=${jual}&grosir=${grosir}&modal=${modal}`);
+  document.querySelector("button[onclick^='updateData']").textContent = "Tambah";
+  document.querySelector("button[onclick^='updateData']").setAttribute("onclick", "tambahData()");
+  loadData();
+}
+
+// ambil input element
+const namaInput = document.getElementById("nama");
+const kategoriInput = document.getElementById("kategori");
+const jualInput = document.getElementById("jual");
+const grosirInput = document.getElementById("grosir");
+const modalInput = document.getElementById("modal");
+
+loadData();
+</script>
+</body>
+</html>
