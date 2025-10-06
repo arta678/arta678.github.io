@@ -6,6 +6,15 @@
   <title>Daftar Barang</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
+    input[type="text"], select {
+  width: 100%;
+  font-size: 18px;
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+    
     body {
       font-family: "Segoe UI", Arial, sans-serif;
       margin: 0;
@@ -171,18 +180,22 @@
     }
 
     /* === Mobile Optimization === */
-    @media (max-width: 600px) {
-      header { font-size: 1.2rem; padding: 12px; }
-      .search-bar { flex-direction: column; }
-      input, select {
-        width: 100%;
-        font-size: 1.1rem;
-        padding: 14px;
-      }
-      th, td { padding: 9px; font-size: 0.95rem; }
-      button { font-size: 1rem; padding: 10px 14px; width: auto; }
-      .modal-content { width: 90%; padding: 16px; }
-    }
+@media (max-width: 600px) {
+  input[type="text"], select {
+    font-size: 16px;
+    padding: 14px;
+  }
+
+  button, .category-button {
+    font-size: 16px;
+    padding: 10px 14px;
+  }
+
+  table {
+    font-size: 15px;
+  }
+}
+
   </style>
 </head>
 <body>
