@@ -1,271 +1,361 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daftar Barang Toko Arta</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <title>Daftar Barang</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
+    input[type="text"], select {
+      width: 100%;
+      font-size: 18px;
+      padding: 12px 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
     body {
-      font-family: "Segoe UI", sans-serif;
+      font-family: "Segoe UI", Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f3f4f6;
+      background: #f9fafb;
       color: #333;
     }
-
     header {
-      background-color: #2563eb;
-      color: white;
-      padding: 12px;
-      text-align: center;
-      font-size: 1.2em;
-      font-weight: bold;
-    }
-
-    main {
-      max-width: 900px;
-      margin: 20px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .search-bar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    input[type="text"],
-    select {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      flex: 1;
-      font-size: 16px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    th, td {
-      border: 1px solid #e5e7eb;
-      padding: 10px;
-      text-align: left;
-    }
-
-    th {
       background: #2563eb;
       color: white;
+      padding: 14px;
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-
+    main {
+      padding: 12px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .search-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    input, select {
+      padding: 14px;
+      font-size: 1.1rem;
+      border: 1px solid #bbb;
+      border-radius: 10px;
+      flex: 1;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    select {
+      background: white;
+      min-width: 180px;
+    }
+    input:focus, select:focus {
+      border-color: #2563eb;
+      outline: none;
+      box-shadow: 0 0 6px rgba(37,99,235,0.3);
+    }
+    .table-container {
+      overflow-x: auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 700px;
+    }
+    th, td {
+      border-bottom: 1px solid #eee;
+      padding: 10px 12px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      background: #f3f4f6;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
     tr:hover {
-      background-color: #f1f5f9;
+      background: #f9f9f9;
       cursor: pointer;
     }
-
-    /* Popup */
-    #popup {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+    .pagination {
+      margin-top: 15px;
+      display: flex;
       justify-content: center;
       align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-
-    .popup-content {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 400px;
-      width: 90%;
-      position: relative;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .close-btn {
-      position: absolute;
-      right: 10px;
-      top: 5px;
-      font-size: 22px;
+    button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
-      color: #666;
+      background: #2563eb;
+      color: white;
+      font-size: 1rem;
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #1e40af;
+    }
+    #page-info {
+      font-size: 1rem;
     }
 
-    .close-btn:hover {
-      color: #000;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0; transform: scale(0.9);}
-      to {opacity: 1; transform: scale(1);}
-    }
-
-    /* Loading */
-    #loading-filter {
+    /* === Popup Modal === */
+    .modal {
       display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease;
+      padding: 10px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      width: 95%;
+      max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
       text-align: center;
-      margin-bottom: 10px;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal h3 {
+      margin-top: 0;
       color: #2563eb;
-      font-weight: 500;
+      font-size: 1.3rem;
+    }
+    .modal p {
+      margin: 8px 0;
+      font-size: 1rem;
+    }
+    .close-btn {
+      margin-top: 15px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 100%;
+    }
+    .close-btn:hover {
+      background: #1e40af;
     }
 
-    #loading-filter .spinner {
-      border: 3px solid #e0e7ff;
-      border-top: 3px solid #2563eb;
-      border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 8px;
-    }
-
-    @keyframes spin {
-      to {transform: rotate(360deg);}
-    }
-
-    /* Mobile */
+    /* === Mobile Optimization === */
     @media (max-width: 600px) {
-      .search-bar {
-        flex-direction: row;
-        align-items: center;
-        gap: 8px;
-      }
-
       input[type="text"], select {
         font-size: 16px;
-        padding: 12px;
+        padding: 14px;
       }
-
+      button, .category-button {
+        font-size: 16px;
+        padding: 10px 14px;
+      }
       table {
         font-size: 15px;
       }
     }
+
+    /* Pesan tidak ditemukan */
+    .no-data {
+      text-align: center;
+      color: #999;
+      padding: 20px;
+      font-size: 1rem;
+    }
   </style>
 </head>
+
 <body>
-  <header>📦 Daftar Barang Toko Arta</header>
+  <header>📦 Daftar Barang</header>
   <main>
     <div class="search-bar">
-      <input type="text" id="search" placeholder="Cari barang atau kategori..." oninput="updateTable()" />
-      <select id="kategori" onchange="updateTable()">
-        <option value="">Semua Kategori</option>
+      <input type="text" id="search" placeholder="🔍 Cari barang...">
+      <select id="kategori">
+        <option value="">📂 Semua Kategori</option>
       </select>
     </div>
 
-    <div id="loading-filter">
-      <span class="spinner"></span>Memproses pencarian...
+    <div class="table-container">
+      <table id="tabel-barang">
+        <thead>
+          <tr>
+            <th>Nama Barang</th>
+            <th>Harga Jual</th>
+            <th>Harga Grosir</th>
+            <th>Kode</th>
+            <th>Kategori</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Nama Barang</th>
-          <th>Harga</th>
-          <th>Kategori</th>
-          <th>Keterangan</th>
-        </tr>
-      </thead>
-      <tbody id="table-body"></tbody>
-    </table>
+    <div class="pagination">
+      <button id="prev">⬅️</button>
+      <span id="page-info"></span>
+      <button id="next">➡️</button>
+    </div>
   </main>
 
-  <div id="popup"></div>
+  <!-- === Modal Popup === -->
+  <div class="modal" id="popupModal">
+    <div class="modal-content">
+      <h3 id="modalNama"></h3>
+      <p><strong>Harga Jual:</strong> <span id="modalJual"></span></p>
+      <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
+      <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
+      <p id="modalKeterangan" style="display:none;"><strong>Keterangan:</strong> <span id="modalKetValue"></span></p>
+      <button class="close-btn" onclick="tutupPopup()">Tutup</button>
+    </div>
+  </div>
 
   <script>
     let dataBarang = [];
-
-    async function fetchData() {
-      const sheetId = "1opsWaN0-f-aZEjqTx85jGlw6rBF4rXnGpUdakvW3Ixg";
-      const sheetName = "Sheet1";
-      const url = `https://opensheet.elk.sh/${sheetId}/${sheetName}`;
-      const loading = document.getElementById("loading-filter");
-      loading.style.display = "block";
-
-      const res = await fetch(url);
-      dataBarang = await res.json();
-
-      // isi dropdown kategori
-      let kategoriSet = new Set(dataBarang.map(item => item.Kategori));
-      const kategoriSelect = document.getElementById("kategori");
-      kategoriSet.forEach(k => {
-        if (k) {
-          let opt = document.createElement("option");
-          opt.value = k;
-          opt.textContent = k;
-          kategoriSelect.appendChild(opt);
-        }
-      });
-
-      renderTable(dataBarang);
-      loading.style.display = "none";
-    }
+    let currentPage = 1;
+    const rowsPerPage = 16;
 
     function renderTable(data) {
-      const tableBody = document.getElementById("table-body");
-      tableBody.innerHTML = "";
-      data.forEach(item => {
-        let row = `
-          <tr onclick='showPopup(${JSON.stringify(item)})'>
-            <td>${item["Nama Barang"]}</td>
-            <td>Rp ${item.Harga}</td>
-            <td>${item.Kategori}</td>
-            <td>${item.Keterangan || "-"}</td>
-          </tr>
+      let tbody = document.querySelector("#tabel-barang tbody");
+      tbody.innerHTML = "";
+
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="no-data">Barang tidak ditemukan</td></tr>`;
+        document.getElementById("page-info").textContent = "";
+        return;
+      }
+
+      let start = (currentPage - 1) * rowsPerPage;
+      let end = start + rowsPerPage;
+      let paginatedData = data.slice(start, end);
+
+      paginatedData.forEach(row => {
+        let tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="clickable" style="color:#2563eb; font-weight:600; text-decoration:underline;">${row["Nama Barang"]}</td>
+          <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
+          <td>${row["Harga Dagang"]}</td>
+          <td>${row["Harga Beli"]}</td>
+          <td>${row.Kategori}</td>
         `;
-        tableBody.innerHTML += row;
+        tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
+        tbody.appendChild(tr);
       });
+
+      document.getElementById("page-info").textContent =
+        `Halaman ${currentPage} / ${Math.ceil(data.length / rowsPerPage)}`;
+    }
+
+    function bukaPopup(row) {
+      document.getElementById("modalNama").textContent = row["Nama Barang"];
+      document.getElementById("modalJual").textContent = "Rp " + Number(row["Harga Jual"]).toLocaleString("id-ID");
+      document.getElementById("modalGrosir").textContent = row["Harga Dagang"];
+      document.getElementById("modalKategori").textContent = row["Kategori"];
+
+      if (row["Keterangan"] && row["Keterangan"].trim() !== "") {
+        document.getElementById("modalKetValue").textContent = row["Keterangan"];
+        document.getElementById("modalKeterangan").style.display = "block";
+      } else {
+        document.getElementById("modalKeterangan").style.display = "none";
+      }
+
+      document.getElementById("popupModal").style.display = "flex";
+    }
+
+    function tutupPopup() {
+      document.getElementById("popupModal").style.display = "none";
     }
 
     function updateTable() {
-      const loading = document.getElementById("loading-filter");
-      loading.style.display = "block";
+      let searchText = document.getElementById("search").value.toLowerCase();
+      let kategori = document.getElementById("kategori").value;
 
-      setTimeout(() => {
-        let searchText = document.getElementById("search").value.toLowerCase();
-        let kategori = document.getElementById("kategori").value;
+      let filtered = dataBarang.filter(item => {
+        let namaMatch = item["Nama Barang"]?.toLowerCase().includes(searchText);
+        let kategoriMatch = item["Kategori"]?.toLowerCase().includes(searchText);
+        let filterKategori = (kategori === "" || item.Kategori === kategori);
+        return (namaMatch || kategoriMatch) && filterKategori;
+      });
 
-        let filtered = dataBarang.filter(item => {
-          let namaMatch = item["Nama Barang"]?.toLowerCase().includes(searchText);
-          let kategoriMatch = item["Kategori"]?.toLowerCase().includes(searchText);
-          let filterKategori = (kategori === "" || item.Kategori === kategori);
-          return (namaMatch || kategoriMatch) && filterKategori;
-        });
+      renderTable(filtered);
+    }
 
+    document.getElementById("search").addEventListener("input", () => {
+      currentPage = 1;
+      updateTable();
+    });
+
+    document.getElementById("kategori").addEventListener("change", () => {
+      currentPage = 1;
+      updateTable();
+    });
+
+    document.getElementById("next").addEventListener("click", () => {
+      let filtered = dataBarang.filter(item => {
+        let namaMatch = item["Nama Barang"]?.toLowerCase().includes(document.getElementById("search").value.toLowerCase());
+        let kategoriMatch = item["Kategori"]?.toLowerCase().includes(document.getElementById("search").value.toLowerCase());
+        let filterKategori = (document.getElementById("kategori").value === "" || item.Kategori === document.getElementById("kategori").value);
+        return (namaMatch || kategoriMatch) && filterKategori;
+      });
+      if (currentPage < Math.ceil(filtered.length / rowsPerPage)) {
+        currentPage++;
         renderTable(filtered);
-        loading.style.display = "none";
-      }, 300);
-    }
+      }
+    });
 
-    function showPopup(item) {
-      const popup = document.getElementById("popup");
-      popup.style.display = "flex";
-      popup.innerHTML = `
-        <div class="popup-content">
-          <span class="close-btn" onclick="closePopup()">&times;</span>
-          <h3>${item["Nama Barang"]}</h3>
-          <p><strong>Harga:</strong> Rp ${item.Harga}</p>
-          <p><strong>Kategori:</strong> ${item.Kategori}</p>
-          ${item.Keterangan ? `<p><strong>Keterangan:</strong> ${item.Keterangan}</p>` : ""}
-        </div>
-      `;
-    }
+    document.getElementById("prev").addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updateTable();
+      }
+    });
 
-    function closePopup() {
-      document.getElementById("popup").style.display = "none";
-    }
-
-    fetchData();
+    Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv", {
+      download: true,
+      header: true,
+      complete: function(results) {
+        dataBarang = results.data.filter(row => row["Nama Barang"]);
+        let kategoriUnik = [...new Set(dataBarang.map(item => item.Kategori))];
+        let select = document.getElementById("kategori");
+        kategoriUnik.forEach(kat => {
+          let opt = document.createElement("option");
+          opt.value = kat;
+          opt.textContent = kat;
+          select.appendChild(opt);
+        });
+        updateTable();
+      }
+    });
   </script>
 </body>
 </html>
