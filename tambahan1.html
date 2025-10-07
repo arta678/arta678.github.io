@@ -185,6 +185,14 @@
         font-size: 15px;
       }
     }
+
+    /* Pesan tidak ditemukan */
+    .no-data {
+      text-align: center;
+      color: #999;
+      padding: 20px;
+      font-size: 1rem;
+    }
   </style>
 </head>
 
@@ -192,7 +200,7 @@
   <header>📦 Daftar Barang</header>
   <main>
     <div class="search-bar">
-      <input type="text" id="search" placeholder="🔍 Cari barang atau kategori...">
+      <input type="text" id="search" placeholder="🔍 Cari barang...">
       <select id="kategori">
         <option value="">📂 Semua Kategori</option>
       </select>
@@ -239,6 +247,13 @@
     function renderTable(data) {
       let tbody = document.querySelector("#tabel-barang tbody");
       tbody.innerHTML = "";
+
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="no-data">Barang tidak ditemukan</td></tr>`;
+        document.getElementById("page-info").textContent = "";
+        return;
+      }
+
       let start = (currentPage - 1) * rowsPerPage;
       let end = start + rowsPerPage;
       let paginatedData = data.slice(start, end);
