@@ -196,20 +196,6 @@
   }
 }
 
-    tr:hover {
-  background: #eff6ff;
-  transition: background 0.2s ease;
-}
-    td {
-  padding: 12px 10px;
-}
-    header {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-
-
-
   </style>
 </head>
 <body>
@@ -221,8 +207,6 @@
         <option value="">📂 Semua Kategori</option>
       </select>
     </div>
-    <p id="loading" style="text-align:center; color:#666;">⏳ Memuat data...</p>
-
 
     <div class="table-container">
       <table id="tabel-barang">
@@ -264,21 +248,21 @@
     const rowsPerPage = 16;
 
     function renderTable(data) {
-      const tbody = document.querySelector("#tabel-barang tbody");
+      let tbody = document.querySelector("#tabel-barang tbody");
       tbody.innerHTML = "";
 
-      const start = (currentPage - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-      const paginated = data.slice(start, end);
+      let start = (currentPage - 1) * rowsPerPage;
+      let end = start + rowsPerPage;
+      let paginatedData = data.slice(start, end);
 
-      paginated.forEach(row => {
-        const tr = document.createElement("tr");
+      paginatedData.forEach(row => {
+        let tr = document.createElement("tr");
         tr.innerHTML = `
           <td class="clickable" style="color:#2563eb; font-weight:600; text-decoration:underline;">${row["Nama Barang"]}</td>
           <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
           <td>${row["Harga Dagang"]}</td>
           <td>${row["Harga Beli"]}</td>
-          <td>${row["Kategori"]}</td>
+          <td>${row.Kategori}</td>
         `;
         tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
         tbody.appendChild(tr);
@@ -291,8 +275,8 @@
     function bukaPopup(row) {
       document.getElementById("modalNama").textContent = row["Nama Barang"];
       document.getElementById("modalJual").textContent = "Rp " + Number(row["Harga Jual"]).toLocaleString("id-ID");
-      document.getElementById("modalDagang").textContent = row["Harga Dagang"];
-      document.getElementById("modalBeli").textContent = row["Harga Beli"];
+      document.getElementById("modalGrosir").textContent = row["Harga Dagang"];
+     // document.getElementById("modalKode").textContent = row["Harga Beli"];
       document.getElementById("modalKategori").textContent = row["Kategori"];
       document.getElementById("popupModal").style.display = "flex";
     }
@@ -302,11 +286,10 @@
     }
 
     function updateTable() {
-      const searchText = document.getElementById("search").value.toLowerCase();
-      const kategori = document.getElementById("kategori").value;
-      const filtered = dataBarang.filter(item =>
-        (item["Nama Barang"]?.toLowerCase().includes(searchText) ||
-         item["Kategori"]?.toLowerCase().includes(searchText)) &&
+      let searchText = document.getElementById("search").value.toLowerCase();
+      let kategori = document.getElementById("kategori").value;
+      let filtered = dataBarang.filter(item =>
+        item["Nama Barang"].toLowerCase().includes(searchText) &&
         (kategori === "" || item.Kategori === kategori)
       );
       renderTable(filtered);
@@ -316,14 +299,12 @@
       currentPage = 1;
       updateTable();
     });
-
     document.getElementById("kategori").addEventListener("change", () => {
       currentPage = 1;
       updateTable();
     });
-
     document.getElementById("next").addEventListener("click", () => {
-      const filtered = dataBarang.filter(item =>
+      let filtered = dataBarang.filter(item =>
         item["Nama Barang"].toLowerCase().includes(document.getElementById("search").value.toLowerCase()) &&
         (document.getElementById("kategori").value === "" || item.Kategori === document.getElementById("kategori").value)
       );
@@ -332,7 +313,6 @@
         renderTable(filtered);
       }
     });
-
     document.getElementById("prev").addEventListener("click", () => {
       if (currentPage > 1) {
         currentPage--;
@@ -346,15 +326,14 @@
       header: true,
       complete: function(results) {
         dataBarang = results.data.filter(row => row["Nama Barang"]);
-        const kategoriUnik = [...new Set(dataBarang.map(item => item.Kategori))];
-        const select = document.getElementById("kategori");
+        let kategoriUnik = [...new Set(dataBarang.map(item => item.Kategori))];
+        let select = document.getElementById("kategori");
         kategoriUnik.forEach(kat => {
-          const opt = document.createElement("option");
+          let opt = document.createElement("option");
           opt.value = kat;
           opt.textContent = kat;
           select.appendChild(opt);
         });
-        document.getElementById("loading").style.display = "none";
         updateTable();
       }
     });
