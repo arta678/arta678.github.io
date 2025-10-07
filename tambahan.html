@@ -236,7 +236,7 @@
       <h3 id="modalNama"></h3>
       <p><strong>Harga Jual:</strong> <span id="modalJual"></span></p>
       <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
-      <p><strong>Kode:</strong> <span id="modalKode"></span></p>
+      <!-- <p><strong>Kode:</strong> <span id="modalKode"></span></p> -->
       <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
       <button class="close-btn" onclick="tutupPopup()">Tutup</button>
     </div>
@@ -276,7 +276,7 @@
       document.getElementById("modalNama").textContent = row["Nama Barang"];
       document.getElementById("modalJual").textContent = "Rp " + Number(row["Harga Jual"]).toLocaleString("id-ID");
       document.getElementById("modalGrosir").textContent = row["Harga Dagang"];
-      document.getElementById("modalKode").textContent = row["Harga Beli"];
+     // document.getElementById("modalKode").textContent = row["Harga Beli"];
       document.getElementById("modalKategori").textContent = row["Kategori"];
       document.getElementById("popupModal").style.display = "flex";
     }
