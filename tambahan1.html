@@ -6,22 +6,13 @@
   <title>Daftar Barang</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
-    input[type="text"], select {
-      width: 100%;
-      font-size: 18px;
-      padding: 12px 14px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
     body {
       font-family: "Segoe UI", Arial, sans-serif;
       margin: 0;
-      padding: 0;
       background: #f9fafb;
       color: #333;
     }
+
     header {
       background: #2563eb;
       color: white;
@@ -33,31 +24,39 @@
       top: 0;
       z-index: 100;
     }
+
     main {
       padding: 12px;
       max-width: 1000px;
       margin: auto;
     }
 
+    /* --- Search Bar --- */
     .search-bar {
       display: flex;
-      flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 15px;
+      align-items: center;
     }
 
-    input, select {
-      padding: 14px;
-      font-size: 1.1rem;
-      border: 1px solid #bbb;
+    .search-wrapper {
+      position: relative;
+      flex: 2;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      font-size: 18px;
+      padding: 12px 14px;
+      border: 1px solid #ccc;
       border-radius: 10px;
-      flex: 1;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     select {
+      flex: 1;
+      min-width: 160px;
       background: white;
-      min-width: 180px;
     }
 
     input:focus, select:focus {
@@ -66,12 +65,31 @@
       box-shadow: 0 0 6px rgba(37,99,235,0.3);
     }
 
+    /* Spinner kecil di dalam input */
+    .spinner {
+      display: none;
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ccc;
+      border-top: 2px solid #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: translateY(-50%) rotate(360deg); }
+    }
+
+    /* --- Table --- */
     .table-container {
       overflow-x: auto;
       background: white;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      -webkit-overflow-scrolling: touch;
     }
 
     table {
@@ -79,12 +97,14 @@
       width: 100%;
       min-width: 700px;
     }
+
     th, td {
       border-bottom: 1px solid #eee;
       padding: 10px 12px;
       text-align: left;
       white-space: nowrap;
     }
+
     th {
       background: #f3f4f6;
       font-weight: bold;
@@ -92,11 +112,13 @@
       top: 0;
       z-index: 10;
     }
+
     tr:hover {
-      background: #f9f9f9;
+      background: #eff6ff;
       cursor: pointer;
     }
 
+    /* --- Pagination --- */
     .pagination {
       margin-top: 15px;
       display: flex;
@@ -105,6 +127,7 @@
       gap: 10px;
       flex-wrap: wrap;
     }
+
     button {
       padding: 12px 18px;
       border: none;
@@ -115,6 +138,7 @@
       font-size: 1rem;
       transition: 0.2s;
     }
+
     button:hover {
       background: #1e40af;
     }
@@ -123,7 +147,7 @@
       font-size: 1rem;
     }
 
-    /* === Popup Modal === */
+    /* --- Popup Modal --- */
     .modal {
       display: none;
       position: fixed;
@@ -136,10 +160,12 @@
       animation: fadeIn 0.3s ease;
       padding: 10px;
     }
+
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
+
     .modal-content {
       background: white;
       border-radius: 12px;
@@ -150,6 +176,7 @@
       text-align: center;
       animation: slideUp 0.3s ease;
     }
+
     @keyframes slideUp {
       from { transform: translateY(30px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
@@ -160,10 +187,7 @@
       color: #2563eb;
       font-size: 1.3rem;
     }
-    .modal p {
-      margin: 8px 0;
-      font-size: 1rem;
-    }
+
     .close-btn {
       margin-top: 15px;
       background: #2563eb;
@@ -175,73 +199,63 @@
       font-size: 1rem;
       width: 100%;
     }
+
     .close-btn:hover {
       background: #1e40af;
     }
 
-    /* === Loading Spinner === */
+    /* --- Loading utama --- */
     #loading {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(255,255,255,0.9);
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 2000;
-      font-size: 1.2rem;
-      flex-direction: column;
-      color: #2563eb;
-      backdrop-filter: blur(3px);
+      gap: 10px;
+      color: #555;
+      font-size: 1.1rem;
+      margin: 20px 0;
     }
-    .spinner {
-      border: 4px solid #e0e7ff;
-      border-top: 4px solid #2563eb;
+
+    #loading::before {
+      content: "";
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ccc;
+      border-top: 2px solid #2563eb;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin-bottom: 15px;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      animation: spin 0.8s linear infinite;
     }
 
-    /* === Mobile Optimization === */
+    /* --- Mobile Optimization --- */
     @media (max-width: 600px) {
+      .search-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
       input[type="text"], select {
+        width: 100%;
         font-size: 16px;
-        padding: 14px;
-      }
-
-      button, .category-button {
-        font-size: 16px;
-        padding: 10px 14px;
-      }
-
-      table {
-        font-size: 15px;
       }
     }
   </style>
 </head>
-<body>
-  <div id="loading">
-    <div class="spinner"></div>
-    <div>Memuat data...</div>
-  </div>
 
+<body>
   <header>📦 Daftar Barang</header>
+
   <main>
     <div class="search-bar">
-      <input type="text" id="search" placeholder="🔍 Cari barang...">
       <select id="kategori">
         <option value="">📂 Semua Kategori</option>
       </select>
+      <div class="search-wrapper">
+        <input type="text" id="search" placeholder="🔍 Cari barang...">
+        <div class="spinner" id="input-spinner"></div>
+      </div>
     </div>
 
-    <div class="table-container">
+    <div id="loading">Memuat data dari Google Sheets...</div>
+
+    <div class="table-container" id="table-wrapper" style="display:none;">
       <table id="tabel-barang">
         <thead>
           <tr>
@@ -278,6 +292,7 @@
     let dataBarang = [];
     let currentPage = 1;
     const rowsPerPage = 16;
+    const spinner = document.getElementById("input-spinner");
 
     function renderTable(data) {
       let tbody = document.querySelector("#tabel-barang tbody");
@@ -294,7 +309,7 @@
           <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
           <td>${row["Harga Dagang"]}</td>
           <td>${row["Harga Beli"]}</td>
-          <td>${row.Kategori}</td>
+          <td>${row["Kategori"]}</td>
         `;
         tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
         tbody.appendChild(tr);
@@ -326,14 +341,22 @@
       renderTable(filtered);
     }
 
+    let typingTimer;
     document.getElementById("search").addEventListener("input", () => {
-      currentPage = 1;
-      updateTable();
+      clearTimeout(typingTimer);
+      spinner.style.display = "inline-block";
+      typingTimer = setTimeout(() => {
+        spinner.style.display = "none";
+        currentPage = 1;
+        updateTable();
+      }, 400);
     });
+
     document.getElementById("kategori").addEventListener("change", () => {
       currentPage = 1;
       updateTable();
     });
+
     document.getElementById("next").addEventListener("click", () => {
       let filtered = dataBarang.filter(item =>
         item["Nama Barang"].toLowerCase().includes(document.getElementById("search").value.toLowerCase()) &&
@@ -344,6 +367,7 @@
         renderTable(filtered);
       }
     });
+
     document.getElementById("prev").addEventListener("click", () => {
       if (currentPage > 1) {
         currentPage--;
@@ -351,9 +375,7 @@
       }
     });
 
-    // === Loading indikator aktif saat ambil CSV ===
-    const loading = document.getElementById("loading");
-
+    // === Ambil data dari Google Sheets ===
     Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv", {
       download: true,
       header: true,
@@ -367,11 +389,9 @@
           opt.textContent = kat;
           select.appendChild(opt);
         });
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("table-wrapper").style.display = "block";
         updateTable();
-        loading.style.display = "none"; // sembunyikan loading
-      },
-      error: function() {
-        loading.innerHTML = "<div>❌ Gagal memuat data dari Google Sheet.</div>";
       }
     });
   </script>
