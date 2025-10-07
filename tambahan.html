@@ -261,7 +261,7 @@
           <td class="clickable" style="color:#2563eb; font-weight:600; text-decoration:underline;">${row["Nama Barang"]}</td>
           <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
           <td>${row["Harga Dagang"]}</td>
-          <td>${row["Harga Beli"]}</td>
+          //<td>${row["Harga Beli"]}</td>
           <td>${row.Kategori}</td>
         `;
         tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
