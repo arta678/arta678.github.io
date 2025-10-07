@@ -43,7 +43,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
     }
 
     input, select {
@@ -208,11 +208,32 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* === Mobile Optimization === */
+    /* Spinner kecil untuk filter */
+    #loading-filter .spinner {
+      border: 3px solid #e0e7ff;
+      border-top: 3px solid #2563eb;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 1s linear infinite;
+    }
+
+    /* === Mobile Optimization (tetap sejajar di HP) === */
     @media (max-width: 600px) {
+      .search-bar {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+      }
+
       input[type="text"], select {
         font-size: 16px;
-        padding: 14px;
+        padding: 12px;
+        flex: 1;
+      }
+
+      select {
+        min-width: 140px;
       }
 
       button, .category-button {
@@ -239,6 +260,14 @@
       <select id="kategori">
         <option value="">📂 Semua Kategori</option>
       </select>
+    </div>
+
+    <!-- Loading kecil di bawah pencarian -->
+    <div id="loading-filter" style="display:none; text-align:center; margin-bottom:10px; color:#2563eb; font-weight:500;">
+      <div style="display:inline-flex; align-items:center; gap:8px;">
+        <div class="spinner" style="width:18px; height:18px; border-width:3px;"></div>
+        Memproses pencarian...
+      </div>
     </div>
 
     <div class="table-container">
@@ -317,13 +346,19 @@
     }
 
     function updateTable() {
-      let searchText = document.getElementById("search").value.toLowerCase();
-      let kategori = document.getElementById("kategori").value;
-      let filtered = dataBarang.filter(item =>
-        item["Nama Barang"].toLowerCase().includes(searchText) &&
-        (kategori === "" || item.Kategori === kategori)
-      );
-      renderTable(filtered);
+      const loadingFilter = document.getElementById("loading-filter");
+      loadingFilter.style.display = "block";
+
+      setTimeout(() => {
+        let searchText = document.getElementById("search").value.toLowerCase();
+        let kategori = document.getElementById("kategori").value;
+        let filtered = dataBarang.filter(item =>
+          item["Nama Barang"].toLowerCase().includes(searchText) &&
+          (kategori === "" || item.Kategori === kategori)
+        );
+        renderTable(filtered);
+        loadingFilter.style.display = "none";
+      }, 300);
     }
 
     document.getElementById("search").addEventListener("input", () => {
@@ -351,7 +386,6 @@
       }
     });
 
-    // === Loading indikator aktif saat ambil CSV ===
     const loading = document.getElementById("loading");
 
     Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv", {
@@ -368,7 +402,7 @@
           select.appendChild(opt);
         });
         updateTable();
-        loading.style.display = "none"; // sembunyikan loading
+        loading.style.display = "none";
       },
       error: function() {
         loading.innerHTML = "<div>❌ Gagal memuat data dari Google Sheet.</div>";
