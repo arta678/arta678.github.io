@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -124,7 +123,7 @@
     .clickable {
       color: #2563eb;
       font-weight: 600;
-      text-decoration: none; /* hilangkan garis bawah */
+      text-decoration: none;
     }
     .pagination {
       margin-top: 15px;
@@ -214,13 +213,6 @@
       padding: 20px;
       font-size: 1rem;
     }
-
-    #loading-bar {
-      display: none;
-      text-align: center;
-      margin-bottom: 10px;
-      color: #2563eb;
-    }
   </style>
 </head>
 <body>
@@ -235,8 +227,6 @@
 
     <!-- Statistik Ringkas -->
     <div id="statistik">📦 Jumlah: 0 • 💰 Min: Rp0 • 💎 Max: Rp0</div>
-
-    <div id="loading-bar">⏳ Memuat data...</div>
 
     <div class="table-container">
       <table id="tabel-barang">
@@ -260,7 +250,7 @@
     </div>
   </main>
 
-  <!-- === Modal Popup (tidak diubah) === -->
+  <!-- Modal Popup -->
   <div class="modal" id="popupModal">
     <div class="modal-content">
       <h3 id="modalNama"></h3>
@@ -278,13 +268,8 @@
     let currentPage = 1;
     const rowsPerPage = 15;
 
-    function setLoading(show) {
-      document.getElementById("loading-bar").style.display = show ? "block" : "none";
-    }
-
     function fetchData() {
       const url = CSV_BASE_URL + "&t=" + new Date().getTime();
-      setLoading(true);
       Papa.parse(url, {
         download: true,
         header: true,
@@ -295,7 +280,6 @@
           currentPage = 1;
           updateTable();
           updateStatistik(getFiltered());
-          setLoading(false);
         }
       });
     }
@@ -373,15 +357,11 @@
     function tutupPopup() { document.getElementById("popupModal").style.display = "none"; }
 
     function updateTable() {
-      setLoading(true);
-      setTimeout(() => {
-        const filtered = getFiltered();
-        const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
-        if (currentPage > totalPages) currentPage = totalPages;
-        renderTable(filtered);
-        updateStatistik(filtered);
-        setLoading(false);
-      }, 100);
+      const filtered = getFiltered();
+      const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+      if (currentPage > totalPages) currentPage = totalPages;
+      renderTable(filtered);
+      updateStatistik(filtered);
     }
 
     document.getElementById("next").addEventListener("click", () => {
