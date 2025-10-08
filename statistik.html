@@ -37,6 +37,8 @@
       max-width: 1000px;
       margin: auto;
     }
+
+    /* Input dan kategori */
     .search-bar {
       display: flex;
       flex-wrap: wrap;
@@ -74,7 +76,14 @@
       justify-content: center;
       flex-wrap: wrap;
       gap: 10px;
+      line-height: 1.3;
     }
+    #statistik span.value {
+      font-weight: 700;
+      color: #111;
+    }
+
+    /* Responsif di HP */
     @media (max-width: 600px) {
       #statistik {
         flex-direction: column;
@@ -91,6 +100,7 @@
       }
     }
 
+    /* Tabel */
     .table-container {
       overflow-x: auto;
       background: white;
@@ -125,6 +135,8 @@
       font-weight: 600;
       text-decoration: none; /* hilangkan garis bawah */
     }
+
+    /* Pagination */
     .pagination {
       margin-top: 15px;
       display: flex;
@@ -150,7 +162,7 @@
       font-size: 1rem;
     }
 
-    /* === Popup Modal === */
+    /* Popup Modal */
     .modal {
       display: none;
       position: fixed;
@@ -233,7 +245,11 @@
     </div>
 
     <!-- Statistik Ringkas -->
-    <div id="statistik">📦 Jumlah: 0 • 💰 Min: Rp0 • 💎 Max: Rp0</div>
+    <div id="statistik">
+      📦 Jumlah: <span class="value">0</span> • 
+      💰 Min: <span class="value">Rp0</span> • 
+      💎 Max: <span class="value">Rp0</span>
+    </div>
 
     <div id="loading-bar">⏳ Memuat data...</div>
 
@@ -259,14 +275,14 @@
     </div>
   </main>
 
-  <!-- === Modal Popup (tidak diubah) === -->
+  <!-- Popup Modal (tidak diubah) -->
   <div class="modal" id="popupModal">
     <div class="modal-content">
       <h3 id="modalNama"></h3>
       <p><strong>Harga Jual:</strong> <span id="modalJual"></span></p>
       <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
       <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
-      <p id="modalKeterangan" style="display:none;"><strong>ℹ️Detail: </strong> <span id="modalKetValue"></span></p>
+      <p id="modalKeterangan" style="display:none;"><strong>ℹ️ Detail:</strong> <span id="modalKetValue"></span></p>
       <button class="close-btn" onclick="tutupPopup()">Tutup</button>
     </div>
   </div>
@@ -312,16 +328,20 @@
     }
 
     function updateStatistik(list) {
+      const stat = document.getElementById("statistik");
       if (!list || list.length === 0) {
-        document.getElementById("statistik").textContent = "📦 Barang: 0 • 💰 Min: Rp0 • 💎 Max: Rp0";
+        stat.innerHTML = `📦 Jumlah: <span class="value">0</span> • 💰 Min: <span class="value">Rp0</span> • 💎 Max: <span class="value">Rp0</span>`;
         return;
       }
       const hargaList = list.map(i => Number(i["Harga Jual"] || 0)).filter(n => !isNaN(n));
       const min = Math.min(...hargaList);
       const max = Math.max(...hargaList);
       const total = list.length;
-      document.getElementById("statistik").textContent =
-        `📦 Jumlah: ${total} • 💰 Min: Rp${min.toLocaleString("id-ID")} • 💎 Max: Rp${max.toLocaleString("id-ID")}`;
+      stat.innerHTML = `
+        📦 Jumlah: <span class="value">${total}</span> • 
+        💰 Min: <span class="value">Rp${min.toLocaleString("id-ID")}</span> • 
+        💎 Max: <span class="value">Rp${max.toLocaleString("id-ID")}</span>
+      `;
     }
 
     function renderTable(data) {
