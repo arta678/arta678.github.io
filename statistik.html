@@ -41,7 +41,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
     input, select {
       padding: 14px;
@@ -61,33 +61,46 @@
       box-shadow: 0 0 6px rgba(37,99,235,0.3);
     }
 
-    /* Statistik ringkas */
-    #statistik {
-      font-size: 0.95rem;
-      color: #444;
-      margin-bottom: 10px;
-      text-align: center;
-      background: #eef2ff;
-      padding: 6px 8px;
-      border-radius: 6px;
+    /* === Statistik === */
+    .stats {
       display: flex;
-      justify-content: center;
       flex-wrap: wrap;
+      justify-content: space-between;
       gap: 10px;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: #222;
+      background: #f3f4f6;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-align: center;
     }
+    .stats div {
+      flex: 1;
+      min-width: 100px;
+      font-weight: 600;
+    }
+    .stats span {
+      display: block;
+      font-size: 1.3rem;
+      color: #2563eb;
+      font-weight: bold;
+    }
+
     @media (max-width: 600px) {
-      #statistik {
-        flex-direction: column;
-        font-size: 0.9rem;
+      .stats {
+        font-size: 1rem;
+        flex-direction: row;
+        flex-wrap: wrap;
         gap: 4px;
         padding: 6px;
       }
-      .search-bar {
-        flex-direction: row;
+      .stats div {
+        flex: 1 1 45%;
+        font-size: 0.95rem;
       }
-      .search-bar input, .search-bar select {
-        flex: 1;
-        font-size: 16px;
+      .stats span {
+        font-size: 1.2rem;
       }
     }
 
@@ -123,8 +136,12 @@
     .clickable {
       color: #2563eb;
       font-weight: 600;
-      text-decoration: none; /* hilangkan garis bawah */
+      text-decoration: none; /* hilangkan underline */
     }
+    .clickable:hover {
+      text-decoration: underline;
+    }
+
     .pagination {
       margin-top: 15px;
       display: flex;
@@ -150,7 +167,6 @@
       font-size: 1rem;
     }
 
-    /* === Popup Modal === */
     .modal {
       display: none;
       position: fixed;
@@ -162,12 +178,7 @@
       background: rgba(0,0,0,0.5);
       justify-content: center;
       align-items: center;
-      animation: fadeIn 0.3s ease;
       padding: 10px;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
     }
     .modal-content {
       background: white;
@@ -177,34 +188,6 @@
       max-width: 400px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
       text-align: center;
-      animation: slideUp 0.3s ease;
-    }
-    @keyframes slideUp {
-      from { transform: translateY(30px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    .modal h3 {
-      margin-top: 0;
-      color: #2563eb;
-      font-size: 1.3rem;
-    }
-    .modal p {
-      margin: 8px 0;
-      font-size: 1rem;
-    }
-    .close-btn {
-      margin-top: 15px;
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-size: 1rem;
-      width: 100%;
-    }
-    .close-btn:hover {
-      background: #1e40af;
     }
 
     .no-data {
@@ -213,7 +196,6 @@
       padding: 20px;
       font-size: 1rem;
     }
-
     #loading-bar {
       display: none;
       text-align: center;
@@ -223,19 +205,22 @@
   </style>
 </head>
 <body>
-  <header>📦 Daftar Barang</header>
+  <header>Daftar Barang</header>
   <main>
     <div class="search-bar">
-      <input type="text" id="search" placeholder="🔍 Cari barang..." />
+      <input type="text" id="search" placeholder="Cari barang..." />
       <select id="kategori">
-        <option value="">📂 Semua Kategori</option>
+        <option value="">Semua Kategori</option>
       </select>
     </div>
 
-    <!-- Statistik Ringkas -->
-    <div id="statistik">📦 Barang: 0 • 💰 Termurah: Rp0 • 💎 Termahal: Rp0</div>
+    <div class="stats">
+      <div>Total Barang<span id="statJumlah">0</span></div>
+      <div>Termurah<span id="statMin">-</span></div>
+      <div>Termahal<span id="statMax">-</span></div>
+    </div>
 
-    <div id="loading-bar">⏳ Memuat data...</div>
+    <div id="loading-bar">Memuat data...</div>
 
     <div class="table-container">
       <table id="tabel-barang">
@@ -259,14 +244,14 @@
     </div>
   </main>
 
-  <!-- === Modal Popup (tidak diubah) === -->
+  <!-- Popup tetap sama -->
   <div class="modal" id="popupModal">
     <div class="modal-content">
       <h3 id="modalNama"></h3>
       <p><strong>Harga Jual:</strong> <span id="modalJual"></span></p>
       <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
       <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
-      <p id="modalKeterangan" style="display:none;"><strong>ℹ️Detail: </strong> <span id="modalKetValue"></span></p>
+      <p id="modalKeterangan" style="display:none;"><strong>Detail:</strong> <span id="modalKetValue"></span></p>
       <button class="close-btn" onclick="tutupPopup()">Tutup</button>
     </div>
   </div>
@@ -291,9 +276,8 @@
         complete: function(results) {
           dataBarang = results.data.filter(row => row["Nama Barang"]);
           populateKategori();
-          currentPage = 1;
+          updateStats(dataBarang);
           updateTable();
-          updateStatistik(getFiltered());
           setLoading(false);
         }
       });
@@ -301,7 +285,7 @@
 
     function populateKategori() {
       const select = document.getElementById("kategori");
-      select.innerHTML = '<option value="">📂 Semua Kategori</option>';
+      select.innerHTML = '<option value="">Semua Kategori</option>';
       const uniq = [...new Set(dataBarang.map(i => i.Kategori).filter(Boolean))];
       uniq.forEach(k => {
         const opt = document.createElement("option");
@@ -311,56 +295,66 @@
       });
     }
 
-    function updateStatistik(list) {
-      if (!list || list.length === 0) {
-        document.getElementById("statistik").textContent = "📦 Barang: 0 • 💰 Termurah: Rp0 • 💎 Termahal: Rp0";
-        return;
-      }
-      const hargaList = list.map(i => Number(i["Harga Jual"] || 0)).filter(n => !isNaN(n));
-      const min = Math.min(...hargaList);
-      const max = Math.max(...hargaList);
-      const total = list.length;
-      document.getElementById("statistik").textContent =
-        `📦 Barang: ${total} • 💰 Termurah: Rp${min.toLocaleString("id-ID")} • 💎 Termahal: Rp${max.toLocaleString("id-ID")}`;
+    function updateStats(data) {
+      const jumlah = data.length;
+      const harga = data.map(d => Number(d["Harga Jual"])).filter(v => !isNaN(v));
+      const min = harga.length ? Math.min(...harga) : 0;
+      const max = harga.length ? Math.max(...harga) : 0;
+      document.getElementById("statJumlah").textContent = jumlah.toLocaleString("id-ID");
+      document.getElementById("statMin").textContent = min ? "Rp " + min.toLocaleString("id-ID") : "-";
+      document.getElementById("statMax").textContent = max ? "Rp " + max.toLocaleString("id-ID") : "-";
+    }
+
+    function getFiltered() {
+      const s = document.getElementById("search").value.toLowerCase();
+      const k = document.getElementById("kategori").value;
+      return dataBarang.filter(i => {
+        const nama = i["Nama Barang"]?.toLowerCase().includes(s);
+        const filter = (k === "" || i.Kategori === k);
+        return nama && filter;
+      });
     }
 
     function renderTable(data) {
       const tbody = document.querySelector("#tabel-barang tbody");
       tbody.innerHTML = "";
-
-      if (!data || data.length === 0) {
+      if (!data.length) {
         tbody.innerHTML = `<tr><td colspan="5" class="no-data">Barang tidak ditemukan</td></tr>`;
         document.getElementById("page-info").textContent = "";
         return;
       }
-
       const start = (currentPage - 1) * rowsPerPage;
       const end = start + rowsPerPage;
-      const paginated = data.slice(start, end);
-
-      paginated.forEach(row => {
+      data.slice(start, end).forEach(row => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td class="clickable">${escapeHtml(row["Nama Barang"])}</td>
-          <td>Rp ${formatNumber(row["Harga Jual"])}</td>
-          <td>${escapeHtml(row["Harga Dagang"] || "")}</td>
-          <td>${escapeHtml(row["Harga Beli"] || "")}</td>
-          <td>${escapeHtml(row["Kategori"] || "")}</td>
+          <td class="clickable">${row["Nama Barang"]}</td>
+          <td>Rp ${Number(row["Harga Jual"]).toLocaleString("id-ID")}</td>
+          <td>${row["Harga Dagang"] || ""}</td>
+          <td>${row["Harga Beli"] || ""}</td>
+          <td>${row["Kategori"] || ""}</td>
         `;
         tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
         tbody.appendChild(tr);
       });
+      document.getElementById("page-info").textContent = 
+        "Halaman " + currentPage + " / " + Math.ceil(data.length / rowsPerPage);
+    }
 
-      document.getElementById("page-info").textContent =
-        `Halaman ${currentPage} / ${Math.ceil(data.length / rowsPerPage)}`;
+    function updateTable() {
+      const filtered = getFiltered();
+      updateStats(filtered);
+      const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+      if (currentPage > totalPages) currentPage = totalPages;
+      renderTable(filtered);
     }
 
     function bukaPopup(row) {
-      document.getElementById("modalNama").textContent = row["Nama Barang"] || "-";
-      document.getElementById("modalJual").textContent = "Rp " + formatNumber(row["Harga Jual"]);
+      document.getElementById("modalNama").textContent = row["Nama Barang"];
+      document.getElementById("modalJual").textContent = "Rp " + Number(row["Harga Jual"]).toLocaleString("id-ID");
       document.getElementById("modalGrosir").textContent = row["Harga Dagang"] || "-";
       document.getElementById("modalKategori").textContent = row["Kategori"] || "-";
-      if (row["Keterangan"] && row["Keterangan"].toString().trim() !== "") {
+      if (row["Keterangan"]) {
         document.getElementById("modalKetValue").textContent = row["Keterangan"];
         document.getElementById("modalKeterangan").style.display = "block";
       } else {
@@ -369,69 +363,31 @@
       document.getElementById("popupModal").style.display = "flex";
     }
 
-    function tutupPopup() { document.getElementById("popupModal").style.display = "none"; }
-
-    function updateTable() {
-      setLoading(true);
-      setTimeout(() => {
-        const filtered = getFiltered();
-        const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
-        if (currentPage > totalPages) currentPage = totalPages;
-        renderTable(filtered);
-        updateStatistik(filtered);
-        setLoading(false);
-      }, 100);
+    function tutupPopup() {
+      document.getElementById("popupModal").style.display = "none";
     }
 
+    document.getElementById("search").addEventListener("input", () => {
+      currentPage = 1;
+      updateTable();
+    });
+    document.getElementById("kategori").addEventListener("change", () => {
+      currentPage = 1;
+      updateTable();
+    });
     document.getElementById("next").addEventListener("click", () => {
-      const filtered = getFiltered();
-      if (currentPage < Math.ceil(filtered.length / rowsPerPage)) {
+      const f = getFiltered();
+      if (currentPage < Math.ceil(f.length / rowsPerPage)) {
         currentPage++;
-        renderTable(filtered);
+        renderTable(f);
       }
     });
-
     document.getElementById("prev").addEventListener("click", () => {
       if (currentPage > 1) {
         currentPage--;
         updateTable();
       }
     });
-
-    document.getElementById("search").addEventListener("input", () => {
-      currentPage = 1;
-      updateTable();
-    });
-
-    document.getElementById("kategori").addEventListener("change", () => {
-      currentPage = 1;
-      updateTable();
-    });
-
-    function getFiltered() {
-      const s = document.getElementById("search").value.toLowerCase();
-      const k = document.getElementById("kategori").value;
-      return dataBarang.filter(item => {
-        const namaMatch = item["Nama Barang"]?.toLowerCase().includes(s);
-        const kategoriMatch = item["Kategori"]?.toLowerCase().includes(s);
-        const filterKategori = (k === "" || item.Kategori === k);
-        return (namaMatch || kategoriMatch) && filterKategori;
-      });
-    }
-
-    function formatNumber(v) {
-      const n = Number(v);
-      if (!isFinite(n)) return escapeHtml(v || "");
-      return n.toLocaleString("id-ID");
-    }
-
-    function escapeHtml(t) {
-      if (t === undefined || t === null) return "";
-      return String(t)
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
 
     fetchData();
   </script>
