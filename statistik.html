@@ -1,178 +1,204 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Daftar Barang</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
-    input[type="text"], select {
-      width: 100%;
-      font-size: 18px;
-      padding: 12px 14px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    /* ====== Basic ====== */
+    :root {
+      --primary: #2563eb;
+      --muted: #f3f4f6;
+      --bg: #f9fafb;
+      --text: #333;
     }
     body {
-      font-family: "Segoe UI", Arial, sans-serif;
       margin: 0;
-      padding: 0;
-      background: #f9fafb;
-      color: #333;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
     header {
-      background: #2563eb;
+      background: var(--primary);
       color: white;
       padding: 14px;
       text-align: center;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: 600;
       position: sticky;
       top: 0;
       z-index: 100;
     }
+
     main {
-      padding: 12px;
       max-width: 1000px;
-      margin: auto;
+      margin: 12px auto;
+      padding: 12px;
     }
+
+    /* search & category */
     .search-bar {
       display: flex;
-      flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 10px;
-    }
-    input, select {
-      padding: 14px;
-      font-size: 1.1rem;
-      border: 1px solid #bbb;
-      border-radius: 10px;
-      flex: 1;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    select {
-      background: white;
-      min-width: 180px;
-    }
-    input:focus, select:focus {
-      border-color: #2563eb;
-      outline: none;
-      box-shadow: 0 0 6px rgba(37,99,235,0.3);
-    }
-
-    /* Statistik ringkas */
-    .statistik {
-      display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
-      font-size: 15px;
-      background: #f3f4f6;
-      border-radius: 8px;
-      padding: 10px 12px;
-      margin-bottom: 10px;
-      line-height: 1.5;
+      margin-bottom: 8px;
     }
-    .statistik div {
-      flex: 1 1 45%;
-      margin: 4px 0;
+    input[type="text"], select {
+      flex: 1 1 200px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      border: 1px solid #cfcfcf;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    select { min-width: 160px; background: white; }
+
+    /* statistik single-line simple */
+    .stats-line {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 12px;
+      align-items: center;
+      font-size: 0.95rem;
+      color: #222;
+      margin: 10px 0;
+      padding: 8px 10px;
+      background: var(--muted);
+      border-radius: 8px;
+      justify-content: flex-start;
+      overflow-x: auto;
+    }
+    .stats-line .dot {
+      color: #666;
+      margin: 0 6px;
     }
 
+    /* table */
     .table-container {
-      overflow-x: auto;
       background: white;
       border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow-x: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       -webkit-overflow-scrolling: touch;
     }
     table {
-      border-collapse: collapse;
       width: 100%;
+      border-collapse: collapse;
       min-width: 700px;
     }
-    th, td {
-      border-bottom: 1px solid #eee;
-      padding: 10px 12px;
-      text-align: left;
-      white-space: nowrap;
-    }
-    th {
-      background: #f3f4f6;
-      font-weight: bold;
+    thead th {
       position: sticky;
       top: 0;
-      z-index: 10;
+      background: #fafafa;
+      z-index: 5;
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      font-weight: 600;
     }
-    tr:hover {
-      background: #f9f9f9;
+    tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f1f1f1;
+      white-space: nowrap;
+    }
+    tbody tr:hover { background: #fbfbfb; }
+
+    .clickable {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: underline;
       cursor: pointer;
     }
 
+    /* pagination */
     .pagination {
-      margin-top: 15px;
+      margin-top: 12px;
       display: flex;
+      gap: 10px;
       justify-content: center;
       align-items: center;
-      gap: 10px;
       flex-wrap: wrap;
     }
     button {
-      padding: 10px 16px;
+      background: var(--primary);
+      color: white;
       border: none;
+      padding: 10px 14px;
       border-radius: 8px;
       cursor: pointer;
-      background: #2563eb;
+      font-size: 0.95rem;
+    }
+    button:hover { background: #1e40af; }
+    #page-info { font-size: 0.95rem; color: #333; min-width: 120px; text-align: center; }
+
+    /* modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      z-index: 9999;
+    }
+    .modal.open { display: flex; }
+    .modal-box {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      text-align: left;
+    }
+    .modal-box h3 { margin: 0 0 8px 0; color: var(--primary); }
+    .modal-box p { margin: 6px 0; }
+    .close-btn {
+      background: var(--primary);
       color: white;
-      font-size: 1rem;
-      transition: 0.2s;
-    }
-    button:hover {
-      background: #1e40af;
-    }
-    #page-info {
-      font-size: 1rem;
+      border: none;
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 12px;
+      cursor: pointer;
     }
 
-    .no-data {
-      text-align: center;
-      color: #999;
-      padding: 20px;
-      font-size: 1rem;
-    }
-
-    @media (max-width: 600px) {
-      .statistik {
-        flex-direction: column;
-        font-size: 14px;
-      }
-      .statistik div {
-        flex: 1 1 100%;
-      }
-      table {
-        font-size: 15px;
-      }
+    /* responsive */
+    @media (max-width: 640px) {
+      .search-bar { gap: 8px; }
+      .stats-line { font-size: 0.9rem; gap: 8px; padding: 8px; }
+      table { min-width: 600px; }
     }
   </style>
 </head>
 <body>
   <header>📦 Daftar Barang</header>
+
   <main>
     <div class="search-bar">
-      <input type="text" id="search" placeholder="🔍 Cari barang...">
+      <input id="search" type="text" placeholder="🔍 Cari barang..." />
       <select id="kategori">
         <option value="">📂 Semua Kategori</option>
       </select>
     </div>
 
-    <div class="statistik">
-      <div>Jumlah Barang: <span id="statJumlah">0</span></div>
-      <div>Jumlah Kategori: <span id="statKategori">0</span></div>
-      <div>Harga Termurah: <span id="statMin">-</span></div>
-      <div>Harga Termahal: <span id="statMax">-</span></div>
+    <!-- Statistik satu baris sederhana -->
+    <div class="stats-line" id="statsLine" aria-live="polite">
+      <span>📦 Barang: <strong id="statCount">0</strong></span>
+      <span class="dot">•</span>
+      <span>🗂️ Kategori: <strong id="statCats">0</strong></span>
+      <span class="dot">•</span>
+      <span>💰 Termurah: <strong id="statMin">-</strong></span>
+      <span class="dot">•</span>
+      <span>💎 Termahal: <strong id="statMax">-</strong></span>
     </div>
 
+    <!-- Table -->
     <div class="table-container">
-      <table id="tabel-barang">
+      <table id="tabel-barang" aria-describedby="statsLine">
         <thead>
           <tr>
             <th>Nama Barang</th>
@@ -186,133 +212,37 @@
       </table>
     </div>
 
-    <div class="pagination">
+    <!-- Pagination -->
+    <div class="pagination" role="navigation" aria-label="Pagination">
       <button id="prev">⬅️</button>
-      <span id="page-info"></span>
+      <div id="page-info">Halaman 0 / 0</div>
       <button id="next">➡️</button>
     </div>
   </main>
 
+  <!-- Modal popup -->
+  <div class="modal" id="popupModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-box" role="document">
+      <h3 id="modalNama">Nama</h3>
+      <p><strong>Harga Jual:</strong> <span id="modalJual">-</span></p>
+      <p><strong>Harga Grosir:</strong> <span id="modalGrosir">-</span></p>
+      <p><strong>Kode:</strong> <span id="modalKode">-</span></p>
+      <p><strong>Kategori:</strong> <span id="modalKategori">-</span></p>
+      <p id="modalKeterangan" style="display:none;"><strong>ℹ️ Detail:</strong> <span id="modalKetValue"></span></p>
+      <button class="close-btn" id="closeModal">Tutup</button>
+    </div>
+  </div>
+
   <script>
+    // ====== Konfigurasi CSV (ganti sesuai milikmu jika perlu) ======
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv";
-    let dataBarang = [];
+
+    // ====== State ======
+    let dataBarang = [];       // seluruh data
     let currentPage = 1;
     const rowsPerPage = 15;
 
-    Papa.parse(CSV_URL, {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: (res) => {
-        dataBarang = res.data.filter(r => r["Nama Barang"]);
-        populateKategori();
-        updateTable();
-      }
-    });
-
-    function populateKategori() {
-      const select = document.getElementById("kategori");
-      select.innerHTML = '<option value="">📂 Semua Kategori</option>';
-      const uniq = [...new Set(dataBarang.map(i => i.Kategori).filter(Boolean))];
-      uniq.forEach(k => {
-        const opt = document.createElement("option");
-        opt.value = k;
-        opt.textContent = k;
-        select.appendChild(opt);
-      });
-    }
-
-    function updateStatistik(filtered) {
-      const harga = filtered.map(i => parseFloat(i["Harga Jual"]) || 0);
-      const min = harga.length ? Math.min(...harga) : 0;
-      const max = harga.length ? Math.max(...harga) : 0;
-      const kategori = [...new Set(filtered.map(i => i.Kategori).filter(Boolean))];
-
-      document.getElementById("statJumlah").textContent = filtered.length;
-      document.getElementById("statKategori").textContent = kategori.length;
-      document.getElementById("statMin").textContent = harga.length ? "Rp " + min.toLocaleString("id-ID") : "-";
-      document.getElementById("statMax").textContent = harga.length ? "Rp " + max.toLocaleString("id-ID") : "-";
-    }
-
-    function getFiltered() {
-      const search = document.getElementById("search").value.toLowerCase();
-      const kategori = document.getElementById("kategori").value;
-      return dataBarang.filter(item => {
-        const nama = item["Nama Barang"]?.toLowerCase().includes(search);
-        const filterKategori = (kategori === "" || item.Kategori === kategori);
-        return nama && filterKategori;
-      });
-    }
-
-    function renderTable(data) {
-      const tbody = document.querySelector("#tabel-barang tbody");
-      tbody.innerHTML = "";
-
-      if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="5" class="no-data">Barang tidak ditemukan</td></tr>`;
-        document.getElementById("page-info").textContent = "";
-        return;
-      }
-
-      const start = (currentPage - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-      const paginated = data.slice(start, end);
-
-      paginated.forEach(row => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${escapeHtml(row["Nama Barang"])}</td>
-          <td>Rp ${formatNumber(row["Harga Jual"])}</td>
-          <td>${escapeHtml(row["Harga Dagang"] || "-")}</td>
-          <td>${escapeHtml(row["Harga Beli"] || "-")}</td>
-          <td>${escapeHtml(row["Kategori"] || "-")}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      document.getElementById("page-info").textContent = 
-        `Halaman ${currentPage} / ${Math.ceil(data.length / rowsPerPage)}`;
-    }
-
-    function updateTable() {
-      const filtered = getFiltered();
-      updateStatistik(filtered);
-      const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
-      if (currentPage > totalPages) currentPage = totalPages;
-      renderTable(filtered);
-    }
-
-    document.getElementById("search").addEventListener("input", () => {
-      currentPage = 1;
-      updateTable();
-    });
-
-    document.getElementById("kategori").addEventListener("change", () => {
-      currentPage = 1;
-      updateTable();
-    });
-
-    document.getElementById("next").addEventListener("click", () => {
-      const filtered = getFiltered();
-      if (currentPage < Math.ceil(filtered.length / rowsPerPage)) {
-        currentPage++;
-        renderTable(filtered);
-      }
-    });
-
-    document.getElementById("prev").addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        updateTable();
-      }
-    });
-
-    function formatNumber(value) {
-      const n = Number(value);
-      if (!isFinite(n)) return escapeHtml(value || "");
-      return n.toLocaleString("id-ID");
-    }
-
+    // ====== Util ======
     function escapeHtml(text) {
       if (text === undefined || text === null) return "";
       return String(text)
@@ -322,6 +252,207 @@
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
     }
+    function formatNumber(value) {
+      const n = Number(value);
+      if (!isFinite(n)) return escapeHtml(value || "");
+      return n.toLocaleString("id-ID");
+    }
+
+    // ====== Fetch CSV via PapaParse ======
+    Papa.parse(CSV_URL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        // filter baris tanpa nama
+        dataBarang = (results.data || []).filter(r => r["Nama Barang"] && r["Nama Barang"].toString().trim() !== "");
+        populateKategori();
+        currentPage = 1;
+        updateTable();
+      },
+      error: function(err) {
+        console.error("PapaParse error:", err);
+        // tetap inisialisasi ke tampilan kosong
+        populateKategori();
+        updateTable();
+      }
+    });
+
+    // ====== Populate category select ======
+    function populateKategori() {
+      const sel = document.getElementById("kategori");
+      sel.innerHTML = '<option value="">📂 Semua Kategori</option>';
+      const uniq = [...new Set(dataBarang.map(d => (d.Kategori || "").toString().trim()).filter(Boolean))];
+      uniq.forEach(k => {
+        const opt = document.createElement("option");
+        opt.value = k;
+        opt.textContent = k;
+        sel.appendChild(opt);
+      });
+      // restore previously selected if any (optional)
+      // sel.value = localStorage.getItem('lastKategori') || '';
+    }
+
+    // ====== Filtering logic ======
+    function getFiltered() {
+      const q = (document.getElementById("search").value || "").toLowerCase().trim();
+      const kategori = document.getElementById("kategori").value || "";
+      return dataBarang.filter(item => {
+        const name = (item["Nama Barang"] || "").toLowerCase();
+        const cat = (item["Kategori"] || "");
+        // cari pada nama & kategori (seperti sebelumnya)
+        const nameMatch = !q || name.includes(q);
+        const catMatch = !kategori || cat === kategori;
+        return nameMatch && catMatch;
+      });
+    }
+
+    // ====== Statistik (berdasarkan filtered set, bukan per page) ======
+    function updateStats(filtered) {
+      const count = filtered.length;
+      const cats = new Set(filtered.map(i => (i.Kategori || "").toString().trim()).filter(Boolean)).size;
+      const hargaArr = filtered.map(i => {
+        const v = parseFloat((i["Harga Jual"] || "").toString().replace(/[^0-9.\-]/g, ""));
+        return isNaN(v) ? null : v;
+      }).filter(v => v !== null);
+      const min = hargaArr.length ? Math.min(...hargaArr) : null;
+      const max = hargaArr.length ? Math.max(...hargaArr) : null;
+
+      document.getElementById("statCount").textContent = count;
+      document.getElementById("statCats").textContent = cats;
+      document.getElementById("statMin").textContent = min !== null ? "Rp " + formatNumber(min) : "-";
+      document.getElementById("statMax").textContent = max !== null ? "Rp " + formatNumber(max) : "-";
+    }
+
+    // ====== Render table page ======
+    function renderTablePage(filtered) {
+      const tbody = document.querySelector("#tabel-barang tbody");
+      tbody.innerHTML = "";
+
+      if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="no-data">Barang tidak ditemukan</td></tr>`;
+        document.getElementById("page-info").textContent = `Halaman 0 / 0`;
+        return;
+      }
+
+      const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      const pageItems = filtered.slice(start, end);
+
+      pageItems.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><span class="clickable" tabindex="0">${escapeHtml(row["Nama Barang"])}</span></td>
+          <td>Rp ${formatNumber(row["Harga Jual"])}</td>
+          <td>${escapeHtml(row["Harga Dagang"] || "-")}</td>
+          <td>${escapeHtml(row["Harga Beli"] || "-")}</td>
+          <td>${escapeHtml(row["Kategori"] || "-")}</td>
+        `;
+        // add click listener to open modal with full details
+        tr.querySelector(".clickable").addEventListener("click", () => openPopup(row));
+        tr.querySelector(".clickable").addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") openPopup(row);
+        });
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("page-info").textContent = `Halaman ${currentPage} / ${totalPages}`;
+    }
+
+    // ====== Update all: filtered set, stats, and current page display ======
+    function updateTable() {
+      const filtered = getFiltered();
+      // reset page if out of range
+      const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+      if (currentPage > totalPages) currentPage = totalPages;
+      // render page & stats
+      renderTablePage(filtered);
+      updateStats(filtered);
+      // keep table top visible on small screens when filter changes
+      document.querySelector('.table-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ====== Pagination controls ======
+    document.getElementById("next").addEventListener("click", () => {
+      const filtered = getFiltered();
+      const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderTablePage(filtered);
+        // stats remain based on filtered (not page)
+        updateStats(filtered);
+        // scroll table into view for small screens
+        document.querySelector('.table-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+
+    document.getElementById("prev").addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        const filtered = getFiltered();
+        renderTablePage(filtered);
+        updateStats(filtered);
+        document.querySelector('.table-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+
+    // ====== Search & category events ======
+    document.getElementById("search").addEventListener("input", () => {
+      currentPage = 1;
+      updateTable();
+    });
+    document.getElementById("kategori").addEventListener("change", () => {
+      currentPage = 1;
+      updateTable();
+    });
+
+    // ====== Popup modal behavior ======
+    const modal = document.getElementById("popupModal");
+    const closeModal = document.getElementById("closeModal");
+    function openPopup(row) {
+      document.getElementById("modalNama").textContent = row["Nama Barang"] || "-";
+      document.getElementById("modalJual").textContent = "Rp " + formatNumber(row["Harga Jual"]);
+      document.getElementById("modalGrosir").textContent = row["Harga Dagang"] || "-";
+      document.getElementById("modalKode").textContent = row["Harga Beli"] || "-";
+      document.getElementById("modalKategori").textContent = row["Kategori"] || "-";
+      if (row["Keterangan"] && row["Keterangan"].toString().trim()) {
+        document.getElementById("modalKetValue").textContent = row["Keterangan"];
+        document.getElementById("modalKeterangan").style.display = "block";
+      } else {
+        document.getElementById("modalKeterangan").style.display = "none";
+      }
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+    }
+    function closePopup() {
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+    }
+    closeModal.addEventListener("click", closePopup);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closePopup();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePopup();
+    });
+
+    // ====== Accessibility: focus outline for clickable names (optional) ======
+    document.addEventListener('focusin', (e) => {
+      if (e.target.classList && e.target.classList.contains('clickable')) {
+        e.target.style.outline = '2px solid rgba(37,99,235,0.25)';
+        e.target.style.outlineOffset = '2px';
+      }
+    });
+    document.addEventListener('focusout', (e) => {
+      if (e.target.classList && e.target.classList.contains('clickable')) {
+        e.target.style.outline = 'none';
+      }
+    });
+
+    // ====== End ======
   </script>
 </body>
 </html>
