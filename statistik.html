@@ -233,7 +233,7 @@
     </div>
 
     <!-- Statistik Ringkas -->
-    <div id="statistik">📦 Barang: 0 • 💰 Termurah: Rp0 • 💎 Termahal: Rp0</div>
+    <div id="statistik">📦 Jumlah: 0 • 💰 Min: Rp0 • 💎 Max: Rp0</div>
 
     <div id="loading-bar">⏳ Memuat data...</div>
 
@@ -313,7 +313,7 @@
 
     function updateStatistik(list) {
       if (!list || list.length === 0) {
-        document.getElementById("statistik").textContent = "📦 Barang: 0 • 💰 Termurah: Rp0 • 💎 Termahal: Rp0";
+        document.getElementById("statistik").textContent = "📦 Barang: 0 • 💰 Min: Rp0 • 💎 Max: Rp0";
         return;
       }
       const hargaList = list.map(i => Number(i["Harga Jual"] || 0)).filter(n => !isNaN(n));
@@ -321,7 +321,7 @@
       const max = Math.max(...hargaList);
       const total = list.length;
       document.getElementById("statistik").textContent =
-        `📦 Barang: ${total} • 💰 Termurah: Rp${min.toLocaleString("id-ID")} • 💎 Termahal: Rp${max.toLocaleString("id-ID")}`;
+        `📦 Jumlah: ${total} • 💰 Min: Rp${min.toLocaleString("id-ID")} • 💎 Max: Rp${max.toLocaleString("id-ID")}`;
     }
 
     function renderTable(data) {
