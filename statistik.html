@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,6 +7,14 @@
   <title>Daftar Barang</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
+    input[type="text"], select {
+      width: 100%;
+      font-size: 18px;
+      padding: 12px 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
     body {
       font-family: "Segoe UI", Arial, sans-serif;
       margin: 0;
@@ -29,21 +38,19 @@
       max-width: 1000px;
       margin: auto;
     }
-
-    /* Input & Kategori */
     .search-bar {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 8px;
     }
-    input[type="text"], select {
-      flex: 1;
-      padding: 12px 14px;
-      font-size: 18px;
-      border: 1px solid #ccc;
+    input, select {
+      padding: 14px;
+      font-size: 1.1rem;
+      border: 1px solid #bbb;
       border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      flex: 1;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     select {
       background: white;
@@ -57,32 +64,34 @@
 
     /* Statistik ringkas */
     #statistik {
+      font-size: 0.95rem;
+      color: #444;
+      margin-bottom: 10px;
       text-align: center;
-      font-size: 1rem;
-      color: #333;
-      margin-bottom: 8px;
-      line-height: 1.4;
-    }
-    #statistik .value {
-      font-weight: 600;
-      font-size: 1.05rem;
-      color: #000;
+      background: #eef2ff;
+      padding: 6px 8px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     @media (max-width: 600px) {
       #statistik {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 4px;
+        flex-direction: column;
         font-size: 0.9rem;
-        padding: 2px;
+        gap: 4px;
+        padding: 6px;
       }
-      #statistik .value {
-        font-size: 1rem;
+      .search-bar {
+        flex-direction: row;
+      }
+      .search-bar input, .search-bar select {
+        flex: 1;
+        font-size: 16px;
       }
     }
 
-    /* Tabel */
     .table-container {
       overflow-x: auto;
       background: white;
@@ -115,10 +124,8 @@
     .clickable {
       color: #2563eb;
       font-weight: 600;
-      text-decoration: none;
+      text-decoration: none; /* hilangkan garis bawah */
     }
-
-    /* Pagination */
     .pagination {
       margin-top: 15px;
       display: flex;
@@ -144,7 +151,7 @@
       font-size: 1rem;
     }
 
-    /* Popup Modal */
+    /* === Popup Modal === */
     .modal {
       display: none;
       position: fixed;
@@ -207,6 +214,13 @@
       padding: 20px;
       font-size: 1rem;
     }
+
+    #loading-bar {
+      display: none;
+      text-align: center;
+      margin-bottom: 10px;
+      color: #2563eb;
+    }
   </style>
 </head>
 <body>
@@ -220,7 +234,9 @@
     </div>
 
     <!-- Statistik Ringkas -->
-    <div id="statistik">📦 Jumlah: <span class="value">0</span> • 💰 Min: <span class="value">Rp0</span> • 💎 Max: <span class="value">Rp0</span></div>
+    <div id="statistik">📦 Jumlah: 0 • 💰 Min: Rp0 • 💎 Max: Rp0</div>
+
+    <div id="loading-bar">⏳ Memuat data...</div>
 
     <div class="table-container">
       <table id="tabel-barang">
@@ -244,14 +260,14 @@
     </div>
   </main>
 
-  <!-- Popup -->
+  <!-- === Modal Popup (tidak diubah) === -->
   <div class="modal" id="popupModal">
     <div class="modal-content">
       <h3 id="modalNama"></h3>
       <p><strong>Harga Jual:</strong> <span id="modalJual"></span></p>
       <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
       <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
-      <p id="modalKeterangan" style="display:none;"><strong>ℹ️ Detail:</strong> <span id="modalKetValue"></span></p>
+      <p id="modalKeterangan" style="display:none;"><strong>ℹ️Detail: </strong> <span id="modalKetValue"></span></p>
       <button class="close-btn" onclick="tutupPopup()">Tutup</button>
     </div>
   </div>
@@ -262,8 +278,13 @@
     let currentPage = 1;
     const rowsPerPage = 15;
 
+    function setLoading(show) {
+      document.getElementById("loading-bar").style.display = show ? "block" : "none";
+    }
+
     function fetchData() {
       const url = CSV_BASE_URL + "&t=" + new Date().getTime();
+      setLoading(true);
       Papa.parse(url, {
         download: true,
         header: true,
@@ -274,6 +295,7 @@
           currentPage = 1;
           updateTable();
           updateStatistik(getFiltered());
+          setLoading(false);
         }
       });
     }
@@ -291,20 +313,16 @@
     }
 
     function updateStatistik(list) {
-      const stat = document.getElementById("statistik");
       if (!list || list.length === 0) {
-        stat.innerHTML = `📦 Jumlah: <span class="value">0</span> • 💰 Min: <span class="value">Rp0</span> • 💎 Max: <span class="value">Rp0</span>`;
+        document.getElementById("statistik").textContent = "📦 Barang: 0 • 💰 Min: Rp0 • 💎 Max: Rp0";
         return;
       }
       const hargaList = list.map(i => Number(i["Harga Jual"] || 0)).filter(n => !isNaN(n));
       const min = Math.min(...hargaList);
       const max = Math.max(...hargaList);
       const total = list.length;
-      stat.innerHTML = `
-        📦 Jumlah: <span class="value">${total}</span> • 
-        💰 Min: <span class="value">Rp${min.toLocaleString("id-ID")}</span> • 
-        💎 Max: <span class="value">Rp${max.toLocaleString("id-ID")}</span>
-      `;
+      document.getElementById("statistik").textContent =
+        `📦 Jumlah: ${total} • 💰 Min: Rp${min.toLocaleString("id-ID")} • 💎 Max: Rp${max.toLocaleString("id-ID")}`;
     }
 
     function renderTable(data) {
@@ -355,13 +373,15 @@
     function tutupPopup() { document.getElementById("popupModal").style.display = "none"; }
 
     function updateTable() {
+      setLoading(true);
       setTimeout(() => {
         const filtered = getFiltered();
         const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
         if (currentPage > totalPages) currentPage = totalPages;
         renderTable(filtered);
         updateStatistik(filtered);
-      }, 50);
+        setLoading(false);
+      }, 100);
     }
 
     document.getElementById("next").addEventListener("click", () => {
