@@ -6,7 +6,6 @@
   <title>Daftar Barang</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
-    /* ====== Basic ====== */
     :root {
       --primary: #2563eb;
       --muted: #f3f4f6;
@@ -37,27 +36,30 @@
       padding: 12px;
     }
 
-    /* search & category */
+    /* Pencarian & kategori */
     .search-bar {
       display: flex;
       gap: 10px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       margin-bottom: 8px;
     }
     input[type="text"], select {
-      flex: 1 1 200px;
+      flex: 1 1 50%;
       padding: 12px 14px;
       font-size: 1rem;
       border: 1px solid #cfcfcf;
       border-radius: 10px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
-    select { min-width: 160px; background: white; }
+    select {
+      min-width: 160px;
+      background: white;
+    }
 
-    /* statistik single-line simple */
+    /* Statistik */
     .stats-line {
       display: flex;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       gap: 12px;
       align-items: center;
       font-size: 0.95rem;
@@ -69,12 +71,15 @@
       justify-content: flex-start;
       overflow-x: auto;
     }
+    .stats-line span {
+      white-space: nowrap;
+    }
     .stats-line .dot {
       color: #666;
       margin: 0 6px;
     }
 
-    /* table */
+    /* Tabel */
     .table-container {
       background: white;
       border-radius: 10px;
@@ -102,16 +107,21 @@
       border-bottom: 1px solid #f1f1f1;
       white-space: nowrap;
     }
-    tbody tr:hover { background: #fbfbfb; }
+    tbody tr:hover {
+      background: #fbfbfb;
+    }
 
     .clickable {
       color: var(--primary);
       font-weight: 600;
-      text-decoration: underline;
       cursor: pointer;
+      text-decoration: none; /* Hilangkan garis bawah */
+    }
+    .clickable:hover {
+      color: #1e40af;
     }
 
-    /* pagination */
+    /* Pagination */
     .pagination {
       margin-top: 12px;
       display: flex;
@@ -129,10 +139,17 @@
       cursor: pointer;
       font-size: 0.95rem;
     }
-    button:hover { background: #1e40af; }
-    #page-info { font-size: 0.95rem; color: #333; min-width: 120px; text-align: center; }
+    button:hover {
+      background: #1e40af;
+    }
+    #page-info {
+      font-size: 0.95rem;
+      color: #333;
+      min-width: 120px;
+      text-align: center;
+    }
 
-    /* modal */
+    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -143,7 +160,9 @@
       padding: 12px;
       z-index: 9999;
     }
-    .modal.open { display: flex; }
+    .modal.open {
+      display: flex;
+    }
     .modal-box {
       width: 100%;
       max-width: 420px;
@@ -153,8 +172,13 @@
       box-shadow: 0 8px 30px rgba(0,0,0,0.2);
       text-align: left;
     }
-    .modal-box h3 { margin: 0 0 8px 0; color: var(--primary); }
-    .modal-box p { margin: 6px 0; }
+    .modal-box h3 {
+      margin: 0 0 8px 0;
+      color: var(--primary);
+    }
+    .modal-box p {
+      margin: 6px 0;
+    }
     .close-btn {
       background: var(--primary);
       color: white;
@@ -166,11 +190,26 @@
       cursor: pointer;
     }
 
-    /* responsive */
+    /* Responsif */
     @media (max-width: 640px) {
-      .search-bar { gap: 8px; }
-      .stats-line { font-size: 0.9rem; gap: 8px; padding: 8px; }
-      table { min-width: 600px; }
+      .search-bar {
+        flex-wrap: nowrap;
+        gap: 6px;
+      }
+      input[type="text"], select {
+        flex: 1;
+        font-size: 0.95rem;
+        padding: 10px;
+      }
+      .stats-line {
+        flex-direction: column; /* jadi dua baris di HP */
+        align-items: flex-start;
+        gap: 4px;
+        font-size: 0.9rem;
+      }
+      table {
+        min-width: 600px;
+      }
     }
   </style>
 </head>
@@ -185,8 +224,8 @@
       </select>
     </div>
 
-    <!-- Statistik satu baris sederhana -->
-    <div class="stats-line" id="statsLine" aria-live="polite">
+    <!-- Statistik satu baris -->
+    <div class="stats-line" id="statsLine">
       <span>📦 Barang: <strong id="statCount">0</strong></span>
       <span class="dot">•</span>
       <span>🗂️ Kategori: <strong id="statCats">0</strong></span>
@@ -196,9 +235,8 @@
       <span>💎 Termahal: <strong id="statMax">-</strong></span>
     </div>
 
-    <!-- Table -->
     <div class="table-container">
-      <table id="tabel-barang" aria-describedby="statsLine">
+      <table id="tabel-barang">
         <thead>
           <tr>
             <th>Nama Barang</th>
@@ -212,8 +250,7 @@
       </table>
     </div>
 
-    <!-- Pagination -->
-    <div class="pagination" role="navigation" aria-label="Pagination">
+    <div class="pagination">
       <button id="prev">⬅️</button>
       <div id="page-info">Halaman 0 / 0</div>
       <button id="next">➡️</button>
@@ -221,8 +258,8 @@
   </main>
 
   <!-- Modal popup -->
-  <div class="modal" id="popupModal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal-box" role="document">
+  <div class="modal" id="popupModal">
+    <div class="modal-box">
       <h3 id="modalNama">Nama</h3>
       <p><strong>Harga Jual:</strong> <span id="modalJual">-</span></p>
       <p><strong>Harga Grosir:</strong> <span id="modalGrosir">-</span></p>
@@ -234,225 +271,105 @@
   </div>
 
   <script>
-    // ====== Konfigurasi CSV (ganti sesuai milikmu jika perlu) ======
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv";
-
-    // ====== State ======
-    let dataBarang = [];       // seluruh data
+    let dataBarang = [];
     let currentPage = 1;
     const rowsPerPage = 15;
 
-    // ====== Util ======
-    function escapeHtml(text) {
-      if (text === undefined || text === null) return "";
-      return String(text)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-    function formatNumber(value) {
-      const n = Number(value);
-      if (!isFinite(n)) return escapeHtml(value || "");
-      return n.toLocaleString("id-ID");
+    function formatNumber(n) {
+      const num = Number(n);
+      return isNaN(num) ? n : num.toLocaleString("id-ID");
     }
 
-    // ====== Fetch CSV via PapaParse ======
     Papa.parse(CSV_URL, {
       download: true,
       header: true,
-      skipEmptyLines: true,
       complete: function(results) {
-        // filter baris tanpa nama
-        dataBarang = (results.data || []).filter(r => r["Nama Barang"] && r["Nama Barang"].toString().trim() !== "");
-        populateKategori();
-        currentPage = 1;
-        updateTable();
-      },
-      error: function(err) {
-        console.error("PapaParse error:", err);
-        // tetap inisialisasi ke tampilan kosong
+        dataBarang = results.data.filter(d => d["Nama Barang"]);
         populateKategori();
         updateTable();
       }
     });
 
-    // ====== Populate category select ======
     function populateKategori() {
-      const sel = document.getElementById("kategori");
-      sel.innerHTML = '<option value="">📂 Semua Kategori</option>';
-      const uniq = [...new Set(dataBarang.map(d => (d.Kategori || "").toString().trim()).filter(Boolean))];
-      uniq.forEach(k => {
+      const kategoriSelect = document.getElementById("kategori");
+      const unik = [...new Set(dataBarang.map(d => d.Kategori).filter(Boolean))];
+      unik.forEach(k => {
         const opt = document.createElement("option");
         opt.value = k;
         opt.textContent = k;
-        sel.appendChild(opt);
+        kategoriSelect.appendChild(opt);
       });
-      // restore previously selected if any (optional)
-      // sel.value = localStorage.getItem('lastKategori') || '';
     }
 
-    // ====== Filtering logic ======
     function getFiltered() {
-      const q = (document.getElementById("search").value || "").toLowerCase().trim();
-      const kategori = document.getElementById("kategori").value || "";
-      return dataBarang.filter(item => {
-        const name = (item["Nama Barang"] || "").toLowerCase();
-        const cat = (item["Kategori"] || "");
-        // cari pada nama & kategori (seperti sebelumnya)
-        const nameMatch = !q || name.includes(q);
-        const catMatch = !kategori || cat === kategori;
-        return nameMatch && catMatch;
+      const q = document.getElementById("search").value.toLowerCase();
+      const cat = document.getElementById("kategori").value;
+      return dataBarang.filter(d => {
+        const cocokNama = d["Nama Barang"].toLowerCase().includes(q);
+        const cocokCat = !cat || d.Kategori === cat;
+        return cocokNama && cocokCat;
       });
     }
 
-    // ====== Statistik (berdasarkan filtered set, bukan per page) ======
-    function updateStats(filtered) {
-      const count = filtered.length;
-      const cats = new Set(filtered.map(i => (i.Kategori || "").toString().trim()).filter(Boolean)).size;
-      const hargaArr = filtered.map(i => {
-        const v = parseFloat((i["Harga Jual"] || "").toString().replace(/[^0-9.\-]/g, ""));
-        return isNaN(v) ? null : v;
-      }).filter(v => v !== null);
-      const min = hargaArr.length ? Math.min(...hargaArr) : null;
-      const max = hargaArr.length ? Math.max(...hargaArr) : null;
+    function updateStats(data) {
+      const count = data.length;
+      const cats = new Set(data.map(d => d.Kategori).filter(Boolean)).size;
+      const harga = data.map(d => parseFloat(d["Harga Jual"])).filter(n => !isNaN(n));
+      const min = harga.length ? Math.min(...harga) : 0;
+      const max = harga.length ? Math.max(...harga) : 0;
 
       document.getElementById("statCount").textContent = count;
       document.getElementById("statCats").textContent = cats;
-      document.getElementById("statMin").textContent = min !== null ? "Rp " + formatNumber(min) : "-";
-      document.getElementById("statMax").textContent = max !== null ? "Rp " + formatNumber(max) : "-";
+      document.getElementById("statMin").textContent = harga.length ? "Rp " + formatNumber(min) : "-";
+      document.getElementById("statMax").textContent = harga.length ? "Rp " + formatNumber(max) : "-";
     }
 
-    // ====== Render table page ======
-    function renderTablePage(filtered) {
+    function renderTable(data) {
       const tbody = document.querySelector("#tabel-barang tbody");
       tbody.innerHTML = "";
-
-      if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="5" class="no-data">Barang tidak ditemukan</td></tr>`;
-        document.getElementById("page-info").textContent = `Halaman 0 / 0`;
-        return;
-      }
-
-      const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+      const totalPages = Math.ceil(data.length / rowsPerPage) || 1;
       if (currentPage > totalPages) currentPage = totalPages;
-
       const start = (currentPage - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-      const pageItems = filtered.slice(start, end);
+      const page = data.slice(start, start + rowsPerPage);
 
-      pageItems.forEach(row => {
+      page.forEach(d => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td><span class="clickable" tabindex="0">${escapeHtml(row["Nama Barang"])}</span></td>
-          <td>Rp ${formatNumber(row["Harga Jual"])}</td>
-          <td>${escapeHtml(row["Harga Dagang"] || "-")}</td>
-          <td>${escapeHtml(row["Harga Beli"] || "-")}</td>
-          <td>${escapeHtml(row["Kategori"] || "-")}</td>
-        `;
-        // add click listener to open modal with full details
-        tr.querySelector(".clickable").addEventListener("click", () => openPopup(row));
-        tr.querySelector(".clickable").addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") openPopup(row);
-        });
+          <td><span class="clickable">${d["Nama Barang"]}</span></td>
+          <td>Rp ${formatNumber(d["Harga Jual"])}</td>
+          <td>${d["Harga Grosir"] || "-"}</td>
+          <td>${d["Kode"] || "-"}</td>
+          <td>${d["Kategori"] || "-"}</td>`;
+        tr.querySelector(".clickable").onclick = () => openPopup(d);
         tbody.appendChild(tr);
       });
-
       document.getElementById("page-info").textContent = `Halaman ${currentPage} / ${totalPages}`;
     }
 
-    // ====== Update all: filtered set, stats, and current page display ======
     function updateTable() {
       const filtered = getFiltered();
-      // reset page if out of range
-      const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
-      if (currentPage > totalPages) currentPage = totalPages;
-      // render page & stats
-      renderTablePage(filtered);
       updateStats(filtered);
-      // keep table top visible on small screens when filter changes
-      document.querySelector('.table-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      renderTable(filtered);
     }
 
-    // ====== Pagination controls ======
-    document.getElementById("next").addEventListener("click", () => {
-      const filtered = getFiltered();
-      const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
-      if (currentPage < totalPages) {
-        currentPage++;
-        renderTablePage(filtered);
-        // stats remain based on filtered (not page)
-        updateStats(filtered);
-        // scroll table into view for small screens
-        document.querySelector('.table-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
+    document.getElementById("search").oninput = () => { currentPage = 1; updateTable(); };
+    document.getElementById("kategori").onchange = () => { currentPage = 1; updateTable(); };
 
-    document.getElementById("prev").addEventListener("click", () => {
-      if (currentPage > 1) {
-        currentPage--;
-        const filtered = getFiltered();
-        renderTablePage(filtered);
-        updateStats(filtered);
-        document.querySelector('.table-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
+    document.getElementById("next").onclick = () => { currentPage++; updateTable(); };
+    document.getElementById("prev").onclick = () => { if (currentPage > 1) currentPage--; updateTable(); };
 
-    // ====== Search & category events ======
-    document.getElementById("search").addEventListener("input", () => {
-      currentPage = 1;
-      updateTable();
-    });
-    document.getElementById("kategori").addEventListener("change", () => {
-      currentPage = 1;
-      updateTable();
-    });
-
-    // ====== Popup modal behavior ======
-    const modal = document.getElementById("popupModal");
-    const closeModal = document.getElementById("closeModal");
-    function openPopup(row) {
-      document.getElementById("modalNama").textContent = row["Nama Barang"] || "-";
-      document.getElementById("modalJual").textContent = "Rp " + formatNumber(row["Harga Jual"]);
-      document.getElementById("modalGrosir").textContent = row["Harga Dagang"] || "-";
-      document.getElementById("modalKode").textContent = row["Harga Beli"] || "-";
-      document.getElementById("modalKategori").textContent = row["Kategori"] || "-";
-      if (row["Keterangan"] && row["Keterangan"].toString().trim()) {
-        document.getElementById("modalKetValue").textContent = row["Keterangan"];
-        document.getElementById("modalKeterangan").style.display = "block";
-      } else {
-        document.getElementById("modalKeterangan").style.display = "none";
-      }
-      modal.classList.add("open");
-      modal.setAttribute("aria-hidden", "false");
+    // Popup
+    function openPopup(d) {
+      document.getElementById("modalNama").textContent = d["Nama Barang"];
+      document.getElementById("modalJual").textContent = "Rp " + formatNumber(d["Harga Jual"]);
+      document.getElementById("modalGrosir").textContent = d["Harga Grosir"] || "-";
+      document.getElementById("modalKode").textContent = d["Kode"] || "-";
+      document.getElementById("modalKategori").textContent = d["Kategori"] || "-";
+      document.getElementById("popupModal").classList.add("open");
     }
-    function closePopup() {
-      modal.classList.remove("open");
-      modal.setAttribute("aria-hidden", "true");
-    }
-    closeModal.addEventListener("click", closePopup);
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) closePopup();
-    });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closePopup();
-    });
-
-    // ====== Accessibility: focus outline for clickable names (optional) ======
-    document.addEventListener('focusin', (e) => {
-      if (e.target.classList && e.target.classList.contains('clickable')) {
-        e.target.style.outline = '2px solid rgba(37,99,235,0.25)';
-        e.target.style.outlineOffset = '2px';
-      }
-    });
-    document.addEventListener('focusout', (e) => {
-      if (e.target.classList && e.target.classList.contains('clickable')) {
-        e.target.style.outline = 'none';
-      }
-    });
-
-    // ====== End ======
+    document.getElementById("closeModal").onclick = () => document.getElementById("popupModal").classList.remove("open");
+    document.getElementById("popupModal").onclick = (e) => { if (e.target.id === "popupModal") e.target.classList.remove("open"); };
   </script>
 </body>
 </html>
