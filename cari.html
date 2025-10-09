@@ -2,17 +2,18 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Daftar Barang</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
     body {
       font-family: "Segoe UI", Arial, sans-serif;
-      margin: 0;
-      padding: 0;
       background: #f9fafb;
       color: #333;
+      margin: 0;
+      padding: 0;
     }
+
     header {
       background: #2563eb;
       color: white;
@@ -24,40 +25,40 @@
       top: 0;
       z-index: 100;
     }
+
     main {
-      padding: 12px;
       max-width: 1000px;
       margin: auto;
+      padding: 16px;
     }
 
-    /* === Search Bar Layout === */
+    /* ===== SEARCH BAR ===== */
     .search-bar {
       display: flex;
-      align-items: center;
       gap: 10px;
-      margin-bottom: 12px;
       flex-wrap: wrap;
+      align-items: stretch;
+      margin-bottom: 12px;
     }
 
     .search-wrapper {
       position: relative;
-      flex: 1;
-      min-width: 240px;
+      flex: 1 1 300px;
     }
 
     .search-wrapper input {
       width: 100%;
-      font-size: 1.05rem;
+      font-size: 1rem;
       padding: 12px 42px 12px 14px;
       border: 1px solid #bbb;
       border-radius: 10px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     .search-wrapper input:focus {
       border-color: #2563eb;
       outline: none;
-      box-shadow: 0 0 6px rgba(37,99,235,0.3);
+      box-shadow: 0 0 6px rgba(37, 99, 235, 0.3);
     }
 
     /* Tombol X */
@@ -66,8 +67,8 @@
       right: 14px;
       top: 50%;
       transform: translateY(-50%);
-      cursor: pointer;
       display: none;
+      cursor: pointer;
     }
 
     .clear-btn svg {
@@ -82,52 +83,47 @@
     }
 
     select {
-      flex-shrink: 0;
-      font-size: 1.05rem;
+      flex: 0 0 200px;
+      font-size: 1rem;
       padding: 12px 14px;
       border: 1px solid #bbb;
       border-radius: 10px;
-      min-width: 180px;
       background: white;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     select:focus {
       border-color: #2563eb;
       outline: none;
-      box-shadow: 0 0 6px rgba(37,99,235,0.3);
+      box-shadow: 0 0 6px rgba(37, 99, 235, 0.3);
     }
 
     @media (max-width: 600px) {
       .search-bar {
         flex-direction: column;
-        align-items: stretch;
       }
       .search-wrapper, select {
         width: 100%;
       }
     }
 
-    /* Statistik dan Tabel */
+    /* ===== STATISTIK ===== */
     #statistik {
       font-size: 0.95rem;
       color: #444;
       margin-bottom: 10px;
       text-align: center;
       background: #eef2ff;
-      padding: 6px 8px;
+      padding: 8px;
       border-radius: 6px;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
     }
 
+    /* ===== TABEL ===== */
     .table-container {
       overflow-x: auto;
       background: white;
       border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     table {
@@ -146,41 +142,49 @@
     th {
       background: #f3f4f6;
       font-weight: bold;
+      cursor: pointer;
       position: sticky;
       top: 0;
-      cursor: pointer;
-      z-index: 10;
+      z-index: 5;
     }
 
-    th.sorted-asc::after { content: " ⬆️"; }
-    th.sorted-desc::after { content: " ⬇️"; }
-
-    tr:hover { background: #f9f9f9; }
-    .clickable { color: #2563eb; font-weight: 600; text-decoration: none; }
+    tr:hover {
+      background: #f9f9f9;
+    }
 
     .pagination {
-      margin-top: 15px;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
+      margin-top: 16px;
       flex-wrap: wrap;
     }
 
     button {
       padding: 10px 16px;
       border: none;
-      border-radius: 10px;
-      cursor: pointer;
+      border-radius: 8px;
       background: #2563eb;
       color: white;
-      font-size: 1rem;
-      transition: 0.2s;
+      cursor: pointer;
+      transition: background 0.2s;
     }
-    button:hover { background: #1e40af; }
 
-    .no-data { text-align: center; color: #999; padding: 20px; font-size: 1rem; }
-    mark { background-color: yellow; color: black; }
+    button:hover {
+      background: #1e40af;
+    }
+
+    .no-data {
+      text-align: center;
+      color: #777;
+      padding: 16px;
+    }
+
+    mark {
+      background: yellow;
+      color: black;
+    }
   </style>
 </head>
 <body>
@@ -188,7 +192,7 @@
   <main>
     <div class="search-bar">
       <div class="search-wrapper">
-        <input type="text" id="search" placeholder="🔍 Cari barang..." />
+        <input type="text" id="search" placeholder="🔍 Cari barang...">
         <span id="clearSearch" class="clear-btn" title="Hapus pencarian">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
@@ -228,28 +232,23 @@
   <script>
     const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv";
     let dataBarang = [], currentPage = 1, rowsPerPage = 15;
-    let currentSort = { key: "", order: "" };
 
     function fetchData() {
-      const url = CSV_BASE_URL + "&t=" + new Date().getTime();
-      Papa.parse(url, {
+      Papa.parse(CSV_BASE_URL, {
         download: true,
         header: true,
-        skipEmptyLines: true,
-        complete: results => {
-          dataBarang = results.data.filter(row => row["Nama Barang"]);
+        complete: res => {
+          dataBarang = res.data.filter(r => r["Nama Barang"]);
           populateKategori();
-          currentPage = 1;
           updateTable();
-          updateStatistik(getFiltered());
+          updateStatistik(dataBarang);
         }
       });
     }
 
     function populateKategori() {
       const select = document.getElementById("kategori");
-      select.innerHTML = '<option value="">📂 Semua Kategori</option>';
-      const uniq = [...new Set(dataBarang.map(i => i.Kategori).filter(Boolean))];
+      const uniq = [...new Set(dataBarang.map(d => d.Kategori).filter(Boolean))];
       uniq.forEach(k => {
         const opt = document.createElement("option");
         opt.value = k;
@@ -258,93 +257,80 @@
       });
     }
 
-    function updateStatistik(list) {
-      if (!list || list.length === 0) {
-        document.getElementById("statistik").textContent = "📦 Barang: 0 • 💰 Min: Rp0 • 💎 Max: Rp0";
-        return;
-      }
-      const hargaList = list.map(i => Number(i["Harga Jual"] || 0)).filter(n => !isNaN(n));
-      const min = Math.min(...hargaList);
-      const max = Math.max(...hargaList);
-      document.getElementById("statistik").textContent =
-        `📦 Jumlah: ${list.length} • 💰 Min: Rp${min.toLocaleString("id-ID")} • 💎 Max: Rp${max.toLocaleString("id-ID")}`;
+    function getFiltered() {
+      const s = document.getElementById("search").value.toLowerCase();
+      const k = document.getElementById("kategori").value;
+      return dataBarang.filter(item => {
+        const nama = item["Nama Barang"]?.toLowerCase().includes(s);
+        const kategori = item["Kategori"]?.toLowerCase().includes(s);
+        const cocokKategori = !k || item.Kategori === k;
+        return (nama || kategori) && cocokKategori;
+      });
     }
 
     function renderTable(data) {
       const tbody = document.querySelector("#tabel-barang tbody");
       tbody.innerHTML = "";
-      const searchVal = document.getElementById("search").value.toLowerCase();
-
-      if (!data || data.length === 0) {
+      if (!data.length) {
         tbody.innerHTML = `<tr><td colspan="5" class="no-data">Barang tidak ditemukan</td></tr>`;
-        document.getElementById("page-info").textContent = "";
         return;
       }
 
       const start = (currentPage - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-      const paginated = data.slice(start, end);
+      const pageData = data.slice(start, start + rowsPerPage);
 
-      paginated.forEach(row => {
+      pageData.forEach(row => {
         const tr = document.createElement("tr");
-        const nama = highlightText(row["Nama Barang"], searchVal);
-        const jual = highlightText("Rp " + formatNumber(row["Harga Jual"]), searchVal);
-
         tr.innerHTML = `
-          <td class="clickable">${nama}</td>
-          <td>${jual}</td>
-          <td>${escapeHtml(row["Harga Dagang"] || "")}</td>
-          <td>${escapeHtml(row["Harga Beli"] || "")}</td>
-          <td>${escapeHtml(row["Kategori"] || "")}</td>
-        `;
+          <td>${highlight(row["Nama Barang"])}</td>
+          <td>Rp ${format(row["Harga Jual"])}</td>
+          <td>${row["Harga Dagang"] || "-"}</td>
+          <td>${row["Harga Beli"] || "-"}</td>
+          <td>${row["Kategori"] || "-"}</td>`;
         tbody.appendChild(tr);
       });
 
       document.getElementById("page-info").textContent =
-        `Halaman ${currentPage} / ${Math.ceil(data.length / rowsPerPage)}`;
+        `Halaman ${currentPage} dari ${Math.ceil(data.length / rowsPerPage)}`;
     }
 
-    function highlightText(text, term) {
-      if (!term) return escapeHtml(text);
-      const re = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
-      return escapeHtml(text).replace(re, "<mark>$1</mark>");
-    }
-
-    function getFiltered() {
+    function highlight(text = "") {
       const s = document.getElementById("search").value.toLowerCase();
-      const k = document.getElementById("kategori").value;
-      return dataBarang.filter(item => {
-        const namaMatch = item["Nama Barang"]?.toLowerCase().includes(s);
-        const kategoriMatch = item["Kategori"]?.toLowerCase().includes(s);
-        const filterKategori = (k === "" || item.Kategori === k);
-        return (namaMatch || kategoriMatch) && filterKategori;
-      });
+      if (!s) return text;
+      return text.replace(new RegExp(s, "gi"), m => `<mark>${m}</mark>`);
+    }
+
+    function format(num) {
+      const n = Number(num);
+      return isNaN(n) ? num : n.toLocaleString("id-ID");
     }
 
     function updateTable() {
-      const filtered = getFiltered();
-      renderTable(filtered);
-      updateStatistik(filtered);
+      renderTable(getFiltered());
     }
 
-    const searchInput = document.getElementById("search");
-    const clearBtn = document.getElementById("clearSearch");
+    function updateStatistik(list) {
+      if (!list.length) {
+        document.getElementById("statistik").textContent = "📦 Barang: 0 • 💰 Min: Rp0 • 💎 Max: Rp0";
+        return;
+      }
+      const harga = list.map(d => Number(d["Harga Jual"]) || 0);
+      document.getElementById("statistik").textContent =
+        `📦 Jumlah: ${list.length} • 💰 Min: Rp${Math.min(...harga).toLocaleString("id-ID")} • 💎 Max: Rp${Math.max(...harga).toLocaleString("id-ID")}`;
+    }
 
-    searchInput.addEventListener("input", () => {
-      clearBtn.style.display = searchInput.value ? "block" : "none";
-      currentPage = 1;
+    const input = document.getElementById("search");
+    const clear = document.getElementById("clearSearch");
+    input.addEventListener("input", () => {
+      clear.style.display = input.value ? "block" : "none";
       updateTable();
     });
-
-    clearBtn.addEventListener("click", () => {
-      searchInput.value = "";
-      clearBtn.style.display = "none";
-      currentPage = 1;
+    clear.addEventListener("click", () => {
+      input.value = "";
+      clear.style.display = "none";
       updateTable();
     });
-
-    document.getElementById("kategori").addEventListener("change", () => { currentPage = 1; updateTable(); });
-
+    document.getElementById("kategori").addEventListener("change", updateTable);
     fetchData();
   </script>
 </body>
