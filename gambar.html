@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Optimasi Gambar Cepat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    .image-container {
+      max-width: 800px;
+      margin: auto;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    p {
+      color: #555;
+      font-size: 0.95rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌄 Contoh Gambar Optimasi Web</h1>
+
+  <div class="image-container">
+    <picture>
+      <!-- Format paling ringan -->
+      <source 
+        srcset="images/foto-400.avif 400w,
+                images/foto-800.avif 800w,
+                images/foto-1200.avif 1200w"
+        type="image/avif">
+
+      <!-- Format kedua (fallback) -->
+      <source 
+        srcset="images/foto-400.webp 400w,
+                images/foto-800.webp 800w,
+                images/foto-1200.webp 1200w"
+        type="image/webp">
+
+      <!-- Fallback terakhir (JPG) -->
+      <img 
+        src="images/foto-800.jpg"
+        srcset="images/foto-400.jpg 400w,
+                images/foto-800.jpg 800w,
+                images/foto-1200.jpg 1200w"
+        sizes="(max-width: 600px) 400px,
+               (max-width: 1000px) 800px,
+               1200px"
+        alt="Pemandangan gunung dengan langit biru jernih"
+        loading="lazy">
+    </picture>
+  </div>
+
+  <p>Gambar ini otomatis memilih format & ukuran terbaik sesuai perangkat pengguna.</p>
+
+</body>
+</html>
