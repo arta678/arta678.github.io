@@ -116,9 +116,7 @@
     }
     th.sorted-asc::after { content: " ⬆️"; }
     th.sorted-desc::after { content: " ⬇️"; }
-    tr:hover {
-      background: #f9f9f9;
-    }
+    tr:hover { background: #f9f9f9; }
     .clickable {
       color: #2563eb;
       font-weight: 600;
@@ -185,10 +183,16 @@
     }
     .close-btn:hover { background: #1e40af; }
     .close-btn + .close-btn {
-      background: #22c55e; /* tombol Gambar hijau */
+      background: #22c55e; /* Gambar hijau */
     }
     .close-btn + .close-btn:hover {
       background: #16a34a;
+    }
+    .video-btn {
+      background: #ef4444; /* merah */
+    }
+    .video-btn:hover {
+      background: #dc2626;
     }
     .no-data { text-align: center; color: #999; padding: 20px; font-size: 1rem; }
     mark { background-color: yellow; color: black; }
@@ -238,6 +242,7 @@
       <div style="display:flex; gap:10px;">
         <button class="close-btn" onclick="tutupPopup()" style="flex:1;">Tutup</button>
         <button class="close-btn" id="gambarBtn" style="flex:1;">🖼️ Gambar</button>
+        <button class="close-btn video-btn" id="videoBtn" style="flex:1;">🎥 Video</button>
       </div>
     </div>
   </div>
@@ -350,7 +355,16 @@
       const nama = document.getElementById("modalNama").textContent.trim();
       if (!nama) return alert("Nama barang tidak ditemukan.");
       const query = encodeURIComponent(nama);
-      const url = `https://www.google.com/search?tbm=isch&q=${query}`;
+      const url = `https://www.google.com/search?tbm=isch&tbs=isz:l,itp:photo,ift:jpg&q=${query}`;
+      window.open(url, "_blank");
+    });
+
+    // Tombol Video (YouTube)
+    document.getElementById("videoBtn").addEventListener("click", () => {
+      const nama = document.getElementById("modalNama").textContent.trim();
+      if (!nama) return alert("Nama barang tidak ditemukan.");
+      const query = encodeURIComponent(nama);
+      const url = `https://www.youtube.com/results?search_query=${query}`;
       window.open(url, "_blank");
     });
 
@@ -413,7 +427,7 @@
     });
 
     function formatNumber(v){ const n = Number(v); return !isFinite(n)?escapeHtml(v||""):n.toLocaleString("id-ID"); }
-    function escapeHtml(t){ if(t===undefined||t===null)return""; return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
+    function escapeHtml(t){ if(t===undefined||t===null)return""; return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
     fetchData();
   </script>
