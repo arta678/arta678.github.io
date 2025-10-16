@@ -6,6 +6,13 @@
   <title>Daftar Barang</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
+    #gambarBtn:hover {
+  background: #16a34a; /* hijau lebih gelap */
+}
+#videoBtn:hover {
+  background: #cc0000; /* merah lebih gelap */
+}
+
     input[type="text"], select {
       width: 100%;
       font-size: 18px;
@@ -232,20 +239,38 @@
     </div>
   </main>
 
-  <div class="modal" id="popupModal">
-    <div class="modal-content">
-      <h3 id="modalNama"></h3>
-      <p><strong>Harga Jual:</strong> <span id="modalJual"></span></p>
-      <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
-      <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
-      <p id="modalKeterangan" style="display:none;"><strong>ℹ️Detail: </strong> <span id="modalKetValue"></span></p>
-      <div style="display:flex; gap:10px;">
-        <button class="close-btn" onclick="tutupPopup()" style="flex:1;">Tutup</button>
-        <button class="close-btn" id="gambarBtn" style="flex:1;">🖼️ Gambar</button>
-        <button class="close-btn video-btn" id="videoBtn" style="flex:1;">🎥 Video</button>
-      </div>
+<div class="modal" id="popupModal">
+  <div class="modal-content">
+    <h3 id="modalNama"></h3>
+    <p><strong>Harga Jual:</strong> <span id="modalJual"></span></p>
+    <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
+    <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
+    <p id="modalKeterangan" style="display:none;"><strong>ℹ️ Detail: </strong> <span id="modalKetValue"></span></p>
+
+    <div style="display: flex; gap: 10px; margin-top: 15px;">
+      <button class="close-btn" onclick="tutupPopup()" style="flex:1;">Tutup</button>
+
+      <!-- Tombol Gambar -->
+      <button class="close-btn" id="gambarBtn"
+        style="flex:1; background:#22c55e; color:white; display:flex; align-items:center; justify-content:center; gap:6px;">
+        📷 Gambar
+      </button>
+
+      <!-- Tombol Video (logo YouTube SVG) -->
+      <button class="close-btn" id="videoBtn"
+        style="flex:1; background:#ff0000; color:white; display:flex; align-items:center; justify-content:center; gap:6px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+          <path d="M10 15l5.19-3L10 9v6z"></path>
+          <path
+            d="M21.8 8s-.2-1.4-.8-2c-.8-.8-1.7-.8-2.2-.9C16 5 12 5 12 5h0s-4 0-6.8.1c-.6 0-1.4.1-2.2.9-.6.6-.8 2-.8 2S2 9.6 2 11.3v1.4C2 14.4 2.2 16 2.2 16s.2 1.4.8 2c.8.8 1.9.8 2.4.9 1.8.1 7.6.1 7.6.1s4 0 6.8-.1c.6 0 1.4-.1 2.2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.3V11.3c0-1.7-.2-3.3-.2-3.3z">
+          </path>
+        </svg>
+        Video
+      </button>
     </div>
   </div>
+</div>
+
 
   <script>
     const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv";
@@ -350,23 +375,24 @@
       document.getElementById("popupModal").style.display = "none";
     }
 
-    // Tombol Gambar
-    document.getElementById("gambarBtn").addEventListener("click", () => {
-      const nama = document.getElementById("modalNama").textContent.trim();
-      if (!nama) return alert("Nama barang tidak ditemukan.");
-      const query = encodeURIComponent(nama);
-      const url = `https://www.google.com/search?tbm=isch&tbs=isz:l,itp:photo,ift:jpg&q=${query}`;
-      window.open(url, "_blank");
-    });
+// Tombol Gambar (Google Images)
+document.getElementById("gambarBtn").addEventListener("click", () => {
+  const nama = document.getElementById("modalNama").textContent.trim();
+  if (!nama) return alert("Nama barang tidak ditemukan.");
+  const query = encodeURIComponent(nama);
+  const url = `https://www.google.com/search?tbm=isch&tbs=isz:l,itp:photo,ift:jpg&q=${query}`;
+  window.open(url, "_blank");
+});
 
-    // Tombol Video (YouTube)
-    document.getElementById("videoBtn").addEventListener("click", () => {
-      const nama = document.getElementById("modalNama").textContent.trim();
-      if (!nama) return alert("Nama barang tidak ditemukan.");
-      const query = encodeURIComponent(nama);
-      const url = `https://www.youtube.com/results?search_query=${query}`;
-      window.open(url, "_blank");
-    });
+// Tombol Video (YouTube)
+document.getElementById("videoBtn").addEventListener("click", () => {
+  const nama = document.getElementById("modalNama").textContent.trim();
+  if (!nama) return alert("Nama barang tidak ditemukan.");
+  const query = encodeURIComponent(nama);
+  const url = `https://www.youtube.com/results?search_query=${query}`;
+  window.open(url, "_blank");
+});
+
 
     function updateTable() {
       const filtered = getFiltered();
