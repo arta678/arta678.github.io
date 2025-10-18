@@ -346,19 +346,26 @@
       return escapeHtml(text).replace(re, "<mark>$1</mark>");
     }
 
-    function bukaPopup(row) {
-      document.getElementById("modalNama").textContent = row["Nama Barang"] || "-";
-      document.getElementById("modalJual").textContent = "Rp " + formatNumber(row["Harga Jual"]);
-      document.getElementById("modalGrosir").textContent = row["Harga Dagang"] || "-";
-      document.getElementById("modalKategori").textContent = row["Kategori"] || "-";
-      if (row["Keterangan"] && row["Keterangan"].trim() !== "") {
-        document.getElementById("modalKetValue"].textContent = row["Keterangan"];
-        document.getElementById("modalKeterangan"].style.display = "block";
-      } else {
-        document.getElementById("modalKeterangan"].style.display = "none";
-      }
-      document.getElementById("popupModal").style.display = "flex";
-    }
+function bukaPopup(row) {
+  document.getElementById("modalNama").textContent = row["Nama Barang"] || "-";
+  document.getElementById("modalJual").textContent = "Rp " + formatNumber(row["Harga Jual"]);
+  document.getElementById("modalGrosir").textContent = row["Harga Dagang"] || "-";
+
+  // Tambahan: tampilkan Harga Beli (dalam kode)
+  const hargaBeli = row["Harga Beli"] ? konversiHargaKeKode(row["Harga Beli"]) : "-";
+  document.getElementById("modalBeli").textContent = hargaBeli;
+
+  document.getElementById("modalKategori").textContent = row["Kategori"] || "-";
+  if (row["Keterangan"] && row["Keterangan"].trim() !== "") {
+    document.getElementById("modalKetValue").textContent = row["Keterangan"];
+    document.getElementById("modalKeterangan").style.display = "block";
+  } else {
+    document.getElementById("modalKeterangan").style.display = "none";
+  }
+
+  document.getElementById("popupModal").style.display = "flex";
+}
+
 
     function tutupPopup() {
       document.getElementById("popupModal").style.display = "none";
