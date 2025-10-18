@@ -349,8 +349,8 @@
     function bukaPopup(row) {
       document.getElementById("modalNama").textContent = row["Nama Barang"] || "-";
       document.getElementById("modalJual").textContent = "Rp " + formatNumber(row["Harga Jual"]);
-      document.getElementById("modalGrosir"].textContent = row["Harga Dagang"] || "-";
-      document.getElementById("modalKategori"].textContent = row["Kategori"] || "-";
+      document.getElementById("modalGrosir").textContent = row["Harga Dagang"] || "-";
+      document.getElementById("modalKategori").textContent = row["Kategori"] || "-";
       if (row["Keterangan"] && row["Keterangan"].trim() !== "") {
         document.getElementById("modalKetValue"].textContent = row["Keterangan"];
         document.getElementById("modalKeterangan"].style.display = "block";
