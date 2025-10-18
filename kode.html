@@ -2,188 +2,253 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
   <title>Daftar Barang</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
+    #gambarBtn:hover {
+      background: #16a34a; /* hijau lebih gelap */
+    }
+    #videoBtn:hover {
+      background: #cc0000; /* merah lebih gelap */
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      font-size: 18px;
+      padding: 12px 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
     body {
-      font-family: Arial, sans-serif;
-      background: #f3f4f6;
+      font-family: "Segoe UI", Arial, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+      background: #f9fafb;
+      color: #333;
     }
-    h1 {
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 14px;
       text-align: center;
-      margin-bottom: 20px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .controls {
+    main {
+      padding: 12px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .search-bar {
       display: flex;
-      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    input, select {
+      padding: 14px;
+      font-size: 1.1rem;
+      border: 1px solid #bbb;
+      border-radius: 10px;
+      flex: 1;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    select {
+      background: white;
+      min-width: 180px;
+    }
+    input:focus, select:focus {
+      border-color: #2563eb;
+      outline: none;
+      box-shadow: 0 0 6px rgba(37,99,235,0.3);
+    }
+    #statistik {
+      font-size: 0.95rem;
+      color: #444;
       margin-bottom: 10px;
+      text-align: center;
+      background: #eef2ff;
+      padding: 6px 8px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: center;
       flex-wrap: wrap;
       gap: 10px;
     }
-    input, select {
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+    @media (max-width: 600px) {
+      #statistik {
+        flex-direction: column;
+        font-size: 0.9rem;
+        gap: 4px;
+        padding: 6px;
+      }
+      .search-bar {
+        flex-direction: row;
+      }
+      .search-bar input, .search-bar select {
+        flex: 1;
+        font-size: 16px;
+      }
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    .table-container {
+      overflow-x: auto;
       background: white;
       border-radius: 10px;
-      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 700px;
     }
     th, td {
-      padding: 10px;
       border-bottom: 1px solid #eee;
+      padding: 10px 12px;
       text-align: left;
+      white-space: nowrap;
     }
     th {
+      background: #f3f4f6;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 10;
       cursor: pointer;
-      background: #e5e7eb;
     }
-    tr:hover {
-      background: #f9fafb;
-    }
+    th.sorted-asc::after { content: " ⬆️"; }
+    th.sorted-desc::after { content: " ⬇️"; }
+    tr:hover { background: #f9f9f9; }
     .clickable {
       color: #2563eb;
-      cursor: pointer;
-      font-weight: bold;
+      font-weight: 600;
+      text-decoration: none;
     }
     .pagination {
-      margin-top: 10px;
+      margin-top: 15px;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
     button {
-      padding: 6px 12px;
-      border-radius: 6px;
+      padding: 12px 18px;
       border: none;
+      border-radius: 10px;
       cursor: pointer;
+      background: white;
+      color: black;
+      font-size: 1rem;
+      transition: 0.2s;
     }
-    .no-data {
-      text-align: center;
-      padding: 20px;
-    }
-
-    /* Popup Modal */
-    #popupModal {
+    button:hover { background: #1e40af; }
+    #page-info { font-size: 1rem; }
+    .modal {
       display: none;
       position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      align-items: center;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
       justify-content: center;
-      z-index: 999;
+      align-items: center;
+      animation: fadeIn 0.3s ease;
+      padding: 10px;
     }
-    .popup-content {
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-content {
       background: white;
-      padding: 20px;
       border-radius: 12px;
-      width: 90%;
+      padding: 20px;
+      width: 95%;
       max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
       text-align: left;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s ease;
     }
-    .popup-content h2 {
-      margin-top: 0;
-    }
-    .popup-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    #gambarBtn {
-      background: #16a34a;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      border: none;
-    }
-    #gambarBtn:hover {
-      background: #15803d;
-    }
-    #videoBtn {
-      background: #dc2626;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      border: none;
-    }
-    #videoBtn:hover {
-      background: #b91c1c;
-    }
+    @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal h3 { margin-top: 0; color: #2563eb; font-size: 1.3rem; }
+    .modal p { margin: 8px 0; font-size: 1rem; text-align: left; }
     .close-btn {
-      background: #6b7280;
-      color: white;
+      margin-top: 15px;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 100%;
     }
-    .close-btn:hover {
-      background: #4b5563;
+    .video-btn {
+      background: #ef4444; /* merah */
     }
+    .video-btn:hover {
+      background: #dc2626;
+    }
+    .no-data { text-align: center; color: #999; padding: 20px; font-size: 1rem; }
+    mark { background-color: yellow; color: black; }
   </style>
 </head>
 <body>
-  <h1>📦 Daftar Barang</h1>
-  <div class="controls">
-    <input type="search" id="search" placeholder="🔍 Cari barang...">
-    <select id="kategori"></select>
-  </div>
-  <p id="statistik"></p>
-  <table id="tabel-barang">
-    <thead>
-      <tr>
-        <th data-sort="Nama Barang">Nama Barang</th>
-        <th data-sort="Harga Jual">Harga Jual</th>
-        <th>Harga Dagang</th>
-        <th>Harga Beli</th>
-        <th>Kategori</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <div class="pagination">
-    <button id="prev">⬅️ Sebelumnya</button>
-    <span id="page-info"></span>
-    <button id="next">Berikutnya ➡️</button>
-  </div>
+  <header>📦 Daftar Barang</header>
+  <main>
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="🔍 Cari barang..." />
+      <select id="kategori">
+        <option value="">📂 Semua Kategori</option>
+      </select>
+    </div>
 
-  <!-- Popup -->
-  <div id="popupModal">
-    <div class="popup-content">
-      <h2 id="modalNama"></h2>
-      <p><b>Harga Jual:</b> <span id="modalJual"></span></p>
-      <p><b>Harga Dagang:</b> <span id="modalGrosir"></span></p>
-      <p><b>Kategori:</b> <span id="modalKategori"></span></p>
-      <div id="modalKeterangan" style="display:none;">
-        <p><b>Keterangan:</b></p>
-        <p id="modalKetValue" style="white-space: pre-wrap;"></p>
-      </div>
-      <div class="popup-buttons">
-        <!-- Tombol Gambar -->
-        <button id="gambarBtn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="22" height="22">
-            <path fill="#34A853" d="M14 30.1l6-7.2 8 10.1H8z"/>
-            <path fill="#4285F4" d="M42 38H6c-1.1 0-2-.9-2-2V12c0-1.1.9-2 2-2h36c1.1 0 2 .9 2 2v24c0 1.1-.9 2-2 2zM6 12v24h36V12H6z"/>
-            <circle cx="24" cy="19" r="4" fill="#EA4335"/>
-          </svg>
-          Gambar
+    <div id="statistik">📦 Jumlah: 0 • 💰 Min: Rp0 • 💎 Max: Rp0</div>
+
+    <div class="table-container">
+      <table id="tabel-barang">
+        <thead>
+          <tr>
+            <th data-sort="Nama Barang">Nama Barang</th>
+            <th data-sort="Harga Jual">Harga Jual</th>
+            <th>Harga Grosir</th>
+            <th>Kode</th>
+            <th>Kategori</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button id="prev">⬅️</button>
+      <span id="page-info"></span>
+      <button id="next">➡️</button>
+    </div>
+  </main>
+
+  <div class="modal" id="popupModal">
+    <div class="modal-content">
+      <h3 id="modalNama"></h3>
+      <p><strong>Harga Jual:</strong> <span id="modalJual"></span></p>
+      <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
+      <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
+      <p id="modalKeterangan" style="display:none;"><strong>ℹ️ Detail: </strong> <span id="modalKetValue"></span></p>
+
+      <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <button class="close-btn" id="gambarBtn"
+          style="flex:1; border: 1px solid black;  background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">
+          🌄 Gambar
         </button>
-        <!-- Tombol Video -->
-        <button id="videoBtn">
-          <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -77 512 512" width="22">
-            <path fill="white" d="M501.453 56.104C495.574 34.05 478.195 16.66 456.14 10.785 416.82 0 256 0 256 0S95.184 0 55.86 10.785C33.805 16.66 16.426 34.05 10.547 56.104 0 95.43 0 179.25 0 179.25s0 83.82 10.547 123.146c5.879 22.055 23.258 39.445 45.313 45.32C95.184 358.5 256 358.5 256 358.5s160.82 0 200.14-10.785c22.055-5.875 39.434-23.265 45.313-45.32C512 263.07 512 179.25 512 179.25s0-83.82-10.547-123.146zM204.797 255.754V102.746l133.543 76.504z"/>
-          </svg>
-          Video
+        <button class="close-btn" id="videoBtn"
+          style="flex:1; border: 1px solid black; background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">
+          🎬 Video
         </button>
-        <!-- Tombol Tutup -->
-        <button class="close-btn" onclick="tutupPopup()">Tutup</button>
+        <button class="close-btn" onclick="tutupPopup()" style="flex:1; border: 2px solid red;">🛇 Tutup</button>
       </div>
     </div>
   </div>
@@ -192,6 +257,12 @@
     const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv";
     let dataBarang = [], currentPage = 1, rowsPerPage = 15;
     let currentSort = { key: "", order: "" };
+
+    // 🔹 Fungsi konversi angka ke kode huruf
+    function konversiHargaKeKode(angka) {
+      const map = { '1': 'W', '2': 'I', '3': 'G', '4': 'U', '5': 'N', '6': 'A', '7': 'M', '8': 'O', '9': 'T', '0': 'R' };
+      return angka.toString().split('').map(ch => map[ch] ?? ch).join('');
+    }
 
     function fetchData() {
       const url = CSV_BASE_URL + "&t=" + new Date().getTime();
@@ -233,15 +304,11 @@
         `📦 Jumlah: ${list.length} • 💰 Min: Rp${min.toLocaleString("id-ID")} • 💎 Max: Rp${max.toLocaleString("id-ID")}`;
     }
 
-    function konversiHargaKeKode(angka) {
-      const map = { '1': 'W', '2': 'I', '3': 'G', '4': 'U', '5': 'N', '6': 'A', '7': 'M', '8': 'O', '9': 'T', '0': 'R' };
-      return angka.toString().split('').map(ch => map[ch] ?? ch).join('');
-    }
-
     function renderTable(data) {
       const tbody = document.querySelector("#tabel-barang tbody");
       tbody.innerHTML = "";
       const searchVal = document.getElementById("search").value.toLowerCase();
+
       if (!data || data.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" class="no-data">Barang tidak ditemukan</td></tr>`;
         document.getElementById("page-info").textContent = "";
@@ -282,13 +349,13 @@
     function bukaPopup(row) {
       document.getElementById("modalNama").textContent = row["Nama Barang"] || "-";
       document.getElementById("modalJual").textContent = "Rp " + formatNumber(row["Harga Jual"]);
-      document.getElementById("modalGrosir").textContent = row["Harga Dagang"] || "-";
-      document.getElementById("modalKategori").textContent = row["Kategori"] || "-";
+      document.getElementById("modalGrosir"].textContent = row["Harga Dagang"] || "-";
+      document.getElementById("modalKategori"].textContent = row["Kategori"] || "-";
       if (row["Keterangan"] && row["Keterangan"].trim() !== "") {
-        document.getElementById("modalKetValue").textContent = row["Keterangan"];
-        document.getElementById("modalKeterangan").style.display = "block";
+        document.getElementById("modalKetValue"].textContent = row["Keterangan"];
+        document.getElementById("modalKeterangan"].style.display = "block";
       } else {
-        document.getElementById("modalKeterangan").style.display = "none";
+        document.getElementById("modalKeterangan"].style.display = "none";
       }
       document.getElementById("popupModal").style.display = "flex";
     }
@@ -297,14 +364,16 @@
       document.getElementById("popupModal").style.display = "none";
     }
 
+    // Tombol Gambar (Google Images)
     document.getElementById("gambarBtn").addEventListener("click", () => {
       const nama = document.getElementById("modalNama").textContent.trim();
       if (!nama) return alert("Nama barang tidak ditemukan.");
       const query = encodeURIComponent(nama);
-      const url = `https://www.google.com/search?tbm=isch&q=${query}`;
+      const url = `https://www.google.com/search?tbm=isch&tbs=isz:l,itp:photo,ift:jpg&q=${query}`;
       window.open(url, "_blank");
     });
 
+    // Tombol Video (YouTube)
     document.getElementById("videoBtn").addEventListener("click", () => {
       const nama = document.getElementById("modalNama").textContent.trim();
       if (!nama) return alert("Nama barang tidak ditemukan.");
@@ -315,7 +384,9 @@
 
     function updateTable() {
       const filtered = getFiltered();
-      if (currentSort.key) filtered.sort(compare(currentSort.key, currentSort.order));
+      if (currentSort.key) {
+        filtered.sort(compare(currentSort.key, currentSort.order));
+      }
       const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
       if (currentPage > totalPages) currentPage = totalPages;
       renderTable(filtered);
@@ -358,8 +429,29 @@
       }
     }
 
-    function formatNumber(v){ const n = Number(v); return !isFinite(n)?escapeHtml(v||""):n.toLocaleString("id-ID"); }
-    function escapeHtml(t){ if(t===undefined||t===null)return""; return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+    document.querySelectorAll("th[data-sort]").forEach(th=>{
+      th.addEventListener("click",()=>{
+        const key=th.dataset.sort;
+        if(currentSort.key===key){
+          currentSort.order=currentSort.order==="asc"?"desc":"asc";
+        }else{
+          currentSort={key,order:"asc"};
+        }
+        document.querySelectorAll("th").forEach(x=>x.classList.remove("sorted-asc","sorted-desc"));
+        th.classList.add(currentSort.order==="asc"?"sorted-asc":"sorted-desc");
+        updateTable();
+      });
+    });
+
+    function escapeHtml(text){
+      const div=document.createElement("div");
+      div.textContent=text;
+      return div.innerHTML;
+    }
+
+    function formatNumber(num){
+      return Number(num).toLocaleString("id-ID");
+    }
 
     fetchData();
   </script>
