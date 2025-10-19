@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,11 +8,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
     #gambarBtn:hover {
-      background: #16a34a; /* hijau lebih gelap */
-    }
-    #videoBtn:hover {
-      background: #cc0000; /* merah lebih gelap */
-    }
+  background: #16a34a; /* hijau lebih gelap */
+}
+#videoBtn:hover {
+  background: #cc0000; /* merah lebih gelap */
+}
 
     input[type="text"], select {
       width: 100%;
@@ -176,7 +177,7 @@
     }
     @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .modal h3 { margin-top: 0; color: #2563eb; font-size: 1.3rem; }
-    .modal p { margin: 8px 0; font-size: 1rem; text-align: left; }
+    .modal p { margin: 8px 0; font-size: 1rem; }
     .close-btn {
       margin-top: 15px;
       color: black;
@@ -231,38 +232,46 @@
     </div>
   </main>
 
-  <div class="modal" id="popupModal">
-    <div class="modal-content">
-      <h3 id="modalNama"></h3>
-      <p><strong>Harga Jual:</strong> <span id="modalJual"></span></p>
-      <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
-      <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
-      <p id="modalKeterangan" style="display:none;"><strong>ℹ️ Detail: </strong> <span id="modalKetValue"></span></p>
+<div class="modal" id="popupModal">
+  <div class="modal-content">
+    <h3 id="modalNama"></h3>
+    <p><strong>Harga Jual:</strong> <span id="modalJual"></span></p>
+    <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
+    <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
+    <p id="modalKeterangan" style="display:none;"><strong>ℹ️ Detail: </strong> <span id="modalKetValue"></span></p>
 
-      <div style="display: flex; gap: 10px; margin-top: 15px;">
-        <button class="close-btn" id="gambarBtn"
-          style="flex:1; border: 1px solid black;  background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">
-          🌄 Gambar
-        </button>
-        <button class="close-btn" id="videoBtn"
-          style="flex:1; border: 1px solid black; background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">
-          🎬 Video
-        </button>
-        <button class="close-btn" onclick="tutupPopup()" style="flex:1; border: 2px solid red;">🛇 Tutup</button>
-      </div>
+    <div style="display: flex; gap: 10px; margin-top: 15px;">
+      
+
+      <!-- Tombol Gambar -->
+      <button class="close-btn" id="gambarBtn"
+        style="flex:1; border: 1px solid black;  background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">
+        🌄 Gambar
+      </button>
+      <button class="close-btn" id="videoBtn"
+        style="flex:1; border: 1px solid black; background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">🎬
+        Video
+      </button>
+      
+
+
+      <button class="close-btn"  onclick="tutupPopup()" style="flex:1; border: 2px solid red; ">🛇 Tutup</button>
     </div>
   </div>
+</div>
+
 
   <script>
     const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv";
     let dataBarang = [], currentPage = 1, rowsPerPage = 15;
     let currentSort = { key: "", order: "" };
-
-    // 🔹 Fungsi konversi angka ke kode huruf
-    function konversiHargaKeKode(angka) {
-      const map = { '1': 'W', '2': 'I', '3': 'G', '4': 'U', '5': 'N', '6': 'A', '7': 'M', '8': 'O', '9': 'T', '0': 'R' };
-      return angka.toString().split('').map(ch => map[ch] ?? ch).join('');
+    
+    function encodeHargaBeli(angka) {
+        if (!angka) return "";
+        const map = { '1':'W','2':'I','3':'G','4':'U','5':'N','6':'A','7':'M','8':'O','9':'T','0':'R' };
+        return String(angka).split('').map(ch => map[ch] || ch).join('');
     }
+
 
     function fetchData() {
       const url = CSV_BASE_URL + "&t=" + new Date().getTime();
@@ -323,13 +332,11 @@
         const tr = document.createElement("tr");
         const nama = highlightText(row["Nama Barang"], searchVal);
         const jual = highlightText("Rp " + formatNumber(row["Harga Jual"]), searchVal);
-        const hargaBeli = row["Harga Beli"] ? konversiHargaKeKode(row["Harga Beli"]) : "-";
-
         tr.innerHTML = `
           <td class="clickable">${nama}</td>
           <td>${jual}</td>
           <td>${escapeHtml(row["Harga Dagang"] || "")}</td>
-          <td>${hargaBeli}</td>
+          <td>${encodeHargaBeli(row["Harga Beli"])}</td>
           <td>${escapeHtml(row["Kategori"] || "")}</td>
         `;
         tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
@@ -346,48 +353,42 @@
       return escapeHtml(text).replace(re, "<mark>$1</mark>");
     }
 
-function bukaPopup(row) {
-  document.getElementById("modalNama").textContent = row["Nama Barang"] || "-";
-  document.getElementById("modalJual").textContent = "Rp " + formatNumber(row["Harga Jual"]);
-  document.getElementById("modalGrosir").textContent = row["Harga Dagang"] || "-";
-
-  // Tambahan: tampilkan Harga Beli (dalam kode)
-  const hargaBeli = row["Harga Beli"] ? konversiHargaKeKode(row["Harga Beli"]) : "-";
-  document.getElementById("modalBeli").textContent = hargaBeli;
-
-  document.getElementById("modalKategori").textContent = row["Kategori"] || "-";
-  if (row["Keterangan"] && row["Keterangan"].trim() !== "") {
-    document.getElementById("modalKetValue").textContent = row["Keterangan"];
-    document.getElementById("modalKeterangan").style.display = "block";
-  } else {
-    document.getElementById("modalKeterangan").style.display = "none";
-  }
-
-  document.getElementById("popupModal").style.display = "flex";
-}
-
+    function bukaPopup(row) {
+      document.getElementById("modalNama").textContent = row["Nama Barang"] || "-";
+      document.getElementById("modalJual").textContent = "Rp " + formatNumber(row["Harga Jual"]);
+      document.getElementById("modalGrosir").textContent = row["Harga Dagang"] || "-";
+      document.getElementById("modalKategori").textContent = row["Kategori"] || "-";
+      if (row["Keterangan"] && row["Keterangan"].trim() !== "") {
+        document.getElementById("modalKetValue").textContent = row["Keterangan"];
+        document.getElementById("modalKeterangan").style.display = "block";
+      } else {
+        document.getElementById("modalKeterangan").style.display = "none";
+      }
+      document.getElementById("popupModal").style.display = "flex";
+    }
 
     function tutupPopup() {
       document.getElementById("popupModal").style.display = "none";
     }
 
-    // Tombol Gambar (Google Images)
-    document.getElementById("gambarBtn").addEventListener("click", () => {
-      const nama = document.getElementById("modalNama").textContent.trim();
-      if (!nama) return alert("Nama barang tidak ditemukan.");
-      const query = encodeURIComponent(nama);
-      const url = `https://www.google.com/search?tbm=isch&tbs=isz:l,itp:photo,ift:jpg&q=${query}`;
-      window.open(url, "_blank");
-    });
+// Tombol Gambar (Google Images)
+document.getElementById("gambarBtn").addEventListener("click", () => {
+  const nama = document.getElementById("modalNama").textContent.trim();
+  if (!nama) return alert("Nama barang tidak ditemukan.");
+  const query = encodeURIComponent(nama);
+  const url = `https://www.google.com/search?tbm=isch&tbs=isz:l,itp:photo,ift:jpg&q=${query}`;
+  window.open(url, "_blank");
+});
 
-    // Tombol Video (YouTube)
-    document.getElementById("videoBtn").addEventListener("click", () => {
-      const nama = document.getElementById("modalNama").textContent.trim();
-      if (!nama) return alert("Nama barang tidak ditemukan.");
-      const query = encodeURIComponent(nama);
-      const url = `https://www.youtube.com/results?search_query=${query}`;
-      window.open(url, "_blank");
-    });
+// Tombol Video (YouTube)
+document.getElementById("videoBtn").addEventListener("click", () => {
+  const nama = document.getElementById("modalNama").textContent.trim();
+  if (!nama) return alert("Nama barang tidak ditemukan.");
+  const query = encodeURIComponent(nama);
+  const url = `https://www.youtube.com/results?search_query=${query}`;
+  window.open(url, "_blank");
+});
+
 
     function updateTable() {
       const filtered = getFiltered();
@@ -436,29 +437,19 @@ function bukaPopup(row) {
       }
     }
 
-    document.querySelectorAll("th[data-sort]").forEach(th=>{
-      th.addEventListener("click",()=>{
-        const key=th.dataset.sort;
-        if(currentSort.key===key){
-          currentSort.order=currentSort.order==="asc"?"desc":"asc";
-        }else{
-          currentSort={key,order:"asc"};
-        }
-        document.querySelectorAll("th").forEach(x=>x.classList.remove("sorted-asc","sorted-desc"));
-        th.classList.add(currentSort.order==="asc"?"sorted-asc":"sorted-desc");
+    document.querySelectorAll("th[data-sort]").forEach(th => {
+      th.addEventListener("click", () => {
+        const key = th.getAttribute("data-sort");
+        const order = (currentSort.key === key && currentSort.order==="asc") ? "desc" : "asc";
+        currentSort = { key, order };
+        document.querySelectorAll("th").forEach(h=>h.classList.remove("sorted-asc","sorted-desc"));
+        th.classList.add(order==="asc" ? "sorted-asc":"sorted-desc");
         updateTable();
       });
     });
 
-    function escapeHtml(text){
-      const div=document.createElement("div");
-      div.textContent=text;
-      return div.innerHTML;
-    }
-
-    function formatNumber(num){
-      return Number(num).toLocaleString("id-ID");
-    }
+    function formatNumber(v){ const n = Number(v); return !isFinite(n)?escapeHtml(v||""):n.toLocaleString("id-ID"); }
+    function escapeHtml(t){ if(t===undefined||t===null)return""; return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
     fetchData();
   </script>
