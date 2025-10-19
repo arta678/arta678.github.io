@@ -166,6 +166,7 @@
     }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .modal-content {
+      white-space: normal; /* tambahan */
       background: white;
       border-radius: 12px;
       padding: 20px;
@@ -201,12 +202,20 @@
         font-family: monospace; /* supaya jarak karakter konsisten */
         white-space: pre;        /* agar spasi tidak dipadatkan */
         margin: 4px 0;
+        line-height: 1.4; /* tambahan */
       }
     .modal-content strong {
         display: inline-block;
         width: 14ch;  /* lebar kolom kiri, ubah sesuai panjang label terpanjang */
+        vertical-align: top;
       }
-
+    .modal-content p,
+    .modal-content .value,
+    #modalKeterangan {
+        white-space: normal !important;  /* teks otomatis turun ke baris berikutnya */
+        word-wrap: break-word;           /* pecah kata panjang */
+        overflow-wrap: break-word;       /* agar tetap pecah di semua browser */
+      }
     
   </style>
 </head>
