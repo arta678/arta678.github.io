@@ -334,9 +334,9 @@
         const jual = highlightText("Rp " + formatNumber(row["Harga Jual"]), searchVal);
         tr.innerHTML = `
           <td class="clickable">${nama}</td>
-          <td><b>${jual}</b></td>
+          <td>${jual}</td>
           <td>${escapeHtml(row["Harga Dagang"] || "")}</td>
-          <td>${encodeHargaBeli(row["Harga Beli"])}</td>
+          <td><b>${encodeHargaBeli(row["Harga Beli"])}</b></td>
           <td>${escapeHtml(row["Kategori"] || "")}</td>
         `;
         tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
