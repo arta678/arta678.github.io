@@ -235,7 +235,7 @@
 <div class="modal" id="popupModal">
   <div class="modal-content">
     <h3 id="modalNama"></h3>
-    <p><strong>Harga Jual:</strong><b> <span id="modalJual"></span></b>b></p>
+    <p><strong>Harga Jual:</strong><span id="modalJual"></span></p>
     <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
     <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
     <p id="modalKeterangan" style="display:none;"><strong>ℹ️ Detail: </strong> <span id="modalKetValue"></span></p>
@@ -334,7 +334,7 @@
         const jual = highlightText("Rp " + formatNumber(row["Harga Jual"]), searchVal);
         tr.innerHTML = `
           <td class="clickable">${nama}</td>
-          <td>${jual}</td>
+          <td><b>${jual}</b></td>
           <td>${escapeHtml(row["Harga Dagang"] || "")}</td>
           <td>${encodeHargaBeli(row["Harga Beli"])}</td>
           <td>${escapeHtml(row["Kategori"] || "")}</td>
