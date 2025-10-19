@@ -5,12 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
   <title>Daftar Barang</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-
   <style>
+    #gambarBtn:hover { background: #16a34a; }
+    #videoBtn:hover { background: #cc0000; }
+
+    input[type="text"], select {
+      width: 100%;
+      font-size: 18px;
+      padding: 12px 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
     body {
       font-family: "Segoe UI", Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       background: #f9fafb;
       color: #333;
     }
@@ -22,64 +31,36 @@
       font-size: 1.3rem;
       font-weight: 600;
       position: sticky;
-      top: 0;
-      z-index: 100;
+      top: 0; z-index: 100;
     }
     main {
       padding: 12px;
       max-width: 1000px;
       margin: auto;
     }
-
-    /* ✅ Area pencarian */
     .search-bar {
       display: flex;
-      align-items: center;
+      flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 10px;
-      flex-wrap: nowrap;
+      margin-bottom: 8px;
     }
-    .search-bar select {
-      background: white;
-      padding: 12px;
-      font-size: 1rem;
+    input, select {
+      padding: 14px;
+      font-size: 1.1rem;
       border: 1px solid #bbb;
       border-radius: 10px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      width: 180px;
-      flex-shrink: 0;
-    }
-    .search-bar input {
       flex: 1;
-      padding: 12px;
-      font-size: 1rem;
-      border: 1px solid #bbb;
-      border-radius: 10px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
-    .search-bar input:focus, .search-bar select:focus {
+    select {
+      background: white;
+      min-width: 180px;
+    }
+    input:focus, select:focus {
       border-color: #2563eb;
       outline: none;
       box-shadow: 0 0 6px rgba(37,99,235,0.3);
     }
-
-    /* ✅ Responsif - tetap sejajar di HP */
-    @media (max-width: 600px) {
-      .search-bar {
-        flex-wrap: nowrap;
-        flex-direction: row;
-      }
-      .search-bar select {
-        width: 120px;
-        font-size: 0.95rem;
-        padding: 10px;
-      }
-      .search-bar input {
-        font-size: 0.95rem;
-        padding: 10px;
-      }
-    }
-
     #statistik {
       font-size: 0.95rem;
       color: #444;
@@ -93,12 +74,27 @@
       flex-wrap: wrap;
       gap: 10px;
     }
-
+    @media (max-width: 600px) {
+      #statistik {
+        flex-direction: column;
+        font-size: 0.9rem;
+        gap: 4px;
+        padding: 6px;
+      }
+      .search-bar {
+        flex-direction: row;
+      }
+      .search-bar input, .search-bar select {
+        flex: 1;
+        font-size: 16px;
+      }
+    }
     .table-container {
       overflow-x: auto;
       background: white;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      -webkit-overflow-scrolling: touch;
     }
     table {
       border-collapse: collapse;
@@ -122,13 +118,7 @@
     th.sorted-asc::after { content: " ⬆️"; }
     th.sorted-desc::after { content: " ⬇️"; }
     tr:hover { background: #f9f9f9; }
-
-    .clickable {
-      color: #2563eb;
-      font-weight: 600;
-      text-decoration: none;
-    }
-
+    .clickable { color: #2563eb; font-weight: 600; text-decoration: none; }
     .pagination {
       margin-top: 15px;
       display: flex;
@@ -137,7 +127,6 @@
       gap: 10px;
       flex-wrap: wrap;
     }
-
     button {
       padding: 12px 18px;
       border: none;
@@ -148,22 +137,14 @@
       font-size: 1rem;
       transition: 0.2s;
     }
-    button:hover {
-      background: #1e40af;
-      color: white;
-    }
-
-    #gambarBtn:hover { background: #16a34a; color: white; }
-    #videoBtn:hover { background: #cc0000; color: white; }
-
+    button:hover { background: #1e40af; color: white; }
+    #page-info { font-size: 1rem; }
     .modal {
       display: none;
       position: fixed;
       z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.5);
       justify-content: center;
       align-items: center;
@@ -175,8 +156,7 @@
       background: white;
       border-radius: 12px;
       padding: 20px;
-      width: 95%;
-      max-width: 400px;
+      width: 95%; max-width: 400px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
       text-align: left;
       animation: slideUp 0.3s ease;
@@ -194,20 +174,20 @@
       font-size: 1rem;
       width: 100%;
     }
+    .video-btn { background: #ef4444; }
+    .video-btn:hover { background: #dc2626; }
     .no-data { text-align: center; color: #999; padding: 20px; font-size: 1rem; }
     mark { background-color: yellow; color: black; }
   </style>
 </head>
-
 <body>
   <header>📦 Daftar Barang</header>
-
   <main>
     <div class="search-bar">
+      <input type="text" id="search" placeholder="🔍 Cari barang..." />
       <select id="kategori">
         <option value="">📂 Semua Kategori</option>
       </select>
-      <input type="text" id="search" placeholder="🔍 Cari barang..." />
     </div>
 
     <div id="statistik">📦 Jumlah: 0 • 💰 Min: Rp0 • 💎 Max: Rp0</div>
@@ -234,7 +214,6 @@
     </div>
   </main>
 
-  <!-- Popup detail -->
   <div class="modal" id="popupModal">
     <div class="modal-content">
       <h3 id="modalNama"></h3>
@@ -244,22 +223,28 @@
       <p id="modalKeterangan" style="display:none;"><strong>ℹ️ Detail: </strong> <span id="modalKetValue"></span></p>
 
       <div style="display: flex; gap: 10px; margin-top: 15px;">
-        <button class="close-btn" id="gambarBtn" style="flex:1; border:1px solid black; background-color:white;">🌄 Gambar</button>
-        <button class="close-btn" id="videoBtn" style="flex:1; border:1px solid black; background-color:white;">🎬 Video</button>
-        <button class="close-btn" onclick="tutupPopup()" style="flex:1; border:2px solid red;">🛇 Tutup</button>
+        <button class="close-btn" id="gambarBtn"
+          style="flex:1; border: 1px solid black; background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">
+          🌄 Gambar
+        </button>
+        <button class="close-btn" id="videoBtn"
+          style="flex:1; border: 1px solid black; background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">🎬 Video
+        </button>
+        <button class="close-btn" onclick="tutupPopup()" style="flex:1; border: 2px solid red;">🛇 Tutup</button>
       </div>
     </div>
   </div>
 
   <script>
     const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv";
-    let dataBarang = [], currentPage = 1, rowsPerPage = 15, currentSort = { key: "", order: "" };
+    let dataBarang = [], currentPage = 1, rowsPerPage = 15;
+    let currentSort = { key: "", order: "" };
 
-    const encodeHargaBeli = angka => {
+    function encodeHargaBeli(angka) {
       if (!angka) return "";
       const map = { '1':'W','2':'I','3':'G','4':'U','5':'N','6':'A','7':'M','8':'O','9':'T','0':'R' };
       return String(angka).split('').map(ch => map[ch] || ch).join('');
-    };
+    }
 
     function fetchData() {
       const url = CSV_BASE_URL + "&t=" + new Date().getTime();
@@ -270,7 +255,9 @@
         complete: results => {
           dataBarang = results.data.filter(row => row["Nama Barang"]);
           populateKategori();
+          currentPage = 1;
           updateTable();
+          updateStatistik(getFiltered());
         }
       });
     }
@@ -287,14 +274,50 @@
       });
     }
 
-    function formatNumber(v) {
-      const n = Number(v);
-      return !isFinite(n)? v : n.toLocaleString("id-ID");
+    function updateStatistik(list) {
+      if (!list || list.length === 0) {
+        document.getElementById("statistik").textContent = "📦 Barang: 0 • 💰 Min: Rp0 • 💎 Max: Rp0";
+        return;
+      }
+      const hargaList = list.map(i => Number(i["Harga Jual"] || 0)).filter(n => !isNaN(n));
+      const min = Math.min(...hargaList);
+      const max = Math.max(...hargaList);
+      document.getElementById("statistik").textContent =
+        `📦 Jumlah: ${list.length} • 💰 Min: Rp${min.toLocaleString("id-ID")} • 💎 Max: Rp${max.toLocaleString("id-ID")}`;
     }
 
-    function escapeHtml(t) {
-      if (!t) return "";
-      return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    function renderTable(data) {
+      const tbody = document.querySelector("#tabel-barang tbody");
+      tbody.innerHTML = "";
+      const searchVal = document.getElementById("search").value.toLowerCase();
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="no-data">Barang tidak ditemukan</td></tr>`;
+        document.getElementById("page-info").textContent = "";
+        return;
+      }
+
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      const paginated = data.slice(start, end);
+
+      paginated.forEach(row => {
+        const tr = document.createElement("tr");
+        const nama = highlightText(row["Nama Barang"], searchVal);
+        const jual = highlightText("Rp " + formatNumber(row["Harga Jual"]), searchVal);
+        tr.innerHTML = `
+          <td class="clickable">${nama}</td>
+          <td>${jual}</td>
+          <td>${escapeHtml(row["Harga Dagang"] || "")}</td>
+          <td>${encodeHargaBeli(row["Harga Beli"])}</td>
+          <td>${escapeHtml(row["Kategori"] || "")}</td>
+        `;
+        tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("page-info").textContent =
+        `Halaman ${currentPage} / ${Math.ceil(data.length / rowsPerPage)}`;
     }
 
     function highlightText(text, term) {
@@ -302,6 +325,66 @@
       const re = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
       return escapeHtml(text).replace(re, "<mark>$1</mark>");
     }
+
+    function bukaPopup(row) {
+      document.getElementById("modalNama").textContent = row["Nama Barang"] || "-";
+      document.getElementById("modalJual").textContent = "Rp " + formatNumber(row["Harga Jual"]);
+      document.getElementById("modalGrosir").textContent = row["Harga Dagang"] || "-";
+      document.getElementById("modalKategori").textContent = row["Kategori"] || "-";
+      if (row["Keterangan"] && row["Keterangan"].trim() !== "") {
+        document.getElementById("modalKetValue").textContent = row["Keterangan"];
+        document.getElementById("modalKeterangan").style.display = "block";
+      } else {
+        document.getElementById("modalKeterangan").style.display = "none";
+      }
+      document.getElementById("popupModal").style.display = "flex";
+    }
+
+    function tutupPopup() {
+      document.getElementById("popupModal").style.display = "none";
+    }
+
+    // Tombol Gambar (Google Images)
+    document.getElementById("gambarBtn").addEventListener("click", () => {
+      const nama = document.getElementById("modalNama").textContent.trim();
+      if (!nama) return alert("Nama barang tidak ditemukan.");
+      const query = encodeURIComponent(nama);
+      window.open(`https://www.google.com/search?tbm=isch&q=${query}`, "_blank");
+    });
+
+    // Tombol Video (YouTube)
+    document.getElementById("videoBtn").addEventListener("click", () => {
+      const nama = document.getElementById("modalNama").textContent.trim();
+      if (!nama) return alert("Nama barang tidak ditemukan.");
+      const query = encodeURIComponent(nama);
+      window.open(`https://www.youtube.com/results?search_query=${query}`, "_blank");
+    });
+
+    function updateTable() {
+      const filtered = getFiltered();
+      if (currentSort.key) {
+        filtered.sort(compare(currentSort.key, currentSort.order));
+      }
+      const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+      if (currentPage > totalPages) currentPage = totalPages;
+      renderTable(filtered);
+      updateStatistik(filtered);
+    }
+
+    document.getElementById("next").addEventListener("click", () => {
+      const filtered = getFiltered();
+      if (currentPage < Math.ceil(filtered.length / rowsPerPage)) {
+        currentPage++;
+        updateTable();
+      }
+    });
+
+    document.getElementById("prev").addEventListener("click", () => {
+      if (currentPage > 1) { currentPage--; updateTable(); }
+    });
+
+    document.getElementById("search").addEventListener("input", () => { currentPage = 1; updateTable(); });
+    document.getElementById("kategori").addEventListener("change", () => { currentPage = 1; updateTable(); });
 
     function getFiltered() {
       const s = document.getElementById("search").value.toLowerCase();
@@ -314,69 +397,101 @@
       });
     }
 
-    function renderTable(data) {
-      const tbody = document.querySelector("#tabel-barang tbody");
-      tbody.innerHTML = "";
-      if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="5" class="no-data">Barang tidak ditemukan</td></tr>`;
-        document.getElementById("page-info").textContent = "";
-        return;
+    function compare(key, order="asc") {
+      return function(a,b){
+        let valA = a[key] || "", valB = b[key] || "";
+        if(key==="Harga Jual") { valA=Number(valA)||0; valB=Number(valB)||0; }
+        if(valA < valB) return order==="asc" ? -1 : 1;
+        if(valA > valB) return order==="asc" ? 1 : -1;
+        return 0;
       }
-      const start = (currentPage - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-      data.slice(start, end).forEach(row => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td class="clickable">${highlightText(row["Nama Barang"], document.getElementById("search").value)}</td>
-          <td>Rp ${formatNumber(row["Harga Jual"])}</td>
-          <td>${escapeHtml(row["Harga Dagang"] || "")}</td>
-          <td>${encodeHargaBeli(row["Harga Beli"])}</td>
-          <td>${escapeHtml(row["Kategori"] || "")}</td>
-        `;
-        tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
-        tbody.appendChild(tr);
+    }
+
+    document.querySelectorAll("th[data-sort]").forEach(th => {
+      th.addEventListener("click", () => {
+        const key = th.getAttribute("data-sort");
+        const order = (currentSort.key === key && currentSort.order==="asc") ? "desc" : "asc";
+        currentSort = { key, order };
+        document.querySelectorAll("th").forEach(h=>h.classList.remove("sorted-asc","sorted-desc"));
+        th.classList.add(order==="asc"?"sorted-asc":"sorted-desc");
+        updateTable();
       });
-      document.getElementById("page-info").textContent =
-        `Halaman ${currentPage} / ${Math.ceil(data.length / rowsPerPage)}`;
-    }
+    });
 
-    function bukaPopup(row) {
-      document.getElementById("modalNama").textContent = row["Nama Barang"] || "-";
-      document.getElementById("modalJual").textContent = "Rp " + formatNumber(row["Harga Jual"]);
-      document.getElementById("modalGrosir").textContent = row["Harga Dagang"] || "-";
-      document.getElementById("modalKategori").textContent = row["Kategori"] || "-";
-      if (row["Keterangan"]) {
-        document.getElementById("modalKetValue").textContent = row["Keterangan"];
-        document.getElementById("modalKeterangan").style.display = "block";
-      } else document.getElementById("modalKeterangan").style.display = "none";
-      document.getElementById("popupModal").style.display = "flex";
-    }
+    function escapeHtml(text){ const div=document.createElement("div"); div.textContent=text; return div.innerHTML; }
+    function formatNumber(num){ return Number(num).toLocaleString("id-ID"); }
 
-    function tutupPopup() { document.getElementById("popupModal").style.display = "none"; }
+    // === Tambahkan input pencarian di dropdown kategori ===
+    const kategoriSelect = document.getElementById("kategori");
+    kategoriSelect.addEventListener("mousedown", e => {
+      e.preventDefault(); // cegah dropdown default
+      const rect = kategoriSelect.getBoundingClientRect();
 
-    document.getElementById("gambarBtn").onclick = () => {
-      const nama = document.getElementById("modalNama").textContent.trim();
-      if (!nama) return alert("Nama barang tidak ditemukan.");
-      window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(nama)}`, "_blank");
-    };
-    document.getElementById("videoBtn").onclick = () => {
-      const nama = document.getElementById("modalNama").textContent.trim();
-      if (!nama) return alert("Nama barang tidak ditemukan.");
-      window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(nama)}`, "_blank");
-    };
+      // buat dropdown pencarian custom
+      let wrapper = document.createElement("div");
+      wrapper.style.position = "absolute";
+      wrapper.style.left = rect.left + "px";
+      wrapper.style.top = rect.bottom + "px";
+      wrapper.style.width = rect.width + "px";
+      wrapper.style.background = "white";
+      wrapper.style.border = "1px solid #ccc";
+      wrapper.style.borderRadius = "8px";
+      wrapper.style.boxShadow = "0 2px 10px rgba(0,0,0,0.15)";
+      wrapper.style.zIndex = "9999";
+      wrapper.style.maxHeight = "250px";
+      wrapper.style.overflowY = "auto";
+      wrapper.style.padding = "6px";
 
-    document.getElementById("search").addEventListener("input", () => { currentPage = 1; updateTable(); });
-    document.getElementById("kategori").addEventListener("change", () => { currentPage = 1; updateTable(); });
-    document.getElementById("next").addEventListener("click", () => { if (currentPage * rowsPerPage < getFiltered().length) { currentPage++; updateTable(); }});
-    document.getElementById("prev").addEventListener("click", () => { if (currentPage > 1) { currentPage--; updateTable(); }});
+      // input pencarian
+      const searchInput = document.createElement("input");
+      searchInput.type = "text";
+      searchInput.placeholder = "Cari kategori...";
+      searchInput.style.width = "100%";
+      searchInput.style.padding = "8px";
+      searchInput.style.marginBottom = "6px";
+      searchInput.style.fontSize = "16px";
+      searchInput.style.border = "1px solid #ddd";
+      searchInput.style.borderRadius = "6px";
 
-    function updateTable() {
-      const filtered = getFiltered();
-      renderTable(filtered);
-      const harga = filtered.map(i => Number(i["Harga Jual"]) || 0);
-      document.getElementById("statistik").textContent =
-        `📦 Jumlah: ${filtered.length} • 💰 Min: Rp${Math.min(...harga).toLocaleString("id-ID")} • 💎 Max: Rp${Math.max(...harga).toLocaleString("id-ID")}`;
-    }
+      // daftar opsi
+      const options = Array.from(kategoriSelect.options);
+      const list = document.createElement("div");
+      function renderList(filter=""){
+        list.innerHTML = "";
+        options.forEach(opt=>{
+          if(opt.textContent.toLowerCase().includes(filter.toLowerCase())){
+            const item = document.createElement("div");
+            item.textContent = opt.textContent;
+            item.style.padding = "8px";
+            item.style.cursor = "pointer";
+            item.style.borderRadius = "6px";
+            item.addEventListener("mouseover", ()=> item.style.background="#f3f4f6");
+            item.addEventListener("mouseout", ()=> item.style.background="transparent");
+            item.addEventListener("click", ()=>{
+              kategoriSelect.value = opt.value;
+              document.body.removeChild(wrapper);
+              kategoriSelect.dispatchEvent(new Event("change"));
+            });
+            list.appendChild(item);
+          }
+        });
+      }
+      renderList();
+
+      searchInput.addEventListener("input", ()=> renderList(searchInput.value));
+      wrapper.appendChild(searchInput);
+      wrapper.appendChild(list);
+      document.body.appendChild(wrapper);
+
+      // tutup dropdown saat klik di luar
+      const closeHandler = (ev)=>{
+        if(!wrapper.contains(ev.target)){
+          document.body.removeChild(wrapper);
+          document.removeEventListener("mousedown", closeHandler);
+        }
+      };
+      document.addEventListener("mousedown", closeHandler);
+    });
 
     fetchData();
   </script>
