@@ -11,7 +11,7 @@
 
   <style>
     /* ====== Tampilan Custom untuk Dropdown Kategori ====== */
-.choices {
+.custom-choices {
   font-family: "Segoe UI", Arial, sans-serif;
   width: 100%;
   font-size: 1.05rem;
@@ -19,7 +19,7 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.choices__inner {
+.custom-choices .choices__inner {
   background-color: #fff;
   border: 1px solid #bbb;
   border-radius: 10px;
@@ -28,12 +28,12 @@
   transition: 0.2s;
 }
 
-.choices__inner:hover {
+.custom-choices .choices__inner:hover {
   border-color: #2563eb;
   box-shadow: 0 0 6px rgba(37,99,235,0.2);
 }
 
-.choices__input {
+.custom-choices .choices__input {
   background: none;
   border: none;
   font-size: 1rem;
@@ -41,33 +41,33 @@
   margin: 0;
 }
 
-.choices__list--dropdown {
+.custom-choices .choices__list--dropdown {
   border-radius: 10px;
   box-shadow: 0 3px 8px rgba(0,0,0,0.15);
   border: 1px solid #ddd;
   margin-top: 4px;
 }
 
-.choices__list--dropdown .choices__item--selectable {
+.custom-choices .choices__list--dropdown .choices__item--selectable {
   padding: 10px 14px;
 }
 
-.choices__list--dropdown .choices__item--selectable.is-highlighted {
+.custom-choices .choices__list--dropdown .choices__item--selectable.is-highlighted {
   background-color: #2563eb;
   color: #fff;
 }
 
-.choices__placeholder {
+.custom-choices .choices__placeholder {
   color: #888;
 }
 
-.choices__item--selectable {
+.custom-choices .choices__item--selectable {
   font-size: 1rem;
 }
 
-/* Supaya konsisten di HP */
+/* Responsif untuk HP */
 @media (max-width: 600px) {
-  .choices__inner {
+  .custom-choices .choices__inner {
     min-height: 46px;
     font-size: 1rem;
   }
@@ -348,9 +348,10 @@ const kategoriChoices = new Choices(kategoriSelect, {
   searchResultLimit: 10,
   fuseOptions: { threshold: 0.3 },
   classNames: {
-    containerOuter: 'choices custom-choices'
+    containerOuter: 'custom-choices' // hanya 1 nama class (tanpa spasi)
   }
 });
+
 
 
 
