@@ -196,6 +196,18 @@
     }
     .no-data { text-align: center; color: #999; padding: 20px; font-size: 1rem; }
     mark { background-color: yellow; color: black; }
+    
+    .modal-content p {
+        font-family: monospace; /* supaya jarak karakter konsisten */
+        white-space: pre;        /* agar spasi tidak dipadatkan */
+        margin: 4px 0;
+      }
+    .modal-content strong {
+        display: inline-block;
+        width: 14ch;  /* lebar kolom kiri, ubah sesuai panjang label terpanjang */
+      }
+
+    
   </style>
 </head>
 <body>
@@ -235,10 +247,10 @@
 <div class="modal" id="popupModal">
   <div class="modal-content">
     <h3 id="modalNama"></h3>
-    <p><strong>Harga Jual  :</strong> <span id="modalJual"></span></p>
-    <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
-    <p><strong>Kategori    :</strong> <span id="modalKategori"></span></p>
-    <p id="modalKeterangan" style="display:none;"><strong>ℹ️ Detail: </strong> <span id="modalKetValue"></span></p>
+    <p><strong>Harga Jual</strong>: <span id="modalJual"></span></p>
+    <p><strong>Harga Grosir</strong>: <span id="modalGrosir"></span></p>
+    <p><strong>Kategori</strong>: <span id="modalKategori"></span></p>
+    <p id="modalKeterangan" style="display:none;"><strong>Detail</strong>: <span id="modalKetValue"></span></p>
 
     <div style="display: flex; gap: 10px; margin-top: 15px;">
       
