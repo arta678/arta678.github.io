@@ -10,6 +10,69 @@
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
   <style>
+    /* ====== Tampilan Custom untuk Dropdown Kategori ====== */
+.choices {
+  font-family: "Segoe UI", Arial, sans-serif;
+  width: 100%;
+  font-size: 1.05rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.choices__inner {
+  background-color: #fff;
+  border: 1px solid #bbb;
+  border-radius: 10px;
+  min-height: 52px;
+  padding: 10px 12px;
+  transition: 0.2s;
+}
+
+.choices__inner:hover {
+  border-color: #2563eb;
+  box-shadow: 0 0 6px rgba(37,99,235,0.2);
+}
+
+.choices__input {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  padding: 6px;
+  margin: 0;
+}
+
+.choices__list--dropdown {
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  border: 1px solid #ddd;
+  margin-top: 4px;
+}
+
+.choices__list--dropdown .choices__item--selectable {
+  padding: 10px 14px;
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted {
+  background-color: #2563eb;
+  color: #fff;
+}
+
+.choices__placeholder {
+  color: #888;
+}
+
+.choices__item--selectable {
+  font-size: 1rem;
+}
+
+/* Supaya konsisten di HP */
+@media (max-width: 600px) {
+  .choices__inner {
+    min-height: 46px;
+    font-size: 1rem;
+  }
+}
+
     #gambarBtn:hover {
   background: #16a34a; /* hijau lebih gelap */
 }
@@ -278,13 +341,17 @@
 const kategoriSelect = document.getElementById('kategori');
 const kategoriChoices = new Choices(kategoriSelect, {
   searchEnabled: true,
-  searchPlaceholderValue: 'Cari kategori...',
+  searchPlaceholderValue: '🔍 Cari kategori...',
   itemSelectText: '',
   shouldSort: true,
-  shouldSortItems: true,
   position: 'bottom',
-  removeItemButton: false
+  searchResultLimit: 10,
+  fuseOptions: { threshold: 0.3 },
+  classNames: {
+    containerOuter: 'choices custom-choices'
+  }
 });
+
 
 
 
@@ -304,15 +371,16 @@ const kategoriChoices = new Choices(kategoriSelect, {
       });
     }
 
-    function populateKategori() {
+function populateKategori() {
   const uniq = [...new Set(dataBarang.map(i => i.Kategori).filter(Boolean))];
-  kategoriChoices.clearStore(); // hapus isi lama
+  kategoriChoices.clearStore();
   kategoriChoices.setChoices(
-    [{ value: '', label: '📂 Semua Kategori', selected: true, disabled: false }]
+    [{ value: '', label: '📂 Semua Kategori', selected: true }]
       .concat(uniq.map(k => ({ value: k, label: k }))),
     'value', 'label', false
   );
 }
+
 
 
     function updateStatistik(list) {
