@@ -1,4 +1,52 @@
-/* Hilangkan ikon panah dropdown di input datalist */
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <title>Daftar Barang</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <style>
+    #gambarBtn:hover {
+  background: #16a34a; /* hijau lebih gelap */
+}
+#videoBtn:hover {
+  background: #cc0000; /* merah lebih gelap */
+}
+
+
+    input[type="text"], select {
+      width: 100%;
+      font-size: 18px;
+      padding: 12px 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9fafb;
+      color: #333;
+    }
+    header {
+      background: #2563eb;
+      color: white;
+      padding: 14px;
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    main {
+      padding: 12px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    /* Hilangkan ikon panah dropdown di input datalist */
 input[list]::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;
@@ -7,3 +55,612 @@ input[list]::-webkit-inner-spin-button,
 input[list]::-webkit-clear-button {
   display: none;
 }
+.search-bar {
+  display: flex;
+  align-items: flex-end; /* sejajarkan ke bawah, bukan tengah */
+  gap: 10px;
+  margin-bottom: 0; /* hapus jarak ekstra yang bikin offset */
+  padding-bottom: 6px; /* beri sedikit ruang supaya tidak nempel tabel */
+}
+    /* Input pencarian */
+#search {
+  flex: 2;
+  padding: 12px 14px;
+  font-size: 1.1rem;
+  border: 1px solid #bbb;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  height: 52px;
+  line-height: 1.2;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+/* Saat fokus, beri efek biru */
+#search:focus, #kategori:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 6px rgba(37,99,235,0.3);
+}
+
+/* Responsif untuk HP */
+@media (max-width: 600px) {
+  .search-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #search, #kategori {
+    width: 100%;
+    height: auto;
+  }
+}
+
+
+/* ==== KATEGORI DENGAN IKON ==== */
+.kategori-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.kategori-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.3rem;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Input kategori */
+#kategori {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  font-size: 1.3rem;
+  font-weight: 500;
+  border: 1px solid #bbb;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  background: white;
+  height: 52px; /* samakan tinggi */
+  line-height: 1.2;
+  box-sizing: border-box;
+}
+
+
+/* Saat fokus, beri efek biru */
+#kategori:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 6px rgba(37,99,235,0.3);
+}
+
+/* Responsif */
+@media (max-width: 600px) {
+  .kategori-wrapper {
+    width: 100%;
+  }
+
+  #kategori {
+    font-size: 1.1rem;
+  }
+}
+
+
+/* Tombol hapus kategori */
+.hapus-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #777;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s, color 0.2s;
+}
+
+.hapus-btn:hover {
+  opacity: 1;
+  color: #e11d48; /* merah */
+}
+
+
+    input, select {
+      padding: 14px;
+      font-size: 1.1rem;
+      border: 1px solid #bbb;
+      border-radius: 10px;
+      flex: 1;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    select {
+      background: white;
+      min-width: 180px;
+    }
+    input:focus, select:focus {
+      border-color: #2563eb;
+      outline: none;
+      box-shadow: 0 0 6px rgba(37,99,235,0.3);
+    }
+    #statistik {
+      font-size: 0.95rem;
+      color: #444;
+      margin-bottom: 10px;
+      text-align: center;
+      background: #eef2ff;
+      padding: 6px 8px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    @media (max-width: 600px) {
+      #statistik {
+        flex-direction: column;
+        font-size: 0.9rem;
+        gap: 4px;
+        padding: 6px;
+      }
+      .search-bar {
+        flex-direction: row;
+      }
+      .search-bar input, .search-bar select {
+        flex: 1;
+        font-size: 16px;
+      }
+    }
+/*    .table-container {
+      overflow-x: auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      -webkit-overflow-scrolling: touch;
+    }*/
+.table-container {
+  margin-top: 6px; /* kecilkan jarak agar sejajar sempurna */
+}
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 700px;
+    }
+    th, td {
+      border-bottom: 1px solid #eee;
+      padding: 10px 12px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      background: #f3f4f6;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      cursor: pointer;
+    }
+    th.sorted-asc::after { content: " ⬆️"; }
+    th.sorted-desc::after { content: " ⬇️"; }
+    tr:hover { background: #f9f9f9; }
+    .clickable {
+      color: #2563eb;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .pagination {
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: white;
+      color: black;
+      font-size: 1rem;
+      transition: 0.2s;
+    }
+    button:hover { background: #1e40af; }
+    #page-info { font-size: 1rem; }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease;
+      padding: 10px;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-content {
+      white-space: normal; /* tambahan */
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      width: 95%;
+      max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      text-align: left;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal h3 { margin-top: 0; color: #2563eb; font-size: 1.3rem; }
+    .modal p { margin: 8px 0; font-size: 1rem; }
+    .close-btn {
+      margin-top: 15px;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 100%;
+    }
+    .video-btn {
+      background: #ef4444; /* merah */
+    }
+    .video-btn:hover {
+      background: #dc2626;
+    }
+    .no-data { text-align: center; color: #999; padding: 20px; font-size: 1rem; }
+    mark { background-color: yellow; color: black; }
+    
+    .modal-content p {
+        font-family: monospace; /* supaya jarak karakter konsisten */
+        white-space: pre;        /* agar spasi tidak dipadatkan */
+        margin: 4px 0;
+        line-height: 1.4; /* tambahan */
+      }
+    .modal-content strong {
+        display: inline-block;
+        width: 14ch;  /* lebar kolom kiri, ubah sesuai panjang label terpanjang */
+        vertical-align: top;
+      }
+    .modal-content p,
+    .modal-content .value,
+    #modalKeterangan {
+        white-space: normal !important;  /* teks otomatis turun ke baris berikutnya */
+        word-wrap: break-word;           /* pecah kata panjang */
+        overflow-wrap: break-word;       /* agar tetap pecah di semua browser */
+      }
+    
+  </style>
+</head>
+<body>
+  <header>📦 Daftar Barang</header>
+  <main>
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="🔍 Cari barang..." />
+
+
+      <div class="kategori-wrapper">
+        <span class="kategori-icon">📂</span>
+        <input list="kategori-list" id="kategori" placeholder="Kategori...">
+        <button id="hapusKategori" class="hapus-btn" title="Hapus kategori">✖</button>
+        <datalist id="kategori-list"></datalist>
+      </div>
+
+    </div>
+
+    <div id="statistik">📦 Jumlah: 0 • 💰 Min: Rp0 • 💎 Max: Rp0</div>
+
+    <div class="table-container">
+      <table id="tabel-barang">
+        <thead>
+          <tr>
+            <th data-sort="Nama Barang">Nama Barang</th>
+            <th data-sort="Harga Jual">Harga Jual</th>
+            <th>Harga Grosir</th>
+            <th>Kode</th>
+            <th>Kategori</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button id="prev">⬅️</button>
+      <span id="page-info"></span>
+      <button id="next">➡️</button>
+    </div>
+  </main>
+
+<div class="modal" id="popupModal">
+  <div class="modal-content">
+    <h3 id="modalNama"></h3>
+    <p><strong>Harga Jual</strong>: <span id="modalJual"></span></p>
+    <p><strong>Harga Grosir</strong>: <span id="modalGrosir"></span></p>
+    <p><strong>Kategori</strong>: <span id="modalKategori"></span></p>
+    <p id="modalKeterangan" style="display:none;"><strong>Detail</strong>: <span id="modalKetValue"></span></p>
+
+    <div style="display: flex; gap: 10px; margin-top: 15px;">
+      
+
+      <!-- Tombol Gambar -->
+      <button class="close-btn" id="gambarBtn"
+        style="flex:1; border: 1px solid black;  background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">
+        🌄 Gambar
+      </button>
+      <button class="close-btn" id="videoBtn"
+        style="flex:1; border: 1px solid black; background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">🎬
+        Video
+      </button>
+      
+
+
+      <button class="close-btn"  onclick="tutupPopup()" style="flex:1; border: 2px solid red; ">🛇 Tutup</button>
+    </div>
+  </div>
+</div>
+
+
+  <script>
+    const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv";
+    let dataBarang = [], currentPage = 1, rowsPerPage = 15;
+    let currentSort = { key: "", order: "" };
+    
+    function encodeHargaBeli(angka) {
+        if (!angka) return "";
+        const map = { '1':'W','2':'I','3':'G','4':'U','5':'N','6':'A','7':'M','8':'O','9':'T','0':'R' };
+        return String(angka).split('').map(ch => map[ch] || ch).join('');
+    }
+
+
+    function fetchData() {
+      const url = CSV_BASE_URL + "&t=" + new Date().getTime();
+      Papa.parse(url, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: results => {
+          dataBarang = results.data.filter(row => row["Nama Barang"]);
+          populateKategori();
+          currentPage = 1;
+          updateTable();
+          updateStatistik(getFiltered());
+        }
+      });
+    }
+
+    function populateKategori() {
+      const datalist = document.getElementById("kategori-list");
+      datalist.innerHTML = ''; // Bersihkan dulu
+
+      // Ambil daftar kategori unik
+      const uniq = [...new Set(dataBarang.map(i => i.Kategori).filter(Boolean))];
+      uniq.sort().forEach(k => {
+        const opt = document.createElement("option");
+        opt.value = k;
+        datalist.appendChild(opt);
+      });
+    }
+
+
+    function updateStatistik(list) {
+      if (!list || list.length === 0) {
+        document.getElementById("statistik").textContent = "📦 Barang: 0 • 💰 Min: Rp0 • 💎 Max: Rp0";
+        return;
+      }
+      const hargaList = list.map(i => Number(i["Harga Jual"] || 0)).filter(n => !isNaN(n));
+      const min = Math.min(...hargaList);
+      const max = Math.max(...hargaList);
+      document.getElementById("statistik").textContent =
+        `📦 Jumlah: ${list.length} • 💰 Min: Rp${min.toLocaleString("id-ID")} • 💎 Max: Rp${max.toLocaleString("id-ID")}`;
+    }
+
+    function renderTable(data) {
+      const tbody = document.querySelector("#tabel-barang tbody");
+      tbody.innerHTML = "";
+      const searchVal = document.getElementById("search").value.toLowerCase();
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="no-data">Barang tidak ditemukan</td></tr>`;
+        document.getElementById("page-info").textContent = "";
+        return;
+      }
+
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      const paginated = data.slice(start, end);
+
+      paginated.forEach(row => {
+        const tr = document.createElement("tr");
+        const nama = highlightText(row["Nama Barang"], searchVal);
+        const jual = highlightText("Rp " + formatNumber(row["Harga Jual"]), searchVal);
+        tr.innerHTML = `
+          <td class="clickable">${nama}</td>
+          <td>${jual}</td>
+          <td>${escapeHtml(row["Harga Dagang"] || "")}</td>
+          <td><b>${encodeHargaBeli(row["Harga Beli"])}</b></td>
+          <td>${escapeHtml(row["Kategori"] || "")}</td>
+        `;
+        tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("page-info").textContent =
+        `Halaman ${currentPage} / ${Math.ceil(data.length / rowsPerPage)}`;
+    }
+
+    function highlightText(text, term) {
+      if (!term) return escapeHtml(text);
+      const re = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
+      return escapeHtml(text).replace(re, "<mark>$1</mark>");
+    }
+
+    function bukaPopup(row) {
+      document.getElementById("modalNama").textContent = row["Nama Barang"] || "-";
+      document.getElementById("modalJual").textContent = "Rp " + formatNumber(row["Harga Jual"]);
+      document.getElementById("modalGrosir").textContent = row["Harga Dagang"] || "-";
+      document.getElementById("modalKategori").textContent = row["Kategori"] || "-";
+      if (row["Keterangan"] && row["Keterangan"].trim() !== "") {
+        document.getElementById("modalKetValue").textContent = row["Keterangan"];
+        document.getElementById("modalKeterangan").style.display = "block";
+      } else {
+        document.getElementById("modalKeterangan").style.display = "none";
+      }
+      document.getElementById("popupModal").style.display = "flex";
+    }
+
+    function tutupPopup() {
+      document.getElementById("popupModal").style.display = "none";
+    }
+
+// Tombol Gambar (Google Images)
+document.getElementById("gambarBtn").addEventListener("click", () => {
+  const nama = document.getElementById("modalNama").textContent.trim();
+  if (!nama) return alert("Nama barang tidak ditemukan.");
+  const query = encodeURIComponent(nama);
+  const url = `https://www.google.com/search?tbm=isch&tbs=isz:l,itp:photo,ift:jpg&q=${query}`;
+  window.open(url, "_blank");
+});
+
+// Tombol Video (YouTube)
+document.getElementById("videoBtn").addEventListener("click", () => {
+  const nama = document.getElementById("modalNama").textContent.trim();
+  if (!nama) return alert("Nama barang tidak ditemukan.");
+  const query = encodeURIComponent(nama);
+  const url = `https://www.youtube.com/results?search_query=${query}`;
+  window.open(url, "_blank");
+});
+
+
+    function updateTable() {
+      const filtered = getFiltered();
+      if (currentSort.key) {
+        filtered.sort(compare(currentSort.key, currentSort.order));
+      }
+      const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
+      if (currentPage > totalPages) currentPage = totalPages;
+      renderTable(filtered);
+      updateStatistik(filtered);
+    }
+
+    document.getElementById("next").addEventListener("click", () => {
+      const filtered = getFiltered();
+      if (currentPage < Math.ceil(filtered.length / rowsPerPage)) {
+        currentPage++;
+        updateTable();
+      }
+    });
+
+    document.getElementById("prev").addEventListener("click", () => {
+      if (currentPage > 1) { currentPage--; updateTable(); }
+    });
+
+    document.getElementById("search").addEventListener("input", () => { currentPage = 1; updateTable(); });
+    document.getElementById("kategori").addEventListener("input", () => {
+      currentPage = 1;
+      updateTable();
+    });
+
+    function getFiltered() {
+      const s = document.getElementById("search").value.toLowerCase().trim();
+      const k = document.getElementById("kategori").value.trim().toLowerCase();
+
+      return dataBarang.filter(item => {
+        const namaMatch = item["Nama Barang"]?.toLowerCase().includes(s);
+        const kategoriMatch = item["Kategori"]?.toLowerCase().includes(s);
+        const filterKategori = (k === "" || item["Kategori"]?.toLowerCase() === k);
+        return (namaMatch || kategoriMatch) && filterKategori;
+      });
+    }
+
+
+    function compare(key, order="asc") {
+      return function(a,b){
+        let valA = a[key] || "", valB = b[key] || "";
+        if(key==="Harga Jual") { valA=Number(valA)||0; valB=Number(valB)||0; }
+        if(valA < valB) return order==="asc" ? -1 : 1;
+        if(valA > valB) return order==="asc" ? 1 : -1;
+        return 0;
+      }
+    }
+
+    document.querySelectorAll("th[data-sort]").forEach(th => {
+      th.addEventListener("click", () => {
+        const key = th.getAttribute("data-sort");
+        const order = (currentSort.key === key && currentSort.order==="asc") ? "desc" : "asc";
+        currentSort = { key, order };
+        document.querySelectorAll("th").forEach(h=>h.classList.remove("sorted-asc","sorted-desc"));
+        th.classList.add(order==="asc" ? "sorted-asc":"sorted-desc");
+        updateTable();
+      });
+    });
+
+    function formatNumber(v){ const n = Number(v); return !isFinite(n)?escapeHtml(v||""):n.toLocaleString("id-ID"); }
+    function escapeHtml(t){ if(t===undefined||t===null)return""; return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+    // document.getElementById('hapusKategori').addEventListener('click', function() {
+    //   const kategoriInput = document.getElementById('kategori');
+    //   kategoriInput.value = '';  // hapus isi input
+    //   kategoriInput.focus();     // fokus biar UX enak
+
+    //   // 🔥 Pastikan filter tabel dijalankan ulang
+    //   if (typeof filterTable === 'function') {
+    //     filterTable(); // panggil ulang fungsi filter kamu
+    //   } else {
+    //     // fallback: trigger event input
+    //     kategoriInput.dispatchEvent(new Event('input'));
+    //   }
+    // });
+    // document.getElementById('kategori').addEventListener('input', filterTable);
+    // document.getElementById('search').addEventListener('input', filterTable);
+
+
+
+//     // tombol hapus kategori — pastikan element dengan id 'hapusKategori' ada di HTML
+// const hapusBtn = document.getElementById('hapusKategori');
+// if (hapusBtn) {
+//   hapusBtn.addEventListener('click', function() {
+//     const kategoriInput = document.getElementById('kategori');
+//     // kosongkan input kategori
+//     kategoriInput.value = '';
+//     // reset ke halaman pertama supaya user melihat seluruh data
+//     currentPage = 1;
+//     // jalankan ulang filter + render tabel
+//     updateTable();
+//     // kembalikan fokus ke input kategori (opsional, supaya UX mulus)
+//     kategoriInput.focus();
+//   });
+// }
+
+
+    const hapusBtn = document.getElementById('hapusKategori');
+if (hapusBtn) {
+  hapusBtn.type = 'button';              // mencegah perilaku submit jika ada form
+  hapusBtn.setAttribute('aria-label','Hapus kategori');
+  hapusBtn.addEventListener('click', function() {
+    const kategoriInput = document.getElementById('kategori');
+    kategoriInput.value = '';            // kosongkan input kategori
+    currentPage = 1;                     // kembali ke halaman 1
+    updateTable();                       // jalankan ulang filter + render tabel
+    kategoriInput.focus();               // beri fokus agar UX lancar
+  });
+}
+
+
+
+
+    fetchData();
+  </script>
+</body>
+</html>
