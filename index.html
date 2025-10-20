@@ -492,6 +492,37 @@ document.getElementById("videoBtn").addEventListener("click", () => {
     function formatNumber(v){ const n = Number(v); return !isFinite(n)?escapeHtml(v||""):n.toLocaleString("id-ID"); }
     function escapeHtml(t){ if(t===undefined||t===null)return""; return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
+        // Ganti datalist jadi select otomatis di HP
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      const kategoriInput = document.getElementById("kategori");
+      const kategoriList = document.getElementById("kategori-list");
+      const container = kategoriInput.parentElement;
+
+      // Buat elemen <select>
+      const select = document.createElement("select");
+      select.id = "kategori-mobile";
+      select.innerHTML = '<option value="">📂 Semua Kategori</option>';
+
+      // Ambil isi datalist
+      Array.from(kategoriList.options).forEach(opt => {
+        const o = document.createElement("option");
+        o.value = opt.value;
+        o.textContent = opt.value;
+        select.appendChild(o);
+      });
+
+      // Ganti input dengan select
+      container.replaceChild(select, kategoriInput);
+
+      // Tambahkan event listener supaya tetap berfungsi
+      select.addEventListener("change", () => {
+        document.getElementById("kategori").value = select.value; // sinkron kalau dibutuhkan
+        currentPage = 1;
+        updateTable();
+      });
+    }
+
+
     fetchData();
   </script>
 </body>
