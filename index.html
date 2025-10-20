@@ -46,10 +46,51 @@
     }
     .search-bar {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: row;
       gap: 10px;
-      margin-bottom: 8px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
     }
+    /* Input pencarian */
+#search {
+  flex: 2;
+  font-size: 1.1rem;
+  padding: 12px 14px;
+  border: 1px solid #bbb;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+/* Saat fokus, beri efek biru */
+#search:focus, #kategori:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 6px rgba(37,99,235,0.3);
+}
+
+/* Responsif untuk HP */
+@media (max-width: 600px) {
+  .search-bar {
+    flex-direction: column;   /* di HP, biar turun ke bawah */
+  }
+
+  #search, #kategori {
+    width: 100%;
+    font-size: 1.1rem;
+  }
+}
+
+#kategori {
+  flex: 1;
+  font-size: 1.3rem;       /* 💥 tulisan kategori diperbesar */
+  font-weight: 500;
+  padding: 12px 14px;
+  border: 1px solid #bbb;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  background: white;
+}
+
     input, select {
       padding: 14px;
       font-size: 1.1rem;
