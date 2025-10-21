@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,8 +8,12 @@
   <title>Daftar Barang</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <style>
-    #gambarBtn:hover { background: #16a34a; }
-    #videoBtn:hover { background: #cc0000; }
+    #gambarBtn:hover {
+  background: #16a34a; /* hijau lebih gelap */
+}
+#videoBtn:hover {
+  background: #cc0000; /* merah lebih gelap */
+}
 
     input[type="text"], select {
       width: 100%;
@@ -19,7 +25,8 @@
     }
     body {
       font-family: "Segoe UI", Arial, sans-serif;
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       background: #f9fafb;
       color: #333;
     }
@@ -31,7 +38,8 @@
       font-size: 1.3rem;
       font-weight: 600;
       position: sticky;
-      top: 0; z-index: 100;
+      top: 0;
+      z-index: 100;
     }
     main {
       padding: 12px;
@@ -118,7 +126,11 @@
     th.sorted-asc::after { content: " ⬆️"; }
     th.sorted-desc::after { content: " ⬇️"; }
     tr:hover { background: #f9f9f9; }
-    .clickable { color: #2563eb; font-weight: 600; text-decoration: none; }
+    .clickable {
+      color: #2563eb;
+      font-weight: 600;
+      text-decoration: none;
+    }
     .pagination {
       margin-top: 15px;
       display: flex;
@@ -137,14 +149,16 @@
       font-size: 1rem;
       transition: 0.2s;
     }
-    button:hover { background: #1e40af; color: white; }
+    button:hover { background: #1e40af; }
     #page-info { font-size: 1rem; }
     .modal {
       display: none;
       position: fixed;
       z-index: 1000;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
       background: rgba(0,0,0,0.5);
       justify-content: center;
       align-items: center;
@@ -153,10 +167,12 @@
     }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .modal-content {
+      white-space: normal; /* tambahan */
       background: white;
       border-radius: 12px;
       padding: 20px;
-      width: 95%; max-width: 400px;
+      width: 95%;
+      max-width: 400px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
       text-align: left;
       animation: slideUp 0.3s ease;
@@ -174,10 +190,34 @@
       font-size: 1rem;
       width: 100%;
     }
-    .video-btn { background: #ef4444; }
-    .video-btn:hover { background: #dc2626; }
+    .video-btn {
+      background: #ef4444; /* merah */
+    }
+    .video-btn:hover {
+      background: #dc2626;
+    }
     .no-data { text-align: center; color: #999; padding: 20px; font-size: 1rem; }
     mark { background-color: yellow; color: black; }
+    
+    .modal-content p {
+        font-family: monospace; /* supaya jarak karakter konsisten */
+        white-space: pre;        /* agar spasi tidak dipadatkan */
+        margin: 4px 0;
+        line-height: 1.4; /* tambahan */
+      }
+    .modal-content strong {
+        display: inline-block;
+        width: 14ch;  /* lebar kolom kiri, ubah sesuai panjang label terpanjang */
+        vertical-align: top;
+      }
+    .modal-content p,
+    .modal-content .value,
+    #modalKeterangan {
+        white-space: normal !important;  /* teks otomatis turun ke baris berikutnya */
+        word-wrap: break-word;           /* pecah kata panjang */
+        overflow-wrap: break-word;       /* agar tetap pecah di semua browser */
+      }
+    
   </style>
 </head>
 <body>
@@ -185,10 +225,14 @@
   <main>
     <div class="search-bar">
       <input type="text" id="search" placeholder="🔍 Cari barang..." />
-      <select id="kategori">
-        <option value="">📂 Semua Kategori</option>
-      </select>
+      <div style="display:flex; gap:6px; flex:1;">
+        <select id="kategori" style="flex:1;">
+          <option value="">📂 Semua Kategori</option>
+        </select>
+        <button id="resetKategoriBtn" title="Kembali ke semua kategori" style="padding: 10px 14px; border-radius:10px; background:#f3f4f6; cursor:pointer;">🔃</button>
+      </div>
     </div>
+
 
     <div id="statistik">📦 Jumlah: 0 • 💰 Min: Rp0 • 💎 Max: Rp0</div>
 
@@ -214,37 +258,54 @@
     </div>
   </main>
 
-  <div class="modal" id="popupModal">
-    <div class="modal-content">
-      <h3 id="modalNama"></h3>
-      <p><strong>Harga Jual:</strong> <span id="modalJual"></span></p>
-      <p><strong>Harga Grosir:</strong> <span id="modalGrosir"></span></p>
-      <p><strong>Kategori:</strong> <span id="modalKategori"></span></p>
-      <p id="modalKeterangan" style="display:none;"><strong>ℹ️ Detail: </strong> <span id="modalKetValue"></span></p>
+<div class="modal" id="popupModal">
+  <div class="modal-content">
+    <h3 id="modalNama"></h3>
+    <p><strong>Harga Jual</strong>: <span id="modalJual"></span></p>
+    <p><strong>Harga Grosir</strong>: <span id="modalGrosir"></span></p>
+    <p><strong>Kategori</strong>: <span id="modalKategori"></span></p>
+    <p id="modalKeterangan" style="display:none;"><strong>Detail</strong>: <span id="modalKetValue"></span></p>
 
-      <div style="display: flex; gap: 10px; margin-top: 15px;">
-        <button class="close-btn" id="gambarBtn"
-          style="flex:1; border: 1px solid black; background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">
-          🌄 Gambar
-        </button>
-        <button class="close-btn" id="videoBtn"
-          style="flex:1; border: 1px solid black; background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">🎬 Video
-        </button>
-        <button class="close-btn" onclick="tutupPopup()" style="flex:1; border: 2px solid red;">🛇 Tutup</button>
-      </div>
+    <div style="display: flex; gap: 10px; margin-top: 15px;">
+      
+
+      <!-- Tombol Gambar -->
+      <button class="close-btn" id="gambarBtn"
+        style="flex:1; border: 1px solid black;  background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">
+        🌄 Gambar
+      </button>
+      <button class="close-btn" id="videoBtn"
+        style="flex:1; border: 1px solid black; background-color: white; display:flex; align-items:center; justify-content:center; gap:6px;">🎬
+        Video
+      </button>
+      
+
+
+      <button class="close-btn"  onclick="tutupPopup()" style="flex:1; border: 2px solid red; ">🛇 Tutup</button>
     </div>
   </div>
+</div>
+
 
   <script>
     const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv";
     let dataBarang = [], currentPage = 1, rowsPerPage = 15;
     let currentSort = { key: "", order: "" };
-
+    
     function encodeHargaBeli(angka) {
-      if (!angka) return "";
-      const map = { '1':'W','2':'I','3':'G','4':'U','5':'N','6':'A','7':'M','8':'O','9':'T','0':'R' };
-      return String(angka).split('').map(ch => map[ch] || ch).join('');
+        if (!angka) return "";
+        const map = { '1':'W','2':'I','3':'G','4':'U','5':'N','6':'A','7':'M','8':'O','9':'T','0':'R' };
+        return String(angka).split('').map(ch => map[ch] || ch).join('');
     }
+
+    document.getElementById("resetKategoriBtn").addEventListener("click", () => {
+      const select = document.getElementById("kategori");
+      select.value = "";
+      currentPage = 1;
+      updateTable();
+    });
+
+
 
     function fetchData() {
       const url = CSV_BASE_URL + "&t=" + new Date().getTime();
@@ -309,7 +370,7 @@
           <td class="clickable">${nama}</td>
           <td>${jual}</td>
           <td>${escapeHtml(row["Harga Dagang"] || "")}</td>
-          <td>${encodeHargaBeli(row["Harga Beli"])}</td>
+          <td><b>${encodeHargaBeli(row["Harga Beli"])}</b></td>
           <td>${escapeHtml(row["Kategori"] || "")}</td>
         `;
         tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
@@ -344,21 +405,24 @@
       document.getElementById("popupModal").style.display = "none";
     }
 
-    // Tombol Gambar (Google Images)
-    document.getElementById("gambarBtn").addEventListener("click", () => {
-      const nama = document.getElementById("modalNama").textContent.trim();
-      if (!nama) return alert("Nama barang tidak ditemukan.");
-      const query = encodeURIComponent(nama);
-      window.open(`https://www.google.com/search?tbm=isch&q=${query}`, "_blank");
-    });
+// Tombol Gambar (Google Images)
+document.getElementById("gambarBtn").addEventListener("click", () => {
+  const nama = document.getElementById("modalNama").textContent.trim();
+  if (!nama) return alert("Nama barang tidak ditemukan.");
+  const query = encodeURIComponent(nama);
+  const url = `https://www.google.com/search?tbm=isch&tbs=isz:l,itp:photo,ift:jpg&q=${query}`;
+  window.open(url, "_blank");
+});
 
-    // Tombol Video (YouTube)
-    document.getElementById("videoBtn").addEventListener("click", () => {
-      const nama = document.getElementById("modalNama").textContent.trim();
-      if (!nama) return alert("Nama barang tidak ditemukan.");
-      const query = encodeURIComponent(nama);
-      window.open(`https://www.youtube.com/results?search_query=${query}`, "_blank");
-    });
+// Tombol Video (YouTube)
+document.getElementById("videoBtn").addEventListener("click", () => {
+  const nama = document.getElementById("modalNama").textContent.trim();
+  if (!nama) return alert("Nama barang tidak ditemukan.");
+  const query = encodeURIComponent(nama);
+  const url = `https://www.youtube.com/results?search_query=${query}`;
+  window.open(url, "_blank");
+});
+
 
     function updateTable() {
       const filtered = getFiltered();
@@ -413,85 +477,13 @@
         const order = (currentSort.key === key && currentSort.order==="asc") ? "desc" : "asc";
         currentSort = { key, order };
         document.querySelectorAll("th").forEach(h=>h.classList.remove("sorted-asc","sorted-desc"));
-        th.classList.add(order==="asc"?"sorted-asc":"sorted-desc");
+        th.classList.add(order==="asc" ? "sorted-asc":"sorted-desc");
         updateTable();
       });
     });
 
-    function escapeHtml(text){ const div=document.createElement("div"); div.textContent=text; return div.innerHTML; }
-    function formatNumber(num){ return Number(num).toLocaleString("id-ID"); }
-
-    // === Tambahkan input pencarian di dropdown kategori ===
-    const kategoriSelect = document.getElementById("kategori");
-    kategoriSelect.addEventListener("mousedown", e => {
-      e.preventDefault(); // cegah dropdown default
-      const rect = kategoriSelect.getBoundingClientRect();
-
-      // buat dropdown pencarian custom
-      let wrapper = document.createElement("div");
-      wrapper.style.position = "absolute";
-      wrapper.style.left = rect.left + "px";
-      wrapper.style.top = rect.bottom + "px";
-      wrapper.style.width = rect.width + "px";
-      wrapper.style.background = "white";
-      wrapper.style.border = "1px solid #ccc";
-      wrapper.style.borderRadius = "8px";
-      wrapper.style.boxShadow = "0 2px 10px rgba(0,0,0,0.15)";
-      wrapper.style.zIndex = "9999";
-      wrapper.style.maxHeight = "250px";
-      wrapper.style.overflowY = "auto";
-      wrapper.style.padding = "6px";
-
-      // input pencarian
-      const searchInput = document.createElement("input");
-      searchInput.type = "text";
-      searchInput.placeholder = "Cari kategori...";
-      searchInput.style.width = "100%";
-      searchInput.style.padding = "8px";
-      searchInput.style.marginBottom = "6px";
-      searchInput.style.fontSize = "16px";
-      searchInput.style.border = "1px solid #ddd";
-      searchInput.style.borderRadius = "6px";
-
-      // daftar opsi
-      const options = Array.from(kategoriSelect.options);
-      const list = document.createElement("div");
-      function renderList(filter=""){
-        list.innerHTML = "";
-        options.forEach(opt=>{
-          if(opt.textContent.toLowerCase().includes(filter.toLowerCase())){
-            const item = document.createElement("div");
-            item.textContent = opt.textContent;
-            item.style.padding = "8px";
-            item.style.cursor = "pointer";
-            item.style.borderRadius = "6px";
-            item.addEventListener("mouseover", ()=> item.style.background="#f3f4f6");
-            item.addEventListener("mouseout", ()=> item.style.background="transparent");
-            item.addEventListener("click", ()=>{
-              kategoriSelect.value = opt.value;
-              document.body.removeChild(wrapper);
-              kategoriSelect.dispatchEvent(new Event("change"));
-            });
-            list.appendChild(item);
-          }
-        });
-      }
-      renderList();
-
-      searchInput.addEventListener("input", ()=> renderList(searchInput.value));
-      wrapper.appendChild(searchInput);
-      wrapper.appendChild(list);
-      document.body.appendChild(wrapper);
-
-      // tutup dropdown saat klik di luar
-      const closeHandler = (ev)=>{
-        if(!wrapper.contains(ev.target)){
-          document.body.removeChild(wrapper);
-          document.removeEventListener("mousedown", closeHandler);
-        }
-      };
-      document.addEventListener("mousedown", closeHandler);
-    });
+    function formatNumber(v){ const n = Number(v); return !isFinite(n)?escapeHtml(v||""):n.toLocaleString("id-ID"); }
+    function escapeHtml(t){ if(t===undefined||t===null)return""; return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
     fetchData();
   </script>
