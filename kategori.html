@@ -296,6 +296,7 @@ tr.selected {
   <script>
     const CSV_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCXZLMSDuJF52ErgdMsRf9oOFdRa5ejt0CtNES-TOjSSC5ZnOGof3qMm_GmbLdClZ3v4nIyBzv99rE/pub?output=csv";
     let dataBarang = [], currentPage = 1, rowsPerPage = 15;
+    let selectedRow = null;
     let currentSort = { key: "", order: "" };
     
     function encodeHargaBeli(angka) {
@@ -379,7 +380,13 @@ tr.selected {
           <td><b>${encodeHargaBeli(row["Harga Beli"])}</b></td>
           <td>${escapeHtml(row["Kategori"] || "")}</td>
         `;
-        tr.querySelector(".clickable").addEventListener("click", () => bukaPopup(row));
+      tr.querySelector(".clickable").addEventListener("click", () => {
+        if (selectedRow) selectedRow.classList.remove("selected");
+        selectedRow = tr;
+        selectedRow.classList.add("selected");
+        bukaPopup(row);
+      });
+
         tbody.appendChild(tr);
       });
 
@@ -409,7 +416,12 @@ tr.selected {
 
     function tutupPopup() {
       document.getElementById("popupModal").style.display = "none";
+      if (selectedRow) {
+        selectedRow.classList.remove("selected");
+        selectedRow = null;
+      }
     }
+
 
 // Tombol Gambar (Google Images)
 document.getElementById("gambarBtn").addEventListener("click", () => {
