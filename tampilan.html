@@ -42,9 +42,9 @@
       overflow-x: auto; background: white; border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-overflow-scrolling: touch;
     }
-    table { border-collapse: collapse; width: 100%; min-width: 700px; }
+    table { border-collapse: collapse; width: 100%; min-width: 700px; table-layout: fixed; }
     th, td {
-      border-bottom: 1px solid #eee; padding: 10px 12px; text-align: left; white-space: nowrap;
+      border-bottom: 1px solid #eee; padding: 10px 12px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     th {
       background: #f3f4f6; font-weight: bold; position: sticky; top: 0; z-index: 10; cursor: pointer;
@@ -144,10 +144,8 @@
       <table id="tabel-barang">
         <thead>
           <tr>
-            <th data-sort="Nama Barang">Nama Barang</th>
+            <th data-sort="Nama Barang" width="230">Nama Barang</th>
             <th data-sort="Harga Jual">Harga Jual</th>
-            <th>Harga Grosir</th>
-            <th>Kode</th>
             <th>Kategori</th>
           </tr>
         </thead>
@@ -270,10 +268,8 @@ function renderTable(data) {
     const nama = highlightText(row["Nama Barang"], searchVal);
     const jual = highlightText("Rp " + formatNumber(row["Harga Jual"]), searchVal);
     tr.innerHTML = `
-      <td class="clickable">${nama}</td>
-      <td>${jual}</td>
-      <td>${escapeHtml(row["Harga Dagang"] || "")}</td>
-      <td><b>${encodeHargaBeli(row["Harga Beli"])}</b></td>
+      <td class="clickable" width="230">${nama}</td>
+      <td >${jual}</td>
       <td>${escapeHtml(row["Kategori"] || "")}</td>`;
     tr.querySelector(".clickable").addEventListener("click", () => {
       if (selectedRow) selectedRow.classList.remove("selected");
