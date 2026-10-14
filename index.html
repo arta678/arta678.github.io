@@ -1,0 +1,1333 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#007bff" />
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<script>
+  if (location.protocol === 'http:' || location.protocol === 'https:') {
+    const m = document.createElement('link');
+    m.rel = 'manifest';
+    m.href = 'manifest.webmanifest';
+    document.head.appendChild(m);
+  }
+</script>
+<title>Harga Produk - Toko Wiguna</title>
+<style>
+  :root {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #111;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 16px;
+    background: #f7f7f8;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #555;
+    background: #fff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e5e7;
+  }
+  .sync-btn {
+    background: #f5f5f7;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: background 0.2s;
+  }
+  .sync-btn:hover { background: #e5e5ea; }
+  .sync-btn:active { transform: scale(0.97); }
+  .header { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; align-items: stretch; }
+  .category-row { display: flex; gap: 8px; align-items: center; width: 100%; }
+  #category {
+    flex: 1;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 11px 12px;
+    font-size: 16px;
+    outline: none;
+    transition: background-color 0.3s ease, border-color 0.2s;
+  }
+  #category.selected { background-color: #fff9c4; border-color: #fbc02d; font-weight: 500; }
+  #resetCategory {
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 15px;
+    cursor: pointer;
+    white-space: nowrap;
+    width: 90px;
+    transition: background 0.2s;
+  }
+  #resetCategory:hover { background: #e0e0e0; }
+  .search { display: flex; gap: 8px; width: 100%; }
+  input[type="search"] {
+    flex: 1;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #fff;
+    outline: none;
+    font-size: 18px;
+    width: 100%;
+    transition: border-color 0.2s;
+  }
+  input[type="search"]:focus { border-color: #007bff; }
+  #btnAddProduk {
+    background: #85b3e5;
+    color: white;
+    border: 1px solid #85b3e5;
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    min-width: 95px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+  }
+  #btnAddProduk:hover { background: #85b3e5; border-color: #85b3e5; }
+  #btnAddProduk:active { transform: scale(0.97); }
+  #sortHarga {
+    background: #f7f7f8;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 15px;
+    cursor: pointer;
+    white-space: nowrap;
+    min-width: 95px;
+    transition: all 0.2s ease;
+  }
+  #sortHarga.active {
+    background: #e3f2fd;
+    border-color: #1976d2;
+    color: #0d47a1;
+    font-weight: 600;
+  }
+  body.modal-open {
+    overflow: hidden !important;
+  }
+  .loader { font-size: 18px; color: #555; margin: 20px 0; text-align: center; font-weight: 500; }
+  .empty { font-size: 18px; color: #666; padding: 30px 10px; text-align: center; }
+  .hint-box {
+    text-align: center;
+    padding: 36px 16px;
+    color: #666;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    margin-top: 12px;
+  }
+  .results-count {
+    font-size: 14px;
+    color: #555;
+    margin: 8px 0;
+    font-weight: 500;
+  }
+  /* Table: touch friendly */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  th, td {
+    padding: 16px 14px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover { background: #f5faff; cursor: pointer; }
+  @media (hover:none) { tr:active { background: #eef4ff; } }
+  .harga { font-weight: bold; font-size: 16px; color: #111; }
+  mark { background-color: #ffeb3b; color: #000; font-weight: bold; border-radius: 2px; padding: 0 2px; }
+  
+  /* Modal */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 999;
+    backdrop-filter: blur(2px);
+    overscroll-behavior: contain;
+  }
+  .modal {
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+  }
+  .modal-header h3 { margin: 0; font-size: 18px; color: #222; }
+  .close-btn {
+    background: #f0f0f2;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #444;
+  }
+  .close-btn:hover { background: #e2e2e5; }
+  .detail-row {
+    margin-bottom: 12px;
+    font-size: 15px;
+    color: #222;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #f0f0f0;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-label {
+    font-size: 12px;
+    color: #777;
+    text-transform: capitalize;
+    margin-bottom: 3px;
+    font-weight: 500;
+  }
+
+  /* Back To Top Button */
+  #backToTop {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 998;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease, background-color 0.2s;
+  }
+  #backToTop:hover { background-color: #0056b3; transform: scale(1.08); }
+  
+  /* Form input edit produk */
+  .form-group { margin-bottom: 12px; }
+  .form-label { display: block; font-size: 13px; color: #555; margin-bottom: 4px; text-transform: capitalize; font-weight: 500; }
+  .form-control { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; outline: none; box-sizing: border-box; }
+  .form-control:focus { border-color: #007bff; box-shadow: 0 0 0 2px rgba(0,123,255,0.15); }
+</style>
+</head>
+<body>
+
+<div id="localWarning" style="display:none;background:#fff3cd;color:#856404;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:13px;border:1px solid #ffeeba;line-height:1.4;">
+  💡 <strong>Info:</strong> Anda membuka file secara langsung (<code>file://</code>). Agar fitur PWA, Service Worker, dan Cache Offline berjalan optimal, buka melalui URL server lokal XAMPP:
+  <div style="margin-top:4px;"><a href="http://localhost:8080/arta678.github.io/" style="color:#0056b3;font-weight:bold;text-decoration:underline;">http://localhost:8080/arta678.github.io/</a></div>
+</div>
+
+<div class="top-bar">
+  <span id="syncStatus">Memeriksa data...</span>
+  <button id="syncBtn" class="sync-btn" title="Muat ulang data terbaru dari Google Sheets">Sinkron Data</button>
+</div>
+
+<div class="header">
+  <div class="category-row">
+    <select id="category" aria-label="Pilih Kategori">
+      <option value="">Semua Kategori</option>
+    </select>
+    <button id="resetCategory">Reset</button>
+  </div>
+
+  <div class="search">
+    <input id="q" type="search" placeholder="Cari Barang..." autocomplete="off" />
+    <button id="btnAddProduk" title="Tambah Produk Baru">Tambah</button>
+    <button id="sortHarga">⇅ Harga</button>
+  </div>
+</div>
+
+<div id="status" class="loader" style="display:none;">⏳ Memuat data...</div>
+<div id="empty" class="empty" style="display:none;">❌ Produk tidak ditemukan</div>
+<div id="initial-hint" class="hint-box">
+  <div style="font-size: 34px; margin-bottom: 8px;">🔍</div>
+  <div>Ketik nama barang pada kolom pencarian atau pilih kategori di atas untuk melihat produk.</div>
+</div>
+<div id="results"></div>
+
+<div id="overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Detail Produk</h3>
+      <button id="closeModalBtn" class="close-btn" aria-label="Tutup Detail">&times;</button>
+    </div>
+    <div id="modal-body"></div>
+    <div class="modal-footer" style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 8px;">
+      <button id="btnEditProduk" style="background:#007bff; color:#fff; border:none; border-radius:8px; padding:10px 18px; font-size:15px; cursor:pointer; font-weight:500; display:flex; align-items:center; gap:6px;">✏️ Edit Produk</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal PIN -->
+<div id="pinOverlay" class="overlay" role="dialog" aria-modal="true" style="display:none; z-index: 1000;">
+  <div class="modal" style="max-width: 360px; text-align: center; padding: 24px;">
+    <div style="font-size: 38px; margin-bottom: 6px;">🔒</div>
+    <h3 style="margin: 0 0 6px 0; font-size: 20px;">Verifikasi PIN</h3>
+    <p style="margin: 0 0 16px 0; font-size: 14px; color: #666;">Masukkan PIN Anda Disini:</p>
+    <form id="pinForm" onsubmit="return false;">
+      <input type="password" id="pinInput" maxlength="6" inputmode="numeric" placeholder="*****" autocomplete="off" style="font-size: 26px; letter-spacing: 8px; text-align: center; width: 170px; padding: 10px; border-radius: 8px; border: 2px solid #ccc; outline: none; margin-bottom: 8px;" />
+      <div id="pinError" style="color: #d32f2f; font-size: 14px; font-weight: 500; display: none; margin-bottom: 12px;">❌ PIN salah! Akses ditolak.</div>
+      <div style="display: flex; gap: 8px; justify-content: center; margin-top: 12px;">
+        <button type="button" id="btnCancelPin" style="flex:1; background: #eee; border: none; border-radius: 8px; padding: 10px 14px; font-size: 15px; cursor: pointer;">Batal</button>
+        <button type="submit" id="btnSubmitPin" style="flex:1; background: #007bff; color: white; border: none; border-radius: 8px; padding: 10px 14px; font-size: 15px; font-weight: bold; cursor: pointer;">Lanjut</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Edit Data Produk -->
+<div id="editOverlay" class="overlay" role="dialog" aria-modal="true" style="display:none; z-index: 1001;">
+  <div class="modal" style="max-width: 580px;">
+    <div class="modal-header">
+      <h3 style="margin:0; font-size: 18px;">✏️ Edit Data Produk</h3>
+      <button id="closeEditModalBtn" class="close-btn" aria-label="Tutup Edit">&times;</button>
+    </div>
+    <form id="editProductForm" onsubmit="return false;" style="margin-top: 10px;">
+      <div id="editFormBody"></div>
+      <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" id="btnCancelEdit" style="background: #f0f0f2; border: none; border-radius: 8px; padding: 10px 18px; font-size: 15px; cursor: pointer;">Batal</button>
+        <button type="submit" id="btnSaveEdit" style="background: #28a745; color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px;">💾 Simpan Produk</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Tambah Produk Baru -->
+<div id="addOverlay" class="overlay" role="dialog" aria-modal="true" style="display:none; z-index: 1001;">
+  <div class="modal" style="max-width: 580px;">
+    <div class="modal-header">
+      <h3 style="margin:0; font-size: 18px;">➕ Tambah Produk Baru</h3>
+      <button id="closeAddModalBtn" class="close-btn" aria-label="Tutup Tambah">&times;</button>
+    </div>
+    <form id="addProductForm" onsubmit="return false;" style="margin-top: 10px;">
+      <div id="addFormBody"></div>
+      <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" id="btnCancelAdd" style="background: #f0f0f2; border: none; border-radius: 8px; padding: 10px 18px; font-size: 15px; cursor: pointer;">Batal</button>
+        <button type="submit" id="btnSaveAdd" style="background: #28a745; color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 15px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px;">💾 Simpan Produk</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<button id="backToTop" title="Kembali ke atas">⬆️</button>
+
+<script defer>
+const SHEET_ID = "1opsWaN0-f-aZEjqTx85jGlw6rBF4rXnGpUdakvW3Ixg";
+const GID = "0";
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+
+// URL Google Apps Script Web App untuk auto-update Google Spreadsheet
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxEa9ZtBa_amaepBygTsypHykTHu5Q9gt7d-5K3oAgAHid9qL1QixrQeNGGNOcUM0Hx/exec";
+
+const CACHE_KEY = "wiguna_products_cache";
+const CACHE_TIME_KEY = "wiguna_cache_time";
+const LOCAL_EDITS_KEY = "wiguna_local_edits"; // Menyimpan edit lokal agar tidak hilang saat refresh
+
+const qInput = document.getElementById('q');
+const catSelect = document.getElementById('category');
+const resultsEl = document.getElementById('results');
+const statusEl = document.getElementById('status');
+const emptyEl = document.getElementById('empty');
+const initialHintEl = document.getElementById('initial-hint');
+const overlay = document.getElementById('overlay');
+const modalBody = document.getElementById('modal-body');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const btnAddProduk = document.getElementById('btnAddProduk');
+const sortBtn = document.getElementById('sortHarga');
+const resetBtn = document.getElementById('resetCategory');
+const syncBtn = document.getElementById('syncBtn');
+const syncStatusEl = document.getElementById('syncStatus');
+const backToTopBtn = document.getElementById('backToTop');
+const btnEditProduk = document.getElementById('btnEditProduk');
+const pinOverlay = document.getElementById('pinOverlay');
+const pinInput = document.getElementById('pinInput');
+const pinError = document.getElementById('pinError');
+const pinForm = document.getElementById('pinForm');
+const btnCancelPin = document.getElementById('btnCancelPin');
+const editOverlay = document.getElementById('editOverlay');
+const editFormBody = document.getElementById('editFormBody');
+const editProductForm = document.getElementById('editProductForm');
+const btnCancelEdit = document.getElementById('btnCancelEdit');
+const closeEditModalBtn = document.getElementById('closeEditModalBtn');
+const addOverlay = document.getElementById('addOverlay');
+const addFormBody = document.getElementById('addFormBody');
+const addProductForm = document.getElementById('addProductForm');
+const btnCancelAdd = document.getElementById('btnCancelAdd');
+const closeAddModalBtn = document.getElementById('closeAddModalBtn');
+
+const LOCAL_ADDED_KEY = "wiguna_local_added"; // Menyimpan produk baru yang ditambahkan
+
+let pinMode = 'edit'; // 'edit' atau 'add'
+let currentSelectedItem = null;
+let data = [];
+let sortAsc = null; // null = normal, true = termurah, false = termahal
+let ready = false;
+let debounceTimer;
+const DEBOUNCE_MS = 300;
+const MAX_RESULTS = 200;
+
+// Kunci scroll background saat popup terbuka
+function lockBodyScroll() {
+  document.body.classList.add('modal-open');
+}
+
+// Buka kunci scroll background jika semua popup tertutup
+function unlockBodyScroll() {
+  const anyOpen = [overlay, pinOverlay, editOverlay, addOverlay].some(el => el && el.style.display === 'flex');
+  if (!anyOpen) {
+    document.body.classList.remove('modal-open');
+  }
+}
+
+function getLocalEdits() {
+  try {
+    return JSON.parse(localStorage.getItem(LOCAL_EDITS_KEY) || '{}');
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveLocalEdits(edits) {
+  localStorage.setItem(LOCAL_EDITS_KEY, JSON.stringify(edits));
+}
+
+function getLocalAdded() {
+  try {
+    return JSON.parse(localStorage.getItem(LOCAL_ADDED_KEY) || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveLocalAdded(arr) {
+  localStorage.setItem(LOCAL_ADDED_KEY, JSON.stringify(arr));
+}
+
+function applyLocalEdits(rows) {
+  if (!rows) return rows;
+  const sample = rows[0] || {};
+  const nameKey = findKey(sample, ['nama_barang', 'nama', 'name', 'produk', 'product', 'title', 'mesi', 'mesin', 'barang']);
+
+  // Masukkan produk baru yang belum masuk ke spreadsheet
+  const added = getLocalAdded();
+  added.forEach(item => {
+    const itemKey = String(item[nameKey] || '').trim().toLowerCase();
+    const exists = rows.some(r => String(r[nameKey] || '').trim().toLowerCase() === itemKey);
+    if (!exists) {
+      rows.unshift(item);
+    }
+  });
+
+  // Terapkan perubahan edit produk
+  const edits = getLocalEdits();
+  const editKeys = Object.keys(edits);
+  if (editKeys.length) {
+    rows.forEach(r => {
+      const k = String(r[nameKey] || '').trim().toLowerCase();
+      if (edits[k]) {
+        Object.assign(r, edits[k]);
+      }
+    });
+  }
+
+  return rows;
+}
+
+// Escape string untuk RegExp aman dari karakter khusus ()[]{}+*^$
+function escapeRegExp(string) {
+  return String(string || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Escape HTML untuk mencegah XSS
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, m => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[m]));
+}
+
+function normalizeHeader(h) {
+  return String(h || '').trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+}
+
+function parseCSVtoRows(text) {
+  const rows = [];
+  let cur = '', i = 0, col = [], inQuotes = false;
+  while (i < text.length) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { cur += '"'; i += 2; continue; }
+        inQuotes = false; i++; continue;
+      } else {
+        cur += ch; i++; continue;
+      }
+    } else {
+      if (ch === '"') { inQuotes = true; i++; continue; }
+      if (ch === ',') { col.push(cur); cur = ''; i++; continue; }
+      if (ch === '\r') { i++; continue; }
+      if (ch === '\n') { col.push(cur); rows.push(col); col = []; cur = ''; i++; continue; }
+      cur += ch; i++;
+    }
+  }
+  if (cur !== '' || inQuotes) col.push(cur);
+  if (col.length) rows.push(col);
+  return rows;
+}
+
+function parseCSV(text) {
+  const rows = parseCSVtoRows(text).filter(r => r.length && r.some(c => String(c || '').trim() !== ''));
+  if (!rows.length) return [];
+  const headerRaw = rows[0];
+  const headers = headerRaw.map(normalizeHeader);
+  return rows.slice(1).map(r => {
+    const obj = {};
+    for (let i = 0; i < headers.length; i++) {
+      obj[headers[i]] = r[i] !== undefined ? r[i] : '';
+    }
+    return obj;
+  });
+}
+
+function findKey(obj, candidates) {
+  const keys = Object.keys(obj || {});
+  for (const c of candidates) {
+    if (keys.includes(c)) return c;
+  }
+  return keys[0] || '';
+}
+
+function formatRupiah(angka) {
+  if (!angka) return '';
+  const clean = String(angka).replace(/[^\d]/g, '');
+  if (!clean) return '';
+  return clean.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+// Cipher kode modal harga beli (Wiguna Motor: RWIGUNAMOT)
+function kodeHarga(nilai) {
+  if (!nilai) return '';
+  const map = { '0':'R','1':'W','2':'I','3':'G','4':'U','5':'N','6':'A','7':'M','8':'O','9':'T','.':'.' };
+  return String(nilai).split('').map(c => map[c] || c).join('');
+}
+
+function updateCategoryOptions(dataset) {
+  const currentVal = catSelect.value;
+  catSelect.innerHTML = '<option value="">Semua Kategori</option>';
+  if (!dataset || !dataset.length) return;
+
+  const catKey = Object.keys(dataset[0]).find(k => /kategori|category|kat/.test(k)) || null;
+  if (catKey) {
+    const s = new Set(dataset.map(d => (d[catKey] || '').trim()).filter(Boolean));
+    Array.from(s).sort((a, b) => a.localeCompare(b, 'id')).forEach(c => {
+      const o = document.createElement('option');
+      o.value = c;
+      o.textContent = c;
+      if (c === currentVal) o.selected = true;
+      catSelect.appendChild(o);
+    });
+  }
+}
+
+function updateSyncUI(timeStr, isOffline = false) {
+  if (!syncStatusEl) return;
+  if (isOffline) {
+    syncStatusEl.innerHTML = `⚠️ <span style="color:#d9534f;font-weight:600;">Offline</span> (Data: ${escapeHtml(timeStr)})`;
+  } else {
+    syncStatusEl.innerHTML = `🟢 Sinkron: <strong>${escapeHtml(timeStr)}</strong>`;
+  }
+}
+
+function loadDataViaJSONP() {
+  return new Promise((resolve, reject) => {
+    const cbName = 'gviz_' + Math.floor(Math.random() * 1000000);
+    const script = document.createElement('script');
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error('Timeout memuat data dari Google Sheets'));
+    }, 15000);
+
+    function cleanup() {
+      clearTimeout(timer);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[cbName] = function(json) {
+      cleanup();
+      try {
+        if (!json || !json.table || !json.table.rows) {
+          reject(new Error('Format data tidak sesuai'));
+          return;
+        }
+        const cols = (json.table.cols || []).map(c => normalizeHeader(c.label || c.id || ''));
+        const rows = json.table.rows.map(r => {
+          const obj = {};
+          if (r && r.c) {
+            r.c.forEach((cell, idx) => {
+              const colName = cols[idx];
+              if (colName) {
+                obj[colName] = cell && cell.v !== null && cell.v !== undefined ? cell.v : '';
+              }
+            });
+          }
+          return obj;
+        }).filter(r => Object.values(r).some(v => String(v).trim() !== ''));
+        resolve(rows);
+      } catch (err) {
+        reject(err);
+      }
+    };
+
+    script.onerror = function() {
+      cleanup();
+      reject(new Error('Gagal memuat JSONP dari Google Sheets'));
+    };
+
+    script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:${cbName}&gid=${GID}`;
+    document.body.appendChild(script);
+  });
+}
+
+async function loadData(forceRefresh = false) {
+  // 1. Coba pulihkan dari cache LocalStorage terlebih dahulu agar tampilan instan
+  const cachedRaw = localStorage.getItem(CACHE_KEY);
+  const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+
+  if (cachedRaw && !forceRefresh) {
+    try {
+      const parsed = JSON.parse(cachedRaw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        data = applyLocalEdits(parsed);
+        updateCategoryOptions(data);
+        ready = true;
+        updateSyncUI(cachedTime || 'Tersimpan', false);
+        searchAndRender();
+      }
+    } catch (e) {
+      console.warn("Gagal membaca cache lokal:", e);
+    }
+  }
+
+  if (data.length === 0) {
+    statusEl.style.display = '';
+  }
+  if (syncStatusEl) {
+    syncStatusEl.textContent = 'Memperbarui data...';
+  }
+
+  // 2. Ambil data terbaru dari Google Sheets (Fetch / JSONP Fallback)
+  try {
+    let freshData = null;
+
+    if (location.protocol === 'file:') {
+      // Pada protokol file:// fetch diblokir CORS browser, gunakan JSONP langsung
+      freshData = await loadDataViaJSONP();
+    } else {
+      try {
+        const res = await fetch(CSV_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const txt = await res.text();
+        freshData = parseCSV(txt);
+      } catch (fetchErr) {
+        // Fallback jika fetch terhambat CORS atau redirect
+        console.warn("Fetch gagal, beralih ke JSONP:", fetchErr.message);
+        freshData = await loadDataViaJSONP();
+      }
+    }
+
+    if (freshData && freshData.length > 0) {
+      data = applyLocalEdits(freshData);
+      updateCategoryOptions(data);
+      ready = true;
+
+      const now = new Date();
+      const timeStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' +
+                      now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+      localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+      localStorage.setItem(CACHE_TIME_KEY, timeStr);
+      updateSyncUI(timeStr, false);
+      searchAndRender();
+    }
+    statusEl.style.display = 'none';
+  } catch (err) {
+    statusEl.style.display = 'none';
+    if (data.length > 0) {
+      // Masih punya data dari cache
+      updateSyncUI(cachedTime || 'Sebelumnya', true);
+    } else {
+      syncStatusEl.textContent = 'Gagal sinkron data';
+      alert('Gagal memuat data dari Google Sheets: ' + err.message + '\nPeriksa koneksi internet Anda.');
+    }
+  }
+}
+
+function searchAndRender() {
+  if (!ready) return;
+  const q = (qInput.value || '').trim().toLowerCase();
+  const cat = (catSelect.value || '').trim();
+
+  if (!q && !cat) {
+    resultsEl.innerHTML = '';
+    emptyEl.style.display = 'none';
+    if (initialHintEl) initialHintEl.style.display = '';
+    return;
+  }
+
+  if (initialHintEl) initialHintEl.style.display = 'none';
+
+  const sample = data[0] || {};
+  const nameKey = findKey(sample, ['nama_barang', 'nama', 'name', 'produk', 'product', 'title']);
+  const catKey = findKey(sample, ['kategori', 'category', 'kat']);
+  const hargaKey = findKey(sample, ['harga_jual', 'harga', 'price']);
+
+  // Filter pencarian
+  const filtered = data.filter(row => {
+    const nama = (row[nameKey] || '').toLowerCase();
+    const kategori = (row[catKey] || '').toLowerCase();
+    const qMatch = !q || nama.includes(q) || kategori.includes(q);
+    const catMatch = !cat || kategori === cat.toLowerCase();
+    return qMatch && catMatch;
+  });
+
+  // Urutkan berdasarkan harga jika tombol aktif
+  if (sortAsc !== null) {
+    filtered.sort((a, b) => {
+      const ha = parseFloat((a[hargaKey] || '0').replace(/[^\d.-]/g, '')) || 0;
+      const hb = parseFloat((b[hargaKey] || '0').replace(/[^\d.-]/g, '')) || 0;
+      return sortAsc ? ha - hb : hb - ha;
+    });
+  }
+
+  renderTable(filtered, q, nameKey);
+}
+
+function renderTable(rows, query, nameKey) {
+  resultsEl.innerHTML = '';
+  if (!rows || rows.length === 0) {
+    emptyEl.style.display = '';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  const table = document.createElement('table');
+  const tbody = document.createElement('tbody');
+
+  // Cari kolom harga satu kali di luar loop untuk efisiensi
+  const sample = rows[0] || {};
+  const hargaKey = findKey(sample, ['harga_jual', 'harga', 'price']);
+
+  rows.slice(0, MAX_RESULTS).forEach(r => {
+    const tr = document.createElement('tr');
+    const tdName = document.createElement('td');
+
+    let name = escapeHtml(r[nameKey] || '(tanpa nama)');
+    if (query) {
+      const cleanQ = query.trim();
+      if (cleanQ) {
+        try {
+          const escapedQ = escapeRegExp(escapeHtml(cleanQ));
+          const regex = new RegExp(`(${escapedQ})`, 'gi');
+          name = name.replace(regex, '<mark>$1</mark>');
+        } catch (_) {}
+      }
+    }
+    tdName.innerHTML = name;
+    tr.appendChild(tdName);
+
+    // Kolom harga
+    const tdHarga = document.createElement('td');
+    tdHarga.style.textAlign = 'right';
+    tdHarga.style.whiteSpace = 'nowrap';
+    const formattedHarga = formatRupiah(r[hargaKey]);
+    tdHarga.innerHTML = `<span class="harga">${formattedHarga ? 'Rp ' + escapeHtml(formattedHarga) : '-'}</span>`;
+    tr.appendChild(tdHarga);
+
+    // ---- Tekan lama untuk popup sembunyikan baris (aman dari click event) ----
+    let pressTimer = null;
+    let isLongPress = false;
+
+    const startPress = () => {
+      isLongPress = false;
+      pressTimer = setTimeout(() => {
+        isLongPress = true;
+        showHidePopup(tr);
+      }, 600); // 0.6 detik
+    };
+
+    const cancelPress = () => {
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    };
+
+    tr.addEventListener('mousedown', startPress);
+    tr.addEventListener('mouseup', cancelPress);
+    tr.addEventListener('mouseleave', cancelPress);
+    tr.addEventListener('touchstart', startPress, { passive: true });
+    tr.addEventListener('touchend', cancelPress);
+    tr.addEventListener('touchmove', cancelPress);
+
+    // Klik buka modal (abaikan jika dipicu sesudah long-press)
+    tr.addEventListener('click', (e) => {
+      if (isLongPress) {
+        isLongPress = false;
+        e.stopPropagation();
+        return;
+      }
+      showModal(r);
+    });
+
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  const count = rows.length;
+  const info = document.createElement('div');
+  info.className = 'results-count';
+  info.textContent = count > MAX_RESULTS 
+    ? `Menampilkan ${MAX_RESULTS} dari ${count} produk ditemukan` 
+    : `${count} produk ditemukan`;
+  resultsEl.prepend(info);
+  resultsEl.appendChild(table);
+}
+
+function showModal(item) {
+  currentSelectedItem = item;
+  modalBody.innerHTML = '';
+  Object.keys(item).forEach(k => {
+    const rawVal = item[k];
+    if (rawVal === undefined || rawVal === null || String(rawVal).trim() === '') return;
+
+    let displayVal = escapeHtml(String(rawVal));
+
+    // Format harga jual
+    if (/harga|price|jual/i.test(k)) {
+      const rp = formatRupiah(rawVal);
+      displayVal = `<span class="harga">${rp ? 'Rp ' + escapeHtml(rp) : '-'}</span>`;
+    }
+
+    // Format harga beli menjadi kode rahasia
+    if (/harga_beli|beli/i.test(k)) {
+      displayVal = `<span class="harga" style="letter-spacing:1px;color:#c62828;">${escapeHtml(kodeHarga(rawVal))}</span>`;
+    }
+
+    const div = document.createElement('div');
+    div.className = 'detail-row';
+    const label = escapeHtml(k.replace(/_/g, ' '));
+    div.innerHTML = `<div class="detail-label">${label}</div><div>${displayVal}</div>`;
+    modalBody.appendChild(div);
+  });
+
+  overlay.style.display = 'flex';
+  lockBodyScroll();
+  document.getElementById('modal').scrollTop = 0;
+}
+
+function closeModal() {
+  overlay.style.display = 'none';
+  unlockBodyScroll();
+}
+
+overlay.addEventListener('click', (e) => {
+  if (e.target === overlay) closeModal();
+});
+
+closeModalBtn.addEventListener('click', closeModal);
+
+// --- Logika Verifikasi PIN, Edit & Tambah Produk ---
+function openPinModal() {
+  pinInput.value = '';
+  pinError.style.display = 'none';
+  pinOverlay.style.display = 'flex';
+  lockBodyScroll();
+  setTimeout(() => pinInput.focus(), 60);
+}
+
+function closePinModal() {
+  pinOverlay.style.display = 'none';
+  unlockBodyScroll();
+}
+
+btnEditProduk.addEventListener('click', () => {
+  pinMode = 'edit';
+  openPinModal();
+});
+
+btnAddProduk.addEventListener('click', () => {
+  pinMode = 'add';
+  openPinModal();
+});
+
+btnCancelPin.addEventListener('click', closePinModal);
+pinOverlay.addEventListener('click', (e) => {
+  if (e.target === pinOverlay) closePinModal();
+});
+
+// Verifikasi PIN: Hanya PIN 5555 yang diizinkan untuk mengedit atau menambah produk
+pinForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const enteredPin = pinInput.value.trim();
+  if (enteredPin === '5555') {
+    closePinModal();
+    if (pinMode === 'edit') {
+      closeModal();
+      openEditModal(currentSelectedItem);
+    } else if (pinMode === 'add') {
+      openAddModal();
+    }
+  } else {
+    pinError.style.display = 'block';
+    pinInput.value = '';
+    pinInput.focus();
+  }
+});
+
+// --- Modal Edit Produk ---
+function openEditModal(item) {
+  if (!item) return;
+  editFormBody.innerHTML = '';
+
+  Object.keys(item).forEach(k => {
+    const val = item[k] !== undefined && item[k] !== null ? item[k] : '';
+    const div = document.createElement('div');
+    div.className = 'form-group';
+    const label = escapeHtml(k.replace(/_/g, ' '));
+    div.innerHTML = `
+      <label class="form-label">${label}</label>
+      <input type="text" class="form-control edit-field" data-key="${escapeHtml(k)}" value="${escapeHtml(String(val))}" />
+    `;
+    editFormBody.appendChild(div);
+  });
+
+  editOverlay.style.display = 'flex';
+  lockBodyScroll();
+  const editModalBox = document.querySelector('#editOverlay .modal');
+  if (editModalBox) editModalBox.scrollTop = 0;
+}
+
+function closeEditModal() {
+  editOverlay.style.display = 'none';
+  unlockBodyScroll();
+}
+
+btnCancelEdit.addEventListener('click', closeEditModal);
+closeEditModalBtn.addEventListener('click', closeEditModal);
+
+// Simpan data produk yang telah diedit (sinkron ke Local Edits & Google Spreadsheet)
+editProductForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!currentSelectedItem) return;
+
+  const saveBtn = document.getElementById('btnSaveEdit');
+  const originalBtnText = saveBtn.innerHTML;
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = '⏳ Menyimpan...';
+
+  const sample = data[0] || {};
+  const nameKey = findKey(sample, ['nama_barang', 'nama', 'name', 'produk', 'product', 'title', 'mesi', 'mesin', 'barang']);
+  const originalProductKey = String(currentSelectedItem[nameKey] || '').trim().toLowerCase();
+
+  const updatedFields = {};
+  const fields = editFormBody.querySelectorAll('.edit-field');
+  fields.forEach(input => {
+    const key = input.getAttribute('data-key');
+    if (key) {
+      const val = input.value.trim();
+      currentSelectedItem[key] = val;
+      updatedFields[key] = val;
+    }
+  });
+
+  // 1. Simpan ke local edits agar detail baru tidak hilang saat di-refresh
+  const edits = getLocalEdits();
+  edits[originalProductKey] = updatedFields;
+  saveLocalEdits(edits);
+
+  // 2. Simpan ke LocalStorage cache
+  localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+
+  // 3. Perbarui filter kategori & refresh tampilan tabel seketika
+  updateCategoryOptions(data);
+  searchAndRender();
+
+  // 4. Kirim pembaruan ke Google Spreadsheet via Apps Script
+  try {
+    const payload = {
+      action: "edit",
+      originalKey: currentSelectedItem[nameKey],
+      data: updatedFields
+    };
+
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+
+    closeEditModal();
+    alert('✅ Data produk berhasil disimpan dan otomatis diperbarui di Google Spreadsheet!');
+  } catch (err) {
+    console.warn("Gagal sinkron ke Google Apps Script:", err);
+    closeEditModal();
+    alert('⚠️ Data berhasil disimpan di aplikasi, namun gagal menghubungi Google Sheets: ' + err.message);
+  }
+
+  saveBtn.disabled = false;
+  saveBtn.innerHTML = originalBtnText;
+  showModal(currentSelectedItem);
+});
+
+// --- Modal Tambah Produk Baru ---
+function openAddModal() {
+  addFormBody.innerHTML = '';
+
+  const sample = data[0] || {};
+  let keys = Object.keys(sample);
+  if (!keys.length) {
+    keys = ['nama_barang', 'kategori', 'harga_jual', 'harga_beli', 'keterangan'];
+  }
+
+  const catKey = keys.find(k => /kategori|category|kat/.test(k));
+  const categories = catKey ? Array.from(new Set(data.map(d => (d[catKey] || '').trim()).filter(Boolean))).sort() : [];
+
+  keys.forEach(k => {
+    const div = document.createElement('div');
+    div.className = 'form-group';
+    const label = escapeHtml(k.replace(/_/g, ' '));
+    const isCat = (k === catKey);
+
+    let inputHtml = '';
+    if (isCat) {
+      inputHtml = `
+        <input type="text" list="addCategoryList" class="form-control add-field" data-key="${escapeHtml(k)}" placeholder="Pilih atau ketik kategori..." />
+        <datalist id="addCategoryList">
+          ${categories.map(c => `<option value="${escapeHtml(c)}"></option>`).join('')}
+        </datalist>
+      `;
+    } else {
+      inputHtml = `<input type="text" class="form-control add-field" data-key="${escapeHtml(k)}" placeholder="Masukkan ${label}..." />`;
+    }
+
+    div.innerHTML = `
+      <label class="form-label">${label}</label>
+      ${inputHtml}
+    `;
+    addFormBody.appendChild(div);
+  });
+
+  addOverlay.style.display = 'flex';
+  lockBodyScroll();
+  const addModalBox = document.querySelector('#addOverlay .modal');
+  if (addModalBox) addModalBox.scrollTop = 0;
+
+  setTimeout(() => {
+    const firstInput = addFormBody.querySelector('input');
+    if (firstInput) firstInput.focus();
+  }, 100);
+}
+
+function closeAddModal() {
+  addOverlay.style.display = 'none';
+  unlockBodyScroll();
+}
+
+btnCancelAdd.addEventListener('click', closeAddModal);
+closeAddModalBtn.addEventListener('click', closeAddModal);
+
+// Simpan data produk baru (sinkron ke LocalStorage & Google Spreadsheet)
+addProductForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const saveBtn = document.getElementById('btnSaveAdd');
+  const originalBtnText = saveBtn.innerHTML;
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = '⏳ Menyimpan...';
+
+  const newProduct = {};
+  const fields = addFormBody.querySelectorAll('.add-field');
+  fields.forEach(input => {
+    const key = input.getAttribute('data-key');
+    if (key) {
+      newProduct[key] = input.value.trim();
+    }
+  });
+
+  const sample = data[0] || {};
+  const nameKey = findKey(sample, ['nama_barang', 'nama', 'name', 'produk', 'product', 'title', 'mesi', 'mesin', 'barang']);
+  if (!newProduct[nameKey]) {
+    alert('Nama produk wajib diisi!');
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = originalBtnText;
+    return;
+  }
+
+  // 1. Simpan ke local added
+  const added = getLocalAdded();
+  added.unshift(newProduct);
+  saveLocalAdded(added);
+
+  // 2. Tambahkan ke data di paling atas
+  data.unshift(newProduct);
+
+  // 3. Simpan ke LocalStorage cache
+  localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+
+  // 4. Update UI
+  updateCategoryOptions(data);
+  searchAndRender();
+
+  // 5. Kirim ke Google Apps Script via POST
+  try {
+    const payload = {
+      action: "add",
+      data: newProduct
+    };
+
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+
+    closeAddModal();
+    alert('✅ Produk baru berhasil ditambahkan dan otomatis tersimpan di Google Spreadsheet!');
+  } catch (err) {
+    console.warn("Gagal sinkron tambah produk ke Google Apps Script:", err);
+    closeAddModal();
+    alert('⚠️ Produk tersimpan di aplikasi, namun gagal menghubungi Google Sheets: ' + err.message);
+  }
+
+  saveBtn.disabled = false;
+  saveBtn.innerHTML = originalBtnText;
+
+  // Buka detail produk yang baru saja ditambahkan
+  showModal(newProduct);
+});
+
+// Mencegah scroll pada background touch perangkat seluler saat popup terbuka
+[overlay, pinOverlay, editOverlay, addOverlay].forEach(el => {
+  if (el) {
+    el.addEventListener('touchmove', (e) => {
+      if (e.target === el) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+  }
+});
+
+// Tombol Escape menutup modal yang sedang terbuka
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (addOverlay.style.display === 'flex') {
+      closeAddModal();
+    } else if (editOverlay.style.display === 'flex') {
+      closeEditModal();
+    } else if (pinOverlay.style.display === 'flex') {
+      closePinModal();
+    } else if (overlay.style.display === 'flex') {
+      closeModal();
+    }
+  }
+});
+
+// Input search listener (debounced)
+qInput.addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(searchAndRender, DEBOUNCE_MS);
+});
+
+// Category change listener
+catSelect.addEventListener('change', () => {
+  if (catSelect.value) {
+    catSelect.classList.add('selected');
+  } else {
+    catSelect.classList.remove('selected');
+  }
+  searchAndRender();
+});
+
+// Reset tombol: mereset kategori dan input pencarian barang
+resetBtn.addEventListener('click', () => {
+  clearTimeout(debounceTimer);
+  catSelect.value = '';
+  catSelect.classList.remove('selected');
+  qInput.value = '';
+  searchAndRender();
+  qInput.focus();
+});
+
+// Sort harga toggle cycle: Default -> Ascending -> Descending -> Default
+sortBtn.addEventListener('click', () => {
+  if (sortAsc === null) {
+    sortAsc = true;
+    sortBtn.textContent = '▲ Termurah';
+    sortBtn.classList.add('active');
+  } else if (sortAsc === true) {
+    sortAsc = false;
+    sortBtn.textContent = '▼ Termahal';
+    sortBtn.classList.add('active');
+  } else {
+    sortAsc = null;
+    sortBtn.textContent = '⇅ Harga';
+    sortBtn.classList.remove('active');
+  }
+  searchAndRender();
+});
+
+// Tombol Sinkronkan Data
+syncBtn.addEventListener('click', () => {
+  loadData(true);
+});
+
+// Long-press popup menu (Sembunyikan baris sementara)
+function showHidePopup(targetRow) {
+  const old = document.getElementById('hidePopup');
+  if (old) old.remove();
+
+  const popup = document.createElement('div');
+  popup.id = 'hidePopup';
+  popup.style.position = 'fixed';
+  popup.style.background = '#fff';
+  popup.style.border = '1px solid #ccc';
+  popup.style.borderRadius = '10px';
+  popup.style.padding = '12px 18px';
+  popup.style.boxShadow = '0 6px 20px rgba(0,0,0,0.3)';
+  popup.style.zIndex = 10000;
+  popup.style.fontSize = '15px';
+  popup.style.transition = 'opacity 0.2s ease';
+  popup.style.opacity = '0';
+
+  const btn = document.createElement('button');
+  btn.textContent = '👁️ Sembunyikan Baris';
+  btn.style.background = '#e53935';
+  btn.style.color = '#fff';
+  btn.style.border = 'none';
+  btn.style.borderRadius = '8px';
+  btn.style.padding = '10px 16px';
+  btn.style.fontSize = '14px';
+  btn.style.cursor = 'pointer';
+  btn.style.fontWeight = '500';
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    targetRow.style.display = 'none';
+    popup.remove();
+  });
+
+  popup.appendChild(btn);
+  document.body.appendChild(popup);
+
+  popup.style.left = '50%';
+  popup.style.top = '50%';
+  popup.style.transform = 'translate(-50%, -50%)';
+  requestAnimationFrame(() => popup.style.opacity = '1');
+
+  const closePopup = (e) => {
+    if (!popup.contains(e.target)) {
+      popup.remove();
+      document.removeEventListener('click', closePopup);
+      document.removeEventListener('touchstart', closePopup);
+    }
+  };
+  setTimeout(() => {
+    document.addEventListener('click', closePopup);
+    document.addEventListener('touchstart', closePopup);
+  }, 50);
+}
+
+// Tombol Kembali ke Atas
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 350) {
+    backToTopBtn.style.display = "block";
+  } else {
+    backToTopBtn.style.display = "none";
+  }
+});
+
+backToTopBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Registrasi Service Worker untuk PWA & Caching Offline (Hanya pada protokol HTTP/HTTPS)
+if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.log('SW registration error:', err);
+    });
+  });
+}
+
+// Tampilkan banner panduan jika dibuka langsung dari explorer (file://)
+if (location.protocol === 'file:') {
+  const warnEl = document.getElementById('localWarning');
+  if (warnEl) warnEl.style.display = 'block';
+}
+
+// Inisialisasi awal
+loadData();
+</script>
+</body>
+</html>
