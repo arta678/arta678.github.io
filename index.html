@@ -868,7 +868,7 @@ function showModal(item) {
     }
 
     // Format harga beli menjadi kode rahasia
-    if (/harga_beli|beli/i.test(k)) {
+    if (/kode|beli/i.test(k)) {
       displayVal = `<span class="harga" style="letter-spacing:1px;color:#c62828;">${escapeHtml(kodeHarga(rawVal))}</span>`;
     }
 
@@ -1046,7 +1046,7 @@ function openAddModal() {
   const sample = data[0] || {};
   let keys = Object.keys(sample);
   if (!keys.length) {
-    keys = ['nama_barang', 'kategori', 'harga_jual', 'harga_beli', 'keterangan'];
+    keys = ['nama_barang', 'kategori', 'harga_jual', 'kode', 'keterangan'];
   }
 
   const catKey = keys.find(k => /kategori|category|kat/.test(k));
